@@ -1,0 +1,43 @@
+{
+	"manifest_version": 2,
+	"name": "RIPS Extension - Duplicate Merger",
+	"version": "1.0.0",
+
+	"description": "RIPS Extension - Enables automatic duplicate client record merging. Checks for mismatching data, asks user to select correct data, then merges!",
+
+	"permissions": [
+		"storage",
+		"tabs"
+	],
+	"content_scripts": [
+		{
+			"matches": [
+				"http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
+				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
+			],
+			"js": [
+				"js/page_controllers/CtrlAdvancedSearch.js",
+                "js/min/fuse.min.js",
+                "js/min/jquery-3.1.1.min.js",
+				"js/Utils.js",
+				"js/ErrorThrowingAPI.js",
+                "js/FieldTranslator.js",
+                
+				"js/page_controllers/MainController.js"
+			]
+		}
+	],
+	"background": {
+		"page": "html/background.html"
+	},
+	"browser_action": {
+		"default_icon": {
+			"32": "img/fav128.png"
+			// "48": "img/icon48.png" // unpacked exts need .png to see icon :)
+		},
+		"default_popup": "html/popup.html"
+	},
+	"icons": {
+    	"128": "img/fav128.png"
+    }
+}
