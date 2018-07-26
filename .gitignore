@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 
+# hide apiKey file - technically it's ok to show though, right?
+/src/shared/auth
+
 # testing
 /coverage
 

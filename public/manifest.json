@@ -1,15 +1,41 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+    //--------------------------------------------------------------
+	//     NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
+	//--------------------------------------------------------------
+    "version": "1.0.0",
+    "manifest_version": 2,
+
+    "short_name": "Duplicate Client Merger",
+    "name": "RIPS Extension - Duplicate Client Merger",
+
+    "description": "RIPS Extension - Enables automatic duplicate client record merging. Checks for mismatching data, asks user to select correct data, then merges!",
+
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "options_page": "index.html", // react app here
+    "browser_action": {
+        "default_icon": {
+            "32": "extension_code/img/fav128.png"
+        },
+        "default_popup": "extension_code/html/optionsPageRedirect.html"
+    },
+
+    "icons": {
+        "48": "extension_code/img/Icon-48.png",
+    	"96": "extension_code/img/Icon-96.png"
+    },
+    "background": {
+		"page": "extension_code/html/background.html"
+    },
+    "content_scripts": [
+		{
+			"matches": [ "http://rips.247lib.com/StarsSup/User/UserDetails*" ],
+			"js": [
+				"extension_code/js/portCodes.js",
+				"extension_code/js/main.js"
+			]
+		}
+	]
 }

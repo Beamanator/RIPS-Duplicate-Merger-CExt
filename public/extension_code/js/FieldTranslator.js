@@ -1,4 +1,6 @@
-// ==================== FIELD TRANSLATOR FILE =======================
+//--------------------------------------------------------------
+//     NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
+//--------------------------------------------------------------
 
 /**
  * Purpose of this function is to set an easy place to translate fields from the input
