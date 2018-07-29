@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 
-// import components
-import { Grid, Button, Paper } from '@material-ui/core';
+// import core components
+import {
+    Button,
+    Grid,
+    Paper,
+    TextField
+} from '@material-ui/core';
 
 // set up styles
 const styles = theme => ({
@@ -16,11 +20,31 @@ const styles = theme => ({
     // header styles
     header: {
         padding: '1px 0px' // gives it some volume somehow
-    }
+    },
+    // input element styles
+    clientNumContainer: {
+        padding: '10px 0 20px 0'
+    },
+    // text-area styles
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+    },
 });
 
 class App extends Component {
-    state = {}
+    state = {
+        client1: '',
+        client2: '',
+        client3: ''
+    }
+
+    handleInputChange = name => event => {
+        this.setState({
+            [name]: event.target.value
+        });
+    }
 
     render() {
         const { classes } = this.props;
@@ -39,53 +63,84 @@ class App extends Component {
                 </Grid>
 
                 {/* Input elements - StARS #s*/}
-                <Grid item xs={12}>
-                    <p>StARS number input boxes will go here</p>
+                <Grid item xs={12} className={classes.textCenter}>
+                    <Paper className={classes.clientNumContainer}>
+                        <h3>Enter StARS #s for each client below:</h3>
+                        <Grid container justify="center" spacing={40}>
+                            <Grid item xs={3}>
+                                <TextField
+                                    id="client1"
+                                    label="Client #1"
+                                    className={classes.textField}
+                                    value={this.state.client1}
+                                    onChange={this.handleInputChange('client1')}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    id="client2"
+                                    label="Client #2"
+                                    className={classes.textField}
+                                    value={this.state.client2}
+                                    onChange={this.handleInputChange('client2')}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    id="client3"
+                                    label="Client #3"
+                                    className={classes.textField}
+                                    value={this.state.client3}
+                                    onChange={this.handleInputChange('client3')}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Paper>
                 </Grid>
 
-                {/* "Go" button - begin collecting data! */}
+                {/* TODO: "Go" button - begin collecting data! */}
                 <Grid item xs={12}>
                     <Button>
-                        Go!
+                        Go! / Clear
                     </Button>
                 </Grid>
 
-                {/* <Client Basic Information> Table */}
+                {/* TODO: <Client Basic Information> Table */}
                 <Grid item xs={12}>
                     Client Basic Information
                 </Grid>
 
-                {/* <Addresses> Table */}
+                {/* TODO: <Addresses> Table */}
                 <Grid item xs={12}>
                     Addresses
                 </Grid>
                 
-                {/* <Notes> Table */}
+                {/* TODO: <Notes> Table */}
                 <Grid item xs={12}>
                     Notes
                 </Grid>
                 
-                {/* <Aliases> Table */}
+                {/* TODO: <Aliases> Table */}
                 <Grid item xs={12}>
                     Aliases
                 </Grid>
 
-                {/* <Relatives> Table */}
+                {/* TODO: <Relatives> Table */}
                 <Grid item xs={12}>
                     Relatives
                 </Grid>
 
-                {/* <Contacts> Table */}
+                {/* TODO: <Contacts> Table */}
                 <Grid item xs={12}>
                     Contacts
                 </Grid>
 
-                {/* <Files (normal and private)> Table */}
+                {/* TODO: <Files (normal and private)> Table */}
                 <Grid item xs={12}>
                     Files (normal and pivate)
                 </Grid>
 
-                {/* <Actions / services> Table */}
+                {/* TODO: <Actions / services> Table */}
                 <Grid item xs={12}>
                     Actions / Services
                 </Grid>
