@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
+import CustomTable from './components/CustomTable';
+
 // import core components
 import {
     Button,
@@ -139,7 +141,11 @@ class App extends Component {
 
                 {/* TODO: <Client Basic Information> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
-                    Client Basic Information
+                    <Paper className={classes.header}>
+                        <h3>Client Basic Information</h3>
+                        {/* TODO: pass data down */}
+                        <CustomTable />
+                    </Paper>
                 </Grid>
 
                 {/* TODO: <Addresses> Table */}
