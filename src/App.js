@@ -17,6 +17,9 @@ const styles = theme => ({
     textCenter: {
         textAlign: 'center'
     },
+    button: {
+        margin: theme.spacing.unit
+    },
     // header styles
     header: {
         padding: '1px 0px' // gives it some volume somehow
@@ -44,6 +47,14 @@ class App extends Component {
         this.setState({
             [name]: event.target.value
         });
+    }
+
+    handleImport = () => {
+        console.log('clicked Import');
+    }
+
+    handleClear = () => {
+        console.log('clicked Clear');
     }
 
     render() {
@@ -98,50 +109,71 @@ class App extends Component {
                     </Paper>
                 </Grid>
 
-                {/* TODO: "Go" button - begin collecting data! */}
-                <Grid item xs={12}>
-                    <Button>
-                        Go! / Clear
-                    </Button>
+                {/* "import" / "clear" buttons - begin collecting data or clear! */}
+                <Grid item xs={12} className={classes.textCenter}>
+                    <Grid container justify="center">
+                        <Grid item xs={2}>
+                            <Button
+                                color="primary"
+                                className={classes.button}
+                                variant="contained"
+                                size="large"
+                                onClick={this.handleImport}
+                            >
+                                Import
+                            </Button>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Button
+                                color="secondary"
+                                className={classes.button}
+                                variant="contained"
+                                size="large"
+                                onClick={this.handleClear}
+                            >
+                                Clear
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
                 {/* TODO: <Client Basic Information> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Client Basic Information
                 </Grid>
 
                 {/* TODO: <Addresses> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Addresses
                 </Grid>
                 
                 {/* TODO: <Notes> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Notes
                 </Grid>
                 
                 {/* TODO: <Aliases> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Aliases
                 </Grid>
 
                 {/* TODO: <Relatives> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Relatives
                 </Grid>
 
                 {/* TODO: <Contacts> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Contacts
                 </Grid>
 
                 {/* TODO: <Files (normal and private)> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Files (normal and pivate)
                 </Grid>
 
                 {/* TODO: <Actions / services> Table */}
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                     Actions / Services
                 </Grid>
             </Grid>
