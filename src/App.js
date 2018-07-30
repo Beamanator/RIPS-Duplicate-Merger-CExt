@@ -30,11 +30,15 @@ const styles = theme => ({
     clientNumContainer: {
         padding: '10px 0 20px 0'
     },
-    // text-area styles
+    // text-area (input) styles
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: 200,
+    },
+    // description sections
+    description: {
+        margin: '0 25%'
     },
 });
 
@@ -70,9 +74,7 @@ class App extends Component {
             >
                 {/* Title */}
                 <Grid item xs={12} className={classes.textCenter}>
-                    <Paper className={classes.header}>
-                        <h1>Welcome to "The Merger"!</h1>
-                    </Paper>
+                    <h1>Welcome to "The Merger"!</h1>
                 </Grid>
 
                 {/* Input elements - StARS #s*/}
@@ -137,6 +139,24 @@ class App extends Component {
                             </Button>
                         </Grid>
                     </Grid>
+                </Grid>
+
+                {/* Instructions */}
+                <Grid item xs={12} className={classes.textCenter}>
+                    <h1>Select the "correct" client data below!</h1>
+                    <h4 className={classes.description}>
+                        Each table below shows data that is inconsistent
+                        between client records. Therefore, please select
+                        a cell in each row that represents the accurate
+                        data for that field.
+                    </h4>
+                    <h4 className={classes.description}>
+                        Example: If the Date of Birth field is shown below,
+                        that means the clients entered have different Date of
+                        Birth saved in their RIPS record. Select the
+                        correct Date of Birth that will be saved in the
+                        merged record.
+                    </h4>
                 </Grid>
 
                 {/* TODO: <Client Basic Information> Table */}
