@@ -7,11 +7,12 @@ import {
     Paper
 } from '@material-ui/core';
 
-// custom table styles
+// custom table Component
 const CustomTableCell = withStyles(theme => ({
     head: {
         backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white
+        color: theme.palette.common.white,
+        fontSize: 16
     },
     body: {
         fontSize: 14,
@@ -34,47 +35,39 @@ const styles = theme => ({
     }
 });
 
+const convertRawData = (rawData) =>
+    // get array of entries in raw data
+    Object.entries( rawData )
+    // add raw data arrays to category
+    .map(e => [e[0], ...e[1]])
 
-// sample data...
-let id = 0;
-const createData = (name, calories, fat, carbs, protein) => {
-    id += 1;
-    return { id, name, calories, fat, carbs, protein };
-}
-
-const data = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 
 const CustomTable = (props) => {
-    const { classes } = props;
+    const { classes, data: rawData } = props;
+    const data = convertRawData(rawData);
+
+    console.log('props', data)
 
     return (
         <Paper className={classes.root}>
             <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
-                        <CustomTableCell>dessert (100g serving)</CustomTableCell>
-                        <CustomTableCell>Calories</CustomTableCell>
-                        <CustomTableCell>fat</CustomTableCell>
-                        <CustomTableCell>carbs</CustomTableCell>
-                        <CustomTableCell>protein</CustomTableCell>
+                        <CustomTableCell>Field Names</CustomTableCell>
+                        <CustomTableCell>Client #1</CustomTableCell>
+                        <CustomTableCell>Client #2</CustomTableCell>
+                        <CustomTableCell>Client #3</CustomTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map(n =>
-                        <TableRow className={classes.row} key={n.id}>
+                    {data.map((n, index) =>
+                        <TableRow className={classes.row} key={index}>
                             <CustomTableCell component="th" scope="row">
-                                {n.name}
+                                {n[0]}
                             </CustomTableCell>
-                            <CustomTableCell>{n.calories}</CustomTableCell>
-                            <CustomTableCell>{n.fat}</CustomTableCell>
-                            <CustomTableCell>{n.carbs}</CustomTableCell>
-                            <CustomTableCell>{n.protein}</CustomTableCell>
+                            <CustomTableCell>{n[1]}</CustomTableCell>
+                            <CustomTableCell>{n[2]}</CustomTableCell>
+                            <CustomTableCell>{n[3]}</CustomTableCell>
                         </TableRow>
                     )}
                 </TableBody>
