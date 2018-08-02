@@ -1,3 +1,6 @@
+//--------------------------------------------------------------
+//                           FUNCTIONS
+//--------------------------------------------------------------
 /**
  * Returns a copy of the old object, with new properties from updatedProperties obj
  * @param {object} oldObject 
