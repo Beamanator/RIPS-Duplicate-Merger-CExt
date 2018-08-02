@@ -74,11 +74,9 @@ const data = {
 
     // Notes
     [P_KEYS.NOTES]: createEmptyData([
-        NOTES
+        // NOTES
     ]),
 };
-
-console.log(data);
 
 // set up styles
 const styles = theme => ({
@@ -130,6 +128,10 @@ class App extends Component {
 
     handleClear = () => {
         console.log('clicked Clear');
+    }
+
+    handleError = (msg) => {
+        console.error(msg)
     }
 
     render() {
@@ -230,13 +232,11 @@ class App extends Component {
 
                 {/* TODO: <Client Basic Information> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
-                    <Paper className={classes.header}>
-                        <h3>Client Basic Information</h3>
-                        {/* TODO: pass data down */}
-                        <CustomTable
-                            data={data[P_KEYS.CLIENT_BASIC_INFORMATION]}
-                        />
-                    </Paper>
+                    <CustomTable
+                        title="Client Basic Information"
+                        rawData={data[P_KEYS.CLIENT_BASIC_INFORMATION]}
+                        errorHandler={this.handleError}
+                    />
                 </Grid>
 
                 {/* TODO: <Addresses> Table */}
@@ -246,7 +246,11 @@ class App extends Component {
                 
                 {/* TODO: <Notes> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
-                    Notes
+                    <CustomTable
+                        title="Notes"
+                        rawData={data[P_KEYS.NOTES]}
+                        errorHandler={this.handleError}
+                    />
                 </Grid>
                 
                 {/* TODO: <Aliases> Table */}
