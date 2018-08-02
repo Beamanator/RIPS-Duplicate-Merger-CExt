@@ -3,6 +3,11 @@ import { withStyles } from '@material-ui/core/styles';
 
 import CustomTable from './components/CustomTable';
 
+import {
+    RIPS_PAGE_KEYS as P_KEYS,
+    RIPS_FIELD_KEYS as F_KEYS
+} from './shared/rips/ripsFieldKeys';
+
 // import core components
 import {
     Button,
@@ -10,6 +15,70 @@ import {
     Paper,
     TextField
 } from '@material-ui/core';
+
+
+// TODO: get data from RIPS...
+// TODO: move this initialized data to redux store?
+/**
+ * Function creates empty arrays next to each field, to make table populating
+ * easy. Basically, turns something like this:
+ * ['FIRST NAME', 'LAST NAME', ...]
+ * into something like this:
+ * [
+ *  ['FIRST NAME', '', '', ''],
+ *  ['LAST NAME', '', '', ''],
+ *  ...
+ * ]
+ *
+ * @param {object} fieldArr - array of RIPS fields
+ * @param {number} numEmpty - number of empty slots to add next to each field
+ * @returns converted array (see function description)
+ */
+const createEmptyData = (fieldArr, numEmpty) => {
+    let container = {};
+
+    // build array of empty strings, with length numEmpty
+    let emptyStrArr = [...Array(numEmpty)]
+        .map(elem => '');
+
+    // map empty string arrays to each data category
+    fieldArr.forEach(category => {
+        container[category] = emptyStrArr
+    });
+
+    return container;
+}
+
+// destructure keys from F_KEYS so we don't have to do F_KEYS.FIRST_NAME, ...
+const {
+    // client basic information
+    FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
+    EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
+    ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS,
+    // addresses (dynamic - TODO)
+    // notes
+    NOTES
+
+} = F_KEYS;
+// create empty, initial data
+const data = {
+    // client basic information
+    [P_KEYS.CLIENT_BASIC_INFORMATION]: createEmptyData([
+        FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
+        EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
+        ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS
+    ], 3),
+
+    // Addresses (dynamic - TODO)
+    // [P_KEYS.ADDRESSES]: createEmptyData([ ... ]),
+
+    // Notes
+    [P_KEYS.NOTES]: createEmptyData([
+        NOTES
+    ]),
+};
+
+console.log(data);
 
 // set up styles
 const styles = theme => ({
@@ -164,7 +233,9 @@ class App extends Component {
                     <Paper className={classes.header}>
                         <h3>Client Basic Information</h3>
                         {/* TODO: pass data down */}
-                        <CustomTable />
+                        <CustomTable
+                            data={data[P_KEYS.CLIENT_BASIC_INFORMATION]}
+                        />
                     </Paper>
                 </Grid>
 
