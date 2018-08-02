@@ -32,24 +32,64 @@ const styles = theme => ({
         '&:nth-of-type(odd)': {
             backgroundColor: theme.palette.background.default
         }
+    },
+    error: {
+        color: 'red',
+        fontSize: 20,
+        fontWeight: 'bold'
     }
 });
 
-const convertRawData = (rawData) =>
+/**
+ * Function converts raw passed-in data to a flat array that can be easily
+ * used by the component.
+ * Example: Takes data like this:
+ * {
+ *  'FIRST_NAME': ['', '', ''],
+ *  'LAST_NAME': ['', '', ''],
+ *  ...
+ * }
+ * and turns it into something like this:
+ * [
+ *  ['FIRST_NAME', '', '', ''],
+ *  ['LAST_NAME', '', '', ''], ...
+ * ]
+ *
+ * @param {object} rawData - js object holding raw data
+ * @param {function} errorHandler - error handler function
+ * @param {string} title - table title
+ */
+const convertRawData = (rawData, errorHandler, title) => {
     // get array of entries in raw data
-    Object.entries( rawData )
+    return Object.entries( rawData )
     // add raw data arrays to category
     .map(e => [e[0], ...e[1]])
-
+}
 
 const CustomTable = (props) => {
-    const { classes, data: rawData } = props;
-    const data = convertRawData(rawData);
+    const {
+        classes,
+        rawData,
+        errorHandler,
+        title
+    } = props;
+    const data = convertRawData(rawData, errorHandler, title);
 
-    console.log('props', data)
+    // if data is empty, don't display table!
+    if (data.length === 0) {
+        let msg =
+            `[${title}] Table Error: Raw data passed to CustomTable is empty. ` +
+            'Check implementation of that component for errors.';
+        errorHandler(msg);
+
+        return (
+            <div className={classes.error}>{`Error in '${title}' data`}</div>
+        );
+    }
 
     return (
         <Paper className={classes.root}>
+            <h3>{title}</h3>
             <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
