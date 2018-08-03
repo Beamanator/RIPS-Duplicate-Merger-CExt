@@ -1,14 +1,17 @@
+// TODO: add global chrome here
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 import CustomTable from './components/CustomTable';
 
+// rips page and field keys
 import {
     RIPS_PAGE_KEYS as P_KEYS,
     RIPS_FIELD_KEYS as F_KEYS
 } from './shared/rips/ripsFieldKeys';
 
-// import core components
+// material-ui core components
 import {
     Button,
     Grid,
@@ -16,19 +19,21 @@ import {
     TextField
 } from '@material-ui/core';
 
+// redux store actions
+import * as actions from './store/actions/index';
 
 // TODO: get data from RIPS...
 // TODO: move this initialized data to redux store?
 /**
- * Function creates empty arrays next to each field, to make table populating
- * easy. Basically, turns something like this:
- * ['FIRST NAME', 'LAST NAME', ...]
- * into something like this:
- * [
- *  ['FIRST NAME', '', '', ''],
- *  ['LAST NAME', '', '', ''],
- *  ...
- * ]
+ * Function creates empty arrays next to each field name to make table populating
+ * easy.
+ * Example: Takes data like this:
+ * ['FIRST_NAME', 'LAST_NAME', ...]
+ * and turns it into something like this:
+ * {
+ *  'FIRST_NAME': ['', '', ''],
+ *  'LAST_NAME': ['', '', ''], ...
+ * }
  *
  * @param {object} fieldArr - array of RIPS fields
  * @param {number} numEmpty - number of empty slots to add next to each field
@@ -39,7 +44,7 @@ const createEmptyData = (fieldArr, numEmpty) => {
 
     // build array of empty strings, with length numEmpty
     let emptyStrArr = [...Array(numEmpty)]
-        .map(elem => '');
+        .map(_ => '');
 
     // map empty string arrays to each data category
     fieldArr.forEach(category => {
@@ -114,6 +119,26 @@ class App extends Component {
         client1: '',
         client2: '',
         client3: ''
+    }
+
+    componentDidMount() {
+        // Warn user if we're in development environment
+        if (process.env.NODE_ENV === 'development') {
+            console.warn(
+                "Not initializing ports since we're only in " +
+                'dev mode (not inside a chrome extension)...'
+            );
+            // TODO: get rid of test action
+            this.props.onBackgroundPortInit();
+        }
+        // Check if port exists. Set one up if not!
+        else if (!this.props.bkgPort) {
+            // begin port init
+            // TODO: pass 'chrome' into port init
+            this.props.onBackgroundPortInit();
+        } else {
+            console.warn('<Main> port already exists', this.props.bkgPort);
+        }
     }
 
     handleInputChange = name => event => {
@@ -230,7 +255,7 @@ class App extends Component {
                     </h4>
                 </Grid>
 
-                {/* TODO: <Client Basic Information> Table */}
+                {/* <Client Basic Information> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Client Basic Information"
@@ -244,7 +269,7 @@ class App extends Component {
                     Addresses
                 </Grid>
                 
-                {/* TODO: <Notes> Table */}
+                {/* <Notes> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Notes"
@@ -282,4 +307,22 @@ class App extends Component {
     }
 }
 
-export default withStyles(styles)(App);
+const mapStateToProps = state => {
+    return {
+        // isAuthenticated...
+        // default table data
+        bkgPort: state.port.port,
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onBackgroundPortInit: () => dispatch(actions.backgroundPortInit())
+    };
+};
+
+// Option 2: use package 'recompose' to export withstyles & connect
+// https://github.com/acdlite/recompose
+// https://stackoverflow.com/questions/45704681/react-material-ui-export-multiple-higher-order-components
+export default connect(mapStateToProps, mapDispatchToProps)
+    (withStyles(styles)(App));
