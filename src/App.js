@@ -5,12 +5,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 import CustomTable from './components/CustomTable';
 
-// rips page and field keys
-import {
-    RIPS_PAGE_KEYS as P_KEYS,
-    RIPS_FIELD_KEYS as F_KEYS
-} from './shared/rips/ripsFieldKeys';
-
 // material-ui core components
 import {
     Button,
@@ -22,66 +16,10 @@ import {
 // redux store actions
 import * as actions from './store/actions/index';
 
-// TODO: get data from RIPS...
-// TODO: move this initialized data to redux store?
-/**
- * Function creates empty arrays next to each field name to make table populating
- * easy.
- * Example: Takes data like this:
- * ['FIRST_NAME', 'LAST_NAME', ...]
- * and turns it into something like this:
- * {
- *  'FIRST_NAME': ['', '', ''],
- *  'LAST_NAME': ['', '', ''], ...
- * }
- *
- * @param {object} fieldArr - array of RIPS fields
- * @param {number} numEmpty - number of empty slots to add next to each field
- * @returns converted array (see function description)
- */
-const createEmptyData = (fieldArr, numEmpty) => {
-    let container = {};
-
-    // build array of empty strings, with length numEmpty
-    let emptyStrArr = [...Array(numEmpty)]
-        .map(_ => '');
-
-    // map empty string arrays to each data category
-    fieldArr.forEach(category => {
-        container[category] = emptyStrArr
-    });
-
-    return container;
-}
-
-// destructure keys from F_KEYS so we don't have to do F_KEYS.FIRST_NAME, ...
-const {
-    // client basic information
-    FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
-    EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
-    ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS,
-    // addresses (dynamic - TODO)
-    // notes
-    NOTES
-
-} = F_KEYS;
-// create empty, initial data
-const data = {
-    // client basic information
-    [P_KEYS.CLIENT_BASIC_INFORMATION]: createEmptyData([
-        FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
-        EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
-        ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS
-    ], 3),
-
-    // Addresses (dynamic - TODO)
-    // [P_KEYS.ADDRESSES]: createEmptyData([ ... ]),
-
-    // Notes
-    [P_KEYS.NOTES]: createEmptyData([
-        // NOTES
-    ]),
-};
+// rips page and field keys
+import {
+    RIPS_PAGE_KEYS as P_KEYS
+} from './shared/rips/ripsFieldKeys';
 
 // set up styles
 const styles = theme => ({
@@ -160,7 +98,7 @@ class App extends Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, sampleData } = this.props;
 
         return (
             <Grid
@@ -259,7 +197,7 @@ class App extends Component {
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Client Basic Information"
-                        rawData={data[P_KEYS.CLIENT_BASIC_INFORMATION]}
+                        rawData={sampleData[P_KEYS.CLIENT_BASIC_INFORMATION]}
                         errorHandler={this.handleError}
                     />
                 </Grid>
@@ -273,7 +211,7 @@ class App extends Component {
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Notes"
-                        rawData={data[P_KEYS.NOTES]}
+                        rawData={sampleData[P_KEYS.NOTES]}
                         errorHandler={this.handleError}
                     />
                 </Grid>
@@ -310,7 +248,7 @@ class App extends Component {
 const mapStateToProps = state => {
     return {
         // isAuthenticated...
-        // default table data
+        sampleData: state.rips.data,
         bkgPort: state.port.port,
     };
 };

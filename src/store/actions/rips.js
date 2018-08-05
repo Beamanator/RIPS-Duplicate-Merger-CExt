@@ -41,9 +41,9 @@ export const ripsFetchSuccess = () => {
     };
 };
 // add payload data to store!
-export const ripsAddUserData = (data) => {
-    return {
-        type: actionTypes.RIPS_ADD_USER_DATA,
-        userData: data
-    };
-};
+// export const ripsAddUserData = (data) => {
+//     return {
+//         type: actionTypes.RIPS_ADD_USER_DATA,
+//         userData: data
+//     };
+// };
