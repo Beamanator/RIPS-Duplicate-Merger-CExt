@@ -19,12 +19,12 @@ const portError = (error) => {
 };
 
 // remove background port in store
-const portRemove = () => {
-    console.log('<port action> removing port');
-    return {
-        type: actionTypes.BACKGROUND_PORT_REMOVE
-    };
-};
+// const portRemove = () => {
+//     console.log('<port action> removing port');
+//     return {
+//         type: actionTypes.BACKGROUND_PORT_REMOVE
+//     };
+// };
 
 export const backgroundPortInit = (chrome) => {
     if (!chrome) {

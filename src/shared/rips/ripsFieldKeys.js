@@ -87,7 +87,7 @@ export const RIPS_FIELD_KEYS = {
     // TODO: dynamic from table
 
     // ======================== NOTES: ========================
-    NOTES: 'NOTES',
+    NOTES: 'Notes',
 
     // TODO: add the rest here
 }
