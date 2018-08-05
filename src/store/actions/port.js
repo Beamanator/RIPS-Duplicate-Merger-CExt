@@ -27,7 +27,17 @@ const portRemove = () => {
 };
 
 export const backgroundPortInit = (chrome) => {
-    console.log('<port action> init port');
+    if (!chrome) {
+        console.warn(
+            'No "chrome" var available. Probably because code is' +
+            ' running outside of an extension. Check if NODE_ENV' +
+            ' is set to \'development\' or \'production\'.\n' +
+            'NODE_ENV: ' + process.env.NODE_ENV
+        );
+        return { type: actionTypes.BLANK_ACTION };
+    }
+
+    console.log('<port action> init background port');
     return dispatch => {
         // set up local port
         const port = chrome.runtime.connect({ name: portCodes.REACT_APP_PORT });
