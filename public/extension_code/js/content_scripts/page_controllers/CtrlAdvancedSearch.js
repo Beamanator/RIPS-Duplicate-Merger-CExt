@@ -36,14 +36,14 @@ function AdvancedSearch_Controller( config ) {
 		// Action not handled by AdvancedSearch.js!
 		default:
 			let err = 'Unhandled action found in AdvancedSearch.js: ' + action;
-
+			console.error('[DE-DUPLICATOR]', 'in Advanced Search (no error yet)')
 			// stop import and flag error message
-			Utils_StopImport( err, function(response) {
-				ThrowError({
-					message: err,
-					errMethods: ['mConsole']
-				});
-			});
+			// Utils_StopImport( err, function(response) {
+			// 	ThrowError({
+			// 		message: err,
+			// 		errMethods: ['mConsole']
+			// 	});
+			// });
 	}
 }
 

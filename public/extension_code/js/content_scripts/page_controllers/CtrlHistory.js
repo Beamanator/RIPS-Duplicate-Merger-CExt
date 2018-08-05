@@ -18,7 +18,8 @@ function ViewActions_Controller( config ) {
 
 		// Action not handled by controller!
 		default:
-			console.error('Unhandled action found in CtrlViewAction.js:', action);
+			// console.error('Unhandled action found in CtrlViewAction.js:', action);
+			console.error('[DE-DUPLICATOR]', 'in History (no error yet)')
 	}
 }
 

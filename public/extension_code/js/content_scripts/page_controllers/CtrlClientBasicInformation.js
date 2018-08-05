@@ -28,7 +28,8 @@ function ClientBasicInformation_Controller( config ) {
 
 		// Action not handled by ClientBasicInformation.js!
 		default:
-			console.error('Unhandled action found in CtrlClientBasicInformation.js:', action);
+			// console.error('Unhandled action found in CtrlClientBasicInformation.js:', action);
+			console.error('[DE-DUPLICATOR]', 'in CBI (no error yet)')
 	}
 }
 
