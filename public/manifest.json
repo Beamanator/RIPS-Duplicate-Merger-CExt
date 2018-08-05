@@ -17,7 +17,7 @@
     "options_page": "index.html", // react app here
     "browser_action": {
         "default_icon": {
-            "32": "extension_code/img/fav128.png"
+            "48": "extension_code/img/Icon-48.png"
         },
         "default_popup": "extension_code/html/optionsPageRedirect.html"
     },
@@ -30,12 +30,36 @@
 		"page": "extension_code/html/background.html"
     },
     "content_scripts": [
-		{
-			"matches": [ "http://rips.247lib.com/StarsSup/User/UserDetails*" ],
+        {	// Shared functions!
+			"matches": [ "http://rips.247lib.com/Stars/*" ],
 			"js": [
-				"extension_code/js/portCodes.js",
-				"extension_code/js/main.js"
+                "extension_code/js/shared/portCodes.js",
+
+                // TODO: evaluate if old scripts are needed
+                // "extension_code/js/content_scripts/min/jquery-3.1.1.min.js",
+                "extension_code/js/content_scripts/page_utils/Utils.js",
+                // TODO: maybe get this from React
+				"extension_code/js/content_scripts/page_utils/FieldTranslator.js"
 			]
+        },
+        
+        // {}, Registration page
+		{	// Client Basic Information page
+			"matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientDetails" ],
+			"js": [	"extension_code/js/content_scripts/page_controllers/CtrlClientBasicInformation.js" ]
+		},
+		// {}, Services pages
+		// {}, Add Action page
+		{	// History page
+			"matches": [ "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList" ],
+			"js": [ "extension_code/js/content_scripts/page_controllers/CtrlHistory.js" ]
+		},
+		{	// Advanced Search pages
+			"matches": [
+				"http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
+				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
+			],
+			"js": [ "extension_code/js/content_scripts/page_controllers/CtrlAdvancedSearch.js" ]
 		}
 	]
 }
