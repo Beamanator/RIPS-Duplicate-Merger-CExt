@@ -1,3 +1,5 @@
+export const BLANK_ACTION = 'BLANK_ACTION';
+
 export const RIPS_FETCH_START = 'RIPS_FETCH_START';
 export const RIPS_FETCH_SUCCESS = 'RIPS_FETCH_SUCCESS';
 export const RIPS_FETCH_FAIL = 'RIPS_FETCH_FAIL';
