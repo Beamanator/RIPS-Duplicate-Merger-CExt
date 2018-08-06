@@ -1,4 +1,20 @@
-// ============================== PAGE CONTROLLER =======================
+//----------------------------------------------------------------
+//      NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
+//----------------------------------------------------------------
+
+// ===============================================================
+//                           CONSTANTS
+// ===============================================================
+const MESSAGE_SOURCE = 'CtrlAdvancedSearch';
+
+// ===============================================================
+//                          PORT CONNECT
+// ===============================================================
+const port = chrome.runtime.connect({ name: CS_ADVANCED_SEARCH_PORT });
+
+// ===============================================================
+//                         MAIN FUNCTIONS
+// ===============================================================
 /**
  * Controller function for Advanced Search pages - decides what to do based off of
  * passed in config object.
@@ -712,65 +728,43 @@ function navigateToAdvancedSearch(nextAction) {
 	});
 }
 
+// ================================================================
+//                     MESSAGE POSTING FUNCTIONS
+// ================================================================
+// Note: port codes come from "../js/portCodes.js"
+// TODO: add to utils?
+const sendPortCodeError = (invalidCode) => {
+    port.postMessage({
+        code: ERROR_CODE_NOT_RECOGNIZED, source: 'main.js',
+        data: `Code <${invalidCode}> not recognized!`
+    });
+};
 
-/**
- * Function sets basic fuse settings for project. Settings for fuse can be found here:
- * http://fusejs.io/
- * Note: fuse = fuzzy text searching
- * Note2: maxPatternLength & keys are necessary for successful searches
- * 
- * threshold: (0 = perfect match, 1.0 = no match at all)
- * id: if present, only returned data has this key (not original search values)
- * location: where in the string the search is looking for a match
- * distance: if 0, match should occur right at the 'location' for a match
- * 
- * @param {object} config - a few config items for settings
- * @returns {object} - basic fuse settings. Caller needs to configure 'keys' to search
- */
-function getBasicFuseSettings(config) {
-	let searchKeys = config.searchKeys || [];
-	let maxPatternLength = config.maxPatternLength || 32;
-	let identifier = config.identifier; // can be undefined
-	let distance = config.distance || 0;
+// ================================================================
+//                          PORT LISTENERS
+// ================================================================
 
-	let settings = {
-		keys: searchKeys,
-		shouldSort: true,
-		id: identifier,
-		includeScore: true,
-		threshold: 0.3,
-		location: 0,
-		distance: distance,
-		maxPatternLength: maxPatternLength + 3
-	};
+port.onMessage.addListener(function(msg) {
+    console.log('<Main.js> port msg received', msg);
 
-	return settings;
-}
+    switch(msg.code) {
+        case START_IMPORT:
+            startImport();
+            break;
 
-/**
- * Function performs Fuse (fuzzy) search and returns results
- * 
- * Note: Fuse results should look like this:
- * 	[
- * 		{
- * 			"item": 0, (id / identifier of search objects)
- * 			"score": 0.25 (how well this item matched)
- * 		},
- * 		{...}
- * 	]
- * 
- * @param {object} config - config for getting basic fuse settings
- * @param {object} itemsToSearch - array of items to search through
- * @param {string} searchText - string to search for in itemsToSearch
- * @returns {object} - search results array of objects
- */
-function fuzzySearch(config, itemsToSearch, searchText) {
-	// get Fuse search options
-	let options = getBasicFuseSettings(config);
-	
-	// set up Fuse object
-	let fuse = new Fuse(itemsToSearch, options);
+        case CONTINUE_IMPORT:
+            continueImport();
+            break;
+        
+        case INIT_PORT:
+            console.log('[Page] Successfully connected to background.js');
+            // if autoStart flag is true, start automatically!
+            if (msg.autoStart) {
+                startImport();
+            }
+            break;
 
-	// perform search, return results
-	return fuse.search(searchText);
-}
+        default: // code not recognized - send error back
+			Utils_SendPortCodeError(port, msg.code, PORTNAME_CS_ADVANCED_SEARCH);
+    }
+});

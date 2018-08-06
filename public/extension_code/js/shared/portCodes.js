@@ -2,20 +2,26 @@
 //                   CODES FOR CHROME EXTENSION FILES
 // ==============================================================================
 // name of the react app / background.js port
-const REACT_APP_PORT = 'REACT_APP_PORT';
-// name of the content script / background.js port
-const CONTENT_SCRIPT_PORT = 'CONTENT_SCRIPT_PORT';
+const PORTNAME_REACT_APP = 'PORT_REACT_APP';
+
+// name of the content script [advanced search] / background.js port
+const PORTNAME_CS_ADVANCED_SEARCH = 'PORT_CS_ADVANCED_SEARCH';
+// name of the content script [client basic information] / background.js port
+const PORTNAME_CS_CLIENT_BASIC_INFORMATION = 'PORT_CS_CLIENT_BASIC_INFORMATION';
+// name of the content script [history] / background.js port
+const PORTNAME_CS_HISTORY = 'PORT_CS_HISTORY';
 
 // ==============================================================================
 //                     REACT APP -> BKG SCRIPT CODES
 // ==============================================================================
-// receive codes (to background.js)
-const INIT_PORT = 'INIT_PORT';
-// send codes (to react app)
+const RA_BKG_INIT_PORT = 'RA_BKG_INIT_PORT';
 
 // ==============================================================================
 //                   CONTENT SCRIPT -> BKG SCRIPT CODES
 // ==============================================================================
-// receive codes (to background.js)
-const START_IMPORT = 'START_IMPORT';
-// send codes (to content script)
+const CS_BKG_START_IMPORT = 'CS_BKG_START_IMPORT';
+
+// ==============================================================================
+//                   BKG SCRIPT -> CONTENT SCRIPT CODES
+// ==============================================================================
+const BKG_CS_DO_SOMETHING = 'BKG_CS_DO_SOMETHING';

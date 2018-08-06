@@ -1,4 +1,20 @@
-// ============================== PAGE CONTROLLER =======================
+//----------------------------------------------------------------
+//      NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
+//----------------------------------------------------------------
+
+// ===============================================================
+//                           CONSTANTS
+// ===============================================================
+const MESSAGE_SOURCE = 'CtrlClientBasicInformation';
+
+// ===============================================================
+//                          PORT CONNECT
+// ===============================================================
+const port = chrome.runtime.connect({ name: CS_CLIENT_BASIC_INFORMATION_PORT });
+
+// ===============================================================
+//                         MAIN FUNCTIONS
+// ===============================================================
 /**
  * Controller function for ClientBasicInformation.js - decides what to do based off of
  * passed in config object.
@@ -124,3 +140,44 @@ function insertOptionalClientDetails( client, ci ) {
 	// tell caller if save needs to happen
 	return needSave;	
 }
+
+// ================================================================
+//                     MESSAGE POSTING FUNCTIONS
+// ================================================================
+// Note: port codes come from "../js/portCodes.js"
+// TODO: add to utils?
+const sendPortCodeError = (invalidCode) => {
+    port.postMessage({
+        code: ERROR_CODE_NOT_RECOGNIZED, source: 'main.js',
+        data: `Code <${invalidCode}> not recognized!`
+    });
+};
+
+// ================================================================
+//                          PORT LISTENERS
+// ================================================================
+
+port.onMessage.addListener(function(msg) {
+    console.log('<Main.js> port msg received', msg);
+
+    switch(msg.code) {
+        case START_IMPORT:
+            startImport();
+            break;
+
+        case CONTINUE_IMPORT:
+            continueImport();
+            break;
+        
+        case INIT_PORT:
+            console.log('[Page] Successfully connected to background.js');
+            // if autoStart flag is true, start automatically!
+            if (msg.autoStart) {
+                startImport();
+            }
+            break;
+
+        default: // code not recognized - send error back
+			Utils_SendPortCodeError(port, msg.code, PORTNAME_CS_CLIENT_BASIC_INFORMATION);
+    }
+});
