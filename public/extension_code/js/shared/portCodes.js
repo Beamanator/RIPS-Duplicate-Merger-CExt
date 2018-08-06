@@ -14,7 +14,7 @@ const PORTNAME_CS_HISTORY = 'PORT_CS_HISTORY';
 // ==============================================================================
 //                     REACT APP -> BKG SCRIPT CODES
 // ==============================================================================
-const RA_BKG_INIT_PORT = 'RA_BKG_INIT_PORT';
+
 
 // ==============================================================================
 //                   CONTENT SCRIPT -> BKG SCRIPT CODES
@@ -25,3 +25,4 @@ const CS_BKG_START_IMPORT = 'CS_BKG_START_IMPORT';
 //                   BKG SCRIPT -> CONTENT SCRIPT CODES
 // ==============================================================================
 const BKG_CS_DO_SOMETHING = 'BKG_CS_DO_SOMETHING';
+const BKG_RA_INIT_PORT = 'BKG_RA_INIT_PORT';
