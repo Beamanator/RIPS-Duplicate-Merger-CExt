@@ -40,7 +40,7 @@ export const backgroundPortInit = (chrome) => {
     console.log('<port action> init background port');
     return dispatch => {
         // set up local port
-        const port = chrome.runtime.connect({ name: portCodes.REACT_APP_PORT });
+        const port = chrome.runtime.connect({ name: portCodes.PORTNAME_REACT_APP });
 
         // wait for port to tell us we're connected
         port.onMessage.addListener(msg => {
@@ -50,7 +50,7 @@ export const backgroundPortInit = (chrome) => {
 
             switch( msg.code ) {
                 // called when port gets connected to background.js
-                case portCodes.INIT_PORT:
+                case portCodes.BKG_RA_INIT_PORT:
                     dispatch(portSet(port));
                     break;
 
@@ -66,14 +66,14 @@ export const backgroundPortInit = (chrome) => {
                 //     break;
 
                 // called when rips word import has completed
-                case portCodes.IMPORT_DONE:
+                case portCodes.BKG_RA_IMPORT_DONE:
                     // tell import we're done and are successful
                     // dispatch(actions.ripsFetchSuccess());
                     console.log('done?');
                     break;
 
                 // invalid msg code recognized in background.js
-                case portCodes.ERROR_CODE_NOT_RECOGNIZED:
+                case portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED:
                     dispatch(portError( `${msg.source} - ${msg.data}` ));
                     break;
                 
@@ -84,7 +84,7 @@ export const backgroundPortInit = (chrome) => {
                     ));
                     // tell background.js to stop import
                     port.postMessage({
-                        code: portCodes.ERROR_BKG_CODE_NOT_RECOGNIZED,
+                        code: portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED,
                         errCode: msg.code
                     });
             }
