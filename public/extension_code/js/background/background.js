@@ -20,7 +20,14 @@ const PORTNAME_HOLDER = [ // container for portnames
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
-
+// TODO: wrap post sending functions with port-not-found error messages
+const sendPortInit = (port, code, autoStartFlag=false) => {
+    // port should always exist, so don't handle other case
+    port.postMessage({
+        code: code,
+        autoStart: autoStartFlag // if in progress, import should auto start
+    });
+}
 
 // ==============================================================================
 //                           PORT MESSAGE LISTENERS
@@ -31,6 +38,9 @@ const initContentScriptPort = (port) => {
         console.warn('Tried initializing CSPort, even though already exists. Skipping');
         return;
     }
+
+    // send init message to either port
+    sendPortInit(port, BKG_CS_INIT_PORT, importInProgress);
 
     // set global content script port holder
     CSPort = port;
@@ -83,6 +93,9 @@ const initReactAppPort = (port) => {
         return;
     }
 
+    // send init message to either port
+    sendPortInit(port, BKG_RA_INIT_PORT);
+
     // set global react app port holder
     RAPort = port;
 
@@ -121,11 +134,7 @@ const initReactAppPort = (port) => {
 // ==============================================================================
 chrome.runtime.onConnect.addListener(port => {
     console.assert( PORTNAME_HOLDER.includes(port.name) );
-    
     console.log(`Port <${port.name}> connected!`);
-
-    // send init message
-    sendPortInit(port, importInProgress);
     
     switch (port.name) {
         case PORTNAME_CS_ADVANCED_SEARCH:
@@ -135,7 +144,7 @@ chrome.runtime.onConnect.addListener(port => {
             initContentScriptPort( port );
             break;
 
-        case REACT_APP_PORT:
+        case PORTNAME_REACT_APP:
             // init react app port listener
             initReactAppPort( port );
             break;

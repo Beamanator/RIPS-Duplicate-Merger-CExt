@@ -4,7 +4,7 @@ import * as actions from './index';
 
 // store background port in store
 const portSet = (port) => {
-    console.log('<port action> setting port');
+    console.log('<port action> storing bkg port');
     return {
         type: actionTypes.BACKGROUND_PORT_SET,
         port: port
@@ -12,6 +12,7 @@ const portSet = (port) => {
 };
 
 const portError = (error) => {
+    console.warn('<port action> found port error:', error);
     return {
         type: actionTypes.BACKGROUND_PORT_ERROR,
         error: error
@@ -84,7 +85,7 @@ export const backgroundPortInit = (chrome) => {
                     ));
                     // tell background.js to stop import
                     port.postMessage({
-                        code: portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED,
+                        code: portCodes.RA_BKG_STOP_IMPORT,
                         errCode: msg.code
                     });
             }
