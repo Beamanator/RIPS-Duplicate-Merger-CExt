@@ -1,4 +1,4 @@
-// TODO: add global chrome here
+/*global chrome*/
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -72,8 +72,7 @@ class App extends Component {
         // Check if port exists. Set one up if not!
         else if (!this.props.bkgPort) {
             // begin port init
-            // TODO: pass 'chrome' into port init
-            this.props.onBackgroundPortInit();
+            this.props.onBackgroundPortInit(chrome);
         } else {
             console.warn('<Main> port already exists', this.props.bkgPort);
         }
@@ -260,12 +259,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onBackgroundPortInit: () => dispatch(actions.backgroundPortInit())
+        onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome))
     };
 };
 
 // Option 2: use package 'recompose' to export withstyles & connect
 // https://github.com/acdlite/recompose
 // https://stackoverflow.com/questions/45704681/react-material-ui-export-multiple-higher-order-components
-export default connect(mapStateToProps, mapDispatchToProps)
-    (withStyles(styles)(App));
+export default connect(
+    mapStateToProps, mapDispatchToProps
+)(withStyles(styles)(App));
