@@ -98,7 +98,11 @@ class App extends Component {
     }
 
     render() {
-        const { classes, sampleData } = this.props;
+        const {
+            classes, // styles
+            bkgPort, // port to background page
+            sampleData, // test data
+        } = this.props;
 
         return (
             <Grid
@@ -156,6 +160,7 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
+                                disabled={!bkgPort}
                                 onClick={this.handleImport}
                             >
                                 Import
