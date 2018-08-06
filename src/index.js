@@ -9,7 +9,6 @@ import thunk from 'redux-thunk';
 import App from './App';
 import ripsReducer from './store/reducers/rips';
 import portReducer from './store/reducers/port';
-import registerServiceWorker from './registerServiceWorker';
 
 // change to create-react-act dev environment specific code
 // process.env.NODE_ENV comes from config folder, env.js file
@@ -39,4 +38,3 @@ const app = (
 )
 
 ReactDOM.render(app, document.getElementById('root'));
-registerServiceWorker();
