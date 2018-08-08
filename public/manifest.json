@@ -34,13 +34,25 @@
 			"matches": [ "http://rips.247lib.com/Stars/*" ],
 			"js": [
                 "extension_code/js/shared/portCodes.js",
+                "extension_code/js/shared/Utils.js",
 
                 // TODO: evaluate if old scripts are needed
                 // "extension_code/js/content_scripts/min/jquery-3.1.1.min.js",
-                "extension_code/js/shared/Utils.js",
                 // TODO: maybe get this from React
 				"extension_code/js/shared/FieldTranslator.js"
 			]
+        },
+
+        {   // "Other" RIPS pages
+            "matches": [ "http://rips.247lib.com/Stars/*" ],
+            "exclude_matches": [
+                "http://rips.247lib.com/Stars/User/Login",
+                "http://rips.247lib.com/Stars/ClientDetails/ClientDetails",
+                "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList",
+                "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
+				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
+            ],
+            "js": [ "extension_code/js/shared/CtrlRedirect.js" ]
         },
         
         // {}, Registration page
@@ -60,6 +72,6 @@
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
 			],
 			"js": [ "extension_code/js/content_scripts/CtrlAdvancedSearch.js" ]
-		}
+        }
 	]
 }
