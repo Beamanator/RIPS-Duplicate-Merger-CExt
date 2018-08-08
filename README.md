@@ -15,3 +15,6 @@ Input a list of StARS numbers and this extension will show the user any mis-matc
 1. `chrome` not available:
     - Found in `App.js`
     - Resolution: Remember to add `/*global chrome*/` to the top of the js file.
+
+## To "exclude" url matches from chrome extension manifest:
+https://developer.chrome.com/extensions/content_scripts#matchAndGlob
