@@ -94,10 +94,25 @@ function Utils_AddError( message, callback ) {}
 // ==============================================================================
 // Note: port codes come from "../../shared/portCodes.js"
 const Utils_SendPortCodeError = (port, invalidCode, source='unknown') => {
-	// TODO: handle unknown port somehow
-	if (!port) return;
+	// handle unknown port
+	if (!port) {
+		const msg = `Could not send message about invalid code <${invalidCode}>.` +
+			' Port not connected. Source: ' + source;
+		return console.error(msg);
+	}
 	port.postMessage({
         code: ERROR_CODE_NOT_RECOGNIZED, source: source,
         data: `Port code <${invalidCode}> not recognized!`
     });
 };
+
+const Utils_SendRedirectCode = (port, urlPart='unknown') => {
+	if (!port) {
+		const msg = `Could not redirect to urlPart <${urlPart}> - port not connected`;
+		return console.error(msg);
+	}
+    port.postMessage({
+        code: CS_BKG_START_PAGE_REDIRECT,
+        page: urlPart
+    });
+}
