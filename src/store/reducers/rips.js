@@ -5,7 +5,9 @@ import { sampleData } from './ripsHelper';
 
 const initialState = {
     // TODO: get fake state from ripsHelper.js
-    data: sampleData
+    data: sampleData,
+    loading: false,
+    error: null
 };
 
 const ripsFetchStart = (state, action) => {
