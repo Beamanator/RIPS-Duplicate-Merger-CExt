@@ -13,7 +13,8 @@ const PORTNAME_HOLDER = [ // container for portnames
     PORTNAME_REACT_APP,
     PORTNAME_CS_ADVANCED_SEARCH,
     PORTNAME_CS_CLIENT_BASIC_INFORMATION,
-    PORTNAME_CS_HISTORY
+    PORTNAME_CS_HISTORY,
+    PORTNAME_CS_REDIRECT
 ];
 
 
@@ -26,6 +27,12 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
     port.postMessage({
         code: code,
         autoStart: autoStartFlag // if in progress, import should auto start
+    });
+}
+
+const sendStartImport = (port) => {
+    port.postMessage({
+        code: BKG_CS_START_IMPORT
     });
 }
 
@@ -49,6 +56,17 @@ const initContentScriptPort = (port) => {
         console.log('<background.js> content script port msg received', msg);
 
         switch(msg.code) {
+            case CS_BKG_STOP_IMPORT:
+                importInProgress = false;
+                sendImportErrorToReactApp(msg.message);
+                break;
+
+            case CS_BKG_START_PAGE_REDIRECT:
+                const msgTabId = MessageSender.sender.tab.id;
+                const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
+                chrome.tabs.update(msgTabId, { url: url });
+                break;
+
             case CS_BKG_IMPORT_DONE:
                 importInProgress = false;
                 // sendImportDone(RAPort);
@@ -105,7 +123,7 @@ const initReactAppPort = (port) => {
         switch(msg.code) {
             case RA_BKG_START_IMPORT:
                 importInProgress = true;
-                // sendStartImport(CSPort);
+                sendStartImport(CSPort);
                 break;
 
             case RA_BKG_CONTINUE_IMPORT:
@@ -140,6 +158,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PORTNAME_CS_ADVANCED_SEARCH:
         case PORTNAME_CS_CLIENT_BASIC_INFORMATION:
         case PORTNAME_CS_HISTORY:
+        case PORTNAME_CS_REDIRECT:
             // init content script port listener
             initContentScriptPort( port );
             break;
