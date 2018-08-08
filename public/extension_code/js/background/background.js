@@ -31,8 +31,17 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
 }
 
 const sendStartImport = (port) => {
+    // TODO: handle invalid / unknown port
     port.postMessage({
         code: BKG_CS_START_IMPORT
+    });
+}
+
+const sendImportErrorToReactApp = (port, message) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: BKG_RA_STOP_IMPORT_WITH_ERROR,
+        message: message
     });
 }
 
@@ -58,7 +67,7 @@ const initContentScriptPort = (port) => {
         switch(msg.code) {
             case CS_BKG_STOP_IMPORT:
                 importInProgress = false;
-                sendImportErrorToReactApp(msg.message);
+                sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
             case CS_BKG_START_PAGE_REDIRECT:
@@ -144,6 +153,8 @@ const initReactAppPort = (port) => {
     port.onDisconnect.addListener(removedPort => {
         console.log(`Port <${removedPort.name}> disconnected`);
         RAPort = null;
+
+        importInProgress = false;
     });
 }
 

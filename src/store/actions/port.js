@@ -38,7 +38,7 @@ export const backgroundPortInit = (chrome) => {
         return { type: actionTypes.BLANK_ACTION };
     }
 
-    console.log('<port action> init background port');
+    console.log('<port action.js> init background port');
     return dispatch => {
         // set up local port
         const port = chrome.runtime.connect({ name: portCodes.PORTNAME_REACT_APP });
@@ -47,12 +47,18 @@ export const backgroundPortInit = (chrome) => {
         port.onMessage.addListener(msg => {
             // make sure code is not empty
             console.assert( msg.code && msg.code.trim() !== '');
-            console.log('<port action> msg received from background.js', msg);
+            console.log('<port action.js> msg received from background.js', msg);
 
             switch( msg.code ) {
                 // called when port gets connected to background.js
                 case portCodes.BKG_RA_INIT_PORT:
                     dispatch(portSet(port));
+                    break;
+
+                // called when import was supped b/c of some error message
+                case portCodes.BKG_RA_STOP_IMPORT_WITH_ERROR:
+                    const message = msg.message;
+                    console.error('<port action.js> import error message:', message);
                     break;
 
                 // called when user data comes back from background.js

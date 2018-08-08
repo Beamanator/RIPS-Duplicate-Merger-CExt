@@ -113,6 +113,6 @@ const Utils_SendRedirectCode = (port, urlPart='unknown') => {
 	}
     port.postMessage({
         code: CS_BKG_START_PAGE_REDIRECT,
-        page: urlPart
+        urlPart: urlPart
     });
 }

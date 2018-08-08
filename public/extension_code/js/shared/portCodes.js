@@ -16,11 +16,13 @@ const PORTNAME_CS_REDIRECT = 'PORT_CS_REDIRECT';
 // ==============================================================================
 //                     REACT APP -> BKG SCRIPT CODES
 // ==============================================================================
+const RA_BKG_START_IMPORT = 'RA_BKG_START_IMPORT';
 
 // ==============================================================================
 //                 BKG SCRIPT -> REACT APP SCRIPT CODES
 // ==============================================================================
 const BKG_RA_INIT_PORT = 'BKG_RA_INIT_PORT';
+const BKG_RA_STOP_IMPORT_WITH_ERROR = 'BKG_RA_STOP_IMPORT_WITH_ERROR';
 
 // ==============================================================================
 //                   CONTENT SCRIPT -> BKG SCRIPT CODES

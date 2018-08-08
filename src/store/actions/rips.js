@@ -14,8 +14,14 @@ const ripsFetchFail = (error) => {
         error: error
     };
 };
+// success! done! - called in port.js actions
+export const ripsFetchSuccess = () => {
+    return {
+        type: actionTypes.RIPS_FETCH_SUCCESS
+    };
+};
 // KICK OFF PROCESS - collect rips words from the website
-export const ripsFetchWords = (port) => {
+export const ripsFetchData = (port) => {
     return dispatch => {
         // begin collecting words
         dispatch(ripsFetchStart());
@@ -32,12 +38,6 @@ export const ripsFetchWords = (port) => {
 
         // NOTE: data import actions are called
         // -> and handled in actions/port.js - via a port listener
-    };
-};
-// success! done! - called in port.js actions
-export const ripsFetchSuccess = () => {
-    return {
-        type: actionTypes.RIPS_FETCH_SUCCESS
     };
 };
 // add payload data to store!

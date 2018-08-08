@@ -66,8 +66,6 @@ class App extends Component {
                 "Not initializing ports since we're only in " +
                 'dev mode (not inside a chrome extension)...'
             );
-            // TODO: get rid of test action
-            this.props.onBackgroundPortInit();
         }
         // Check if port exists. Set one up if not!
         else if (!this.props.bkgPort) {
@@ -86,6 +84,8 @@ class App extends Component {
 
     handleImport = () => {
         console.log('clicked Import');
+        // call action to start fetching data from rips
+        this.props.onRipsFetchData(this.props.bkgPort);
     }
 
     handleClear = () => {
@@ -259,7 +259,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome))
+        onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
+        onRipsFetchData: (bkgPort) => dispatch(actions.ripsFetchData(bkgPort))
     };
 };
 

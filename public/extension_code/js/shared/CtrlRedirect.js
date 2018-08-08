@@ -51,10 +51,10 @@ port.onMessage.addListener(function(msg) {
             // -> may have moved us off the path of data gathering. Stop
             // -> everything here!
             if (msg.autoStart) {
-                const msg = `[${MESSAGE_SOURCE}] autoStart is ${msg.autoStart} but` +
+                const err = `[${MESSAGE_SOURCE}] autoStart is ${msg.autoStart} but` +
                     ' should be unknown / false. User must have redirected on' +
                     ' accident. Stopping script.';
-                sendStopImport(msg);
+                sendStopImport(err);
             }
             break;
 

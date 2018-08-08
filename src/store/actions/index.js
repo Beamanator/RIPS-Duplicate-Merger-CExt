@@ -5,3 +5,7 @@ export {
     backgroundPortInit,
     portInitCollect
 } from './port';
+
+export {
+    ripsFetchData
+} from './rips';
