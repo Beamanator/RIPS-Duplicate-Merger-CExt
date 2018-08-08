@@ -28,7 +28,7 @@ export const ripsFetchWords = (port) => {
         }
 
         // Here, send message to background to start collecting data
-        port.postMessage({ code: portCodes.START_IMPORT });
+        port.postMessage({ code: portCodes.RA_BKG_START_IMPORT });
 
         // NOTE: data import actions are called
         // -> and handled in actions/port.js - via a port listener
