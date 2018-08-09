@@ -4,6 +4,13 @@ RIPS duplicate client merger - Chrome Extension
 ## The Purpose
 Input a list of StARS numbers and this extension will show the user any mis-matching data, the user will select which data is correct, then all of the correct data will be merged into the oldest client. Finally, the newer client(s) will be archived.
 
+## Getting Started
+1. Run `npm install` to install the node packages in `package.json`
+1. Run `npm run build` to "build" the React app
+1. `chrome://extensions` in your browser, then `Load Unpacked`. Now navigate to your `build` directory that was created in the previous step. Finally, click 'ok'.
+
+Now you should have a new, working chrome extension!
+
 ## Common errors:
 1. Error with `service-worker`:
     - Found in `background.js`
