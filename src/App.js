@@ -122,7 +122,7 @@ class App extends Component {
                             <Grid item xs={3}>
                                 <TextField
                                     id="client1"
-                                    label="Client #1"
+                                    label="Client StARS #1"
                                     className={classes.textField}
                                     value={this.state.client1}
                                     onChange={this.handleInputChange('client1')}
@@ -131,7 +131,7 @@ class App extends Component {
                             <Grid item xs={3}>
                                 <TextField
                                     id="client2"
-                                    label="Client #2"
+                                    label="Client StARS #2"
                                     className={classes.textField}
                                     value={this.state.client2}
                                     onChange={this.handleInputChange('client2')}
@@ -140,7 +140,7 @@ class App extends Component {
                             <Grid item xs={3}>
                                 <TextField
                                     id="client3"
-                                    label="Client #3"
+                                    label="Client StARS #3"
                                     className={classes.textField}
                                     value={this.state.client3}
                                     onChange={this.handleInputChange('client3')}
