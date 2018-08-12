@@ -90,9 +90,9 @@ function Utils_UrlContains(urlPiece, throwErr=true) {}
 function Utils_AddError( message, callback ) {}
 
 
-const Utils_Log = (...args) => console.log(...args);
-const Utils_Warn = (...args) => console.warn(...args);
-const Utils_Error = (...args) => console.error(...args); 
+const Utils_Log = (source, ...args) => console.log(source, ...args);
+const Utils_Warn = (source, ...args) => console.warn(source, ...args);
+const Utils_Error = (source, ...args) => console.error(source, ...args); 
 
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
