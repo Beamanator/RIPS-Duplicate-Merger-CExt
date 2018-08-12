@@ -21,7 +21,7 @@ export const ripsFetchSuccess = () => {
     };
 };
 // KICK OFF PROCESS - collect rips words from the website
-export const ripsFetchData = (port) => {
+export const ripsFetchData = (port, clientNums) => {
     return dispatch => {
         // begin collecting words
         dispatch(ripsFetchStart());
@@ -34,7 +34,10 @@ export const ripsFetchData = (port) => {
         }
 
         // Here, send message to background to start collecting data
-        port.postMessage({ code: portCodes.RA_BKG_START_IMPORT });
+        port.postMessage({
+            code: portCodes.RA_BKG_START_IMPORT,
+            clientNums: clientNums
+        });
 
         // NOTE: data import actions are called
         // -> and handled in actions/port.js - via a port listener
