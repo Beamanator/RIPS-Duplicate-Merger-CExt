@@ -18,7 +18,6 @@ const port = chrome.runtime.connect({ name: PORTNAME_CS_ADVANCED_SEARCH });
 const startImport = (clientNums, clientIndex) => {
     Utils_Log(`[${MESSAGE_SOURCE}] - start import!`);
     Utils_Log(`[${MESSAGE_SOURCE}]`, clientNums, clientIndex)
-    debugger;
     // TODO: 1) get client stars # from background
     // TODO: 2) put stars # into UNHCR field
     // TODO: 3) process search results (click + move to next page)
