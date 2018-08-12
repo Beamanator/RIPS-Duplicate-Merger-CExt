@@ -16,9 +16,10 @@ const port = chrome.runtime.connect({ name: PORTNAME_CS_ADVANCED_SEARCH });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startImport = (clientNum) => {
-    Utils_Log(`[${MESSAGE_SOURCE}] - start import!`);
-    Utils_Log(`[${MESSAGE_SOURCE}]`, clientNum);
-    // TODO: 1) get client stars # from background
+    Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
+    
+    // debugger;
+    // TODO: 1) get field translator from somewhere
     // TODO: 2) put stars # into UNHCR field
     // TODO: 3) process search results (click + move to next page)
     // -> remember to handle errors along the way
@@ -35,7 +36,7 @@ const startImport = (clientNum) => {
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
-    Utils_Log(`[${MESSAGE_SOURCE}] port msg received`, msg);
+    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(msg.code) {
         case BKG_CS_START_IMPORT:
@@ -49,8 +50,8 @@ port.onMessage.addListener(function(msg) {
             // break;
         
         case BKG_CS_INIT_PORT:
-            Utils_Log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
-            Utils_Log(`[${MESSAGE_SOURCE}] autostart: `, msg.autoStart);
+            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
             // if autoStart flag is true, start automatically importing!
             if (msg.autoStart) {
                 startImport({
@@ -84,34 +85,13 @@ port.onMessage.addListener(function(msg) {
 	
 // 	switch(action) {
 // 		// Enter client data and press 'search'
-// 		case 'SEARCH_FOR_CLIENT':
-// 		case 'SEARCH_FOR_CLIENT_UNHCR_NUMBER':
-// 		case 'SEARCH_FOR_CLIENT_PHONE':
-// 		case 'SEARCH_FOR_CLIENT_OTHER_PHONE':
 // 		case 'SEARCH_FOR_CLIENT_STARS_NUMBER':
 // 			kickoffSearch(clientIndex, clientData, importSettings, action);
 // 			break;
-
-// 		// Analyze search results - depending on search result,
-// 		// redirect to next search criteria
-// 		case 'ANALYZE_SEARCH_RESULTS_UNHCR_NUMBER':
-// 		case 'ANALYZE_SEARCH_RESULTS_PHONE':
-// 		case 'ANALYZE_SEARCH_RESULTS_OTHER_PHONE':
+//
 // 		case 'ANALYZE_SEARCH_RESULTS_STARS_NUMBER':
 // 			processSearchResults(clientIndex, clientData, importSettings, action);
 // 			break;
-
-// 		// Action not handled by AdvancedSearch.js!
-// 		default:
-// 			let err = 'Unhandled action found in AdvancedSearch.js: ' + action;
-// 			console.error('[DE-DUPLICATOR]', 'in Advanced Search (no error yet)')
-// 			// stop import and flag error message
-// 			// Utils_StopImport( err, function(response) {
-// 			// 	ThrowError({
-// 			// 		message: err,
-// 			// 		errMethods: ['mConsole']
-// 			// 	});
-// 			// });
 // 	}
 // }
 
