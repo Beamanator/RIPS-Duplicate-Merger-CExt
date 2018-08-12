@@ -1,8 +1,9 @@
+// TODO: delete this file after importing data from rips
 // rips page and field keys
 import {
     RIPS_PAGE_KEYS as P_KEYS,
     RIPS_FIELD_KEYS as F_KEYS
-} from '../../shared/rips/ripsFieldKeys';
+} from '../../shared/ripsKeys';
 
 /**
  * Function creates empty arrays next to each field name to make table populating
@@ -12,7 +13,7 @@ import {
  * and turns it into something like this:
  * {
  *  'FIRST_NAME': ['', '', ''],
- *  'LAST_NAME': ['', '', ''], ...
+ *  'LAST_NAME' : ['', '', ''], ...
  * }
  *
  * @param {object} fieldArr - array of RIPS fields
@@ -58,7 +59,7 @@ export const sampleData = {
         ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS
     ], 3),
 
-    // Addresses (dynamic - TODO)
+    // TODO: Addresses (dynamic)
     // [P_KEYS.ADDRESSES]: createEmptyData([ ... ]),
 
     // Notes
