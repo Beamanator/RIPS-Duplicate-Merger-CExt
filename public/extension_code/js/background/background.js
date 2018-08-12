@@ -29,8 +29,7 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
     port.postMessage({
         code: code,
         autoStart: autoStartFlag, // if in progress, import should auto start
-        clientNums: autoStartFlag ? CLIENT_NUMS : undefined,
-        clientIndex: autoStartFlag ? CLIENT_INDEX : undefined,
+        clientNum: autoStartFlag ? CLIENT_NUMS[CLIENT_INDEX] : undefined
     });
 }
 
