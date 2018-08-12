@@ -84,8 +84,13 @@ class App extends Component {
 
     handleImport = () => {
         console.log('clicked Import');
+        
+        // gather client nums into array
+        const { client1, client2, client3 } = this.state;
+        const clientNums = [ client1, client2, client3 ];
+
         // call action to start fetching data from rips
-        this.props.onRipsFetchData(this.props.bkgPort);
+        this.props.onRipsFetchData(this.props.bkgPort, clientNums);
     }
 
     handleClear = () => {
@@ -260,7 +265,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
-        onRipsFetchData: (bkgPort) => dispatch(actions.ripsFetchData(bkgPort))
+        onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums))
     };
 };
 
