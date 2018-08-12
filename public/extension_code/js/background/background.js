@@ -7,7 +7,9 @@
 // ==============================================================================
 let CSPort = null; // content script port
 let RAPort = null; // react app port
-let importInProgress = false; // data collect 'in progress' flag
+let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
+let CLIENT_NUMS = null;
+let CLIENT_INDEX = 0;
 
 const PORTNAME_HOLDER = [ // container for portnames
     PORTNAME_REACT_APP,
@@ -26,14 +28,18 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
     // port should always exist, so don't handle other case
     port.postMessage({
         code: code,
-        autoStart: autoStartFlag // if in progress, import should auto start
+        autoStart: autoStartFlag, // if in progress, import should auto start
+        clientNums: autoStartFlag ? CLIENT_NUMS : undefined,
+        clientIndex: autoStartFlag ? CLIENT_INDEX : undefined,
     });
 }
 
 const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
-        code: BKG_CS_START_IMPORT
+        code: BKG_CS_START_IMPORT,
+        clientNums: CLIENT_NUMS,
+        clientIndex: CLIENT_INDEX
     });
 }
 
@@ -56,7 +62,7 @@ const initContentScriptPort = (port) => {
     }
 
     // send init message to either port
-    sendPortInit(port, BKG_CS_INIT_PORT, importInProgress);
+    sendPortInit(port, BKG_CS_INIT_PORT, IMPORT_IN_PROGRESS);
 
     // set global content script port holder
     CSPort = port;
@@ -66,7 +72,7 @@ const initContentScriptPort = (port) => {
 
         switch(msg.code) {
             case CS_BKG_STOP_IMPORT:
-                importInProgress = false;
+                IMPORT_IN_PROGRESS = false;
                 sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
@@ -77,7 +83,7 @@ const initContentScriptPort = (port) => {
                 break;
 
             case CS_BKG_IMPORT_DONE:
-                importInProgress = false;
+                IMPORT_IN_PROGRESS = false;
                 // sendImportDone(RAPort);
                 break;
 
@@ -93,16 +99,16 @@ const initContentScriptPort = (port) => {
 
             case CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);
-                // importInProgress = false;
+                // IMPORT_IN_PROGRESS = false;
                 break;
 
             case CS_BKG_ERROR_HOW_TO_CONTINUE:
                 // console.error(`Too many '>' elems found on rips page!`);
-                // importInProgress = false;
+                // IMPORT_IN_PROGRESS = false;
                 break;
             
             default: // code not recognized - send error back
-                importInProgress = false;
+                IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PORTNAME_REACT_APP);
         }
     });
@@ -131,7 +137,9 @@ const initReactAppPort = (port) => {
 
         switch(msg.code) {
             case RA_BKG_START_IMPORT:
-                importInProgress = true;
+                IMPORT_IN_PROGRESS = true;
+                CLIENT_NUMS = msg.clientNums;
+                CLIENT_INDEX = 0;
                 sendStartImport(CSPort);
                 break;
 
@@ -140,12 +148,12 @@ const initReactAppPort = (port) => {
                 break;
 
             case RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
-                importInProgress = false;
+                IMPORT_IN_PROGRESS = false;
                 // console.error(`Code sent to React <${msg.errCode}> not recognized`);
                 break;
 
             default: // code not recognized - send error back
-                importInProgress = false;
+                IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PORTNAME_REACT_APP);
         }
     });
@@ -154,7 +162,7 @@ const initReactAppPort = (port) => {
         console.log(`Port <${removedPort.name}> disconnected`);
         RAPort = null;
 
-        importInProgress = false;
+        IMPORT_IN_PROGRESS = false;
     });
 }
 
@@ -180,7 +188,7 @@ chrome.runtime.onConnect.addListener(port => {
             break;
         
         default:
-            importInProgress = false;
+            IMPORT_IN_PROGRESS = false;
             console.error(
                 "ERR: somehow connecting port isn't recognized, but we said assert!",
                 port
