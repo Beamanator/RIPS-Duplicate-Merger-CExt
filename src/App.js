@@ -21,42 +21,12 @@ import {
     RIPS_PAGE_KEYS as P_KEYS
 } from './shared/rips/ripsFieldKeys';
 
-// set up styles
-const styles = theme => ({
-    root: {
-        flexGrow: 1
-    },
-    textCenter: {
-        textAlign: 'center'
-    },
-    button: {
-        margin: theme.spacing.unit
-    },
-    // header styles
-    header: {
-        padding: '1px 0px' // gives it some volume somehow
-    },
-    // input element styles
-    clientNumContainer: {
-        padding: '10px 0 20px 0'
-    },
-    // text-area (input) styles
-    textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: 200,
-    },
-    // description sections
-    description: {
-        margin: '0 25%'
-    },
-});
-
 class App extends Component {
     state = {
         client1: '',
         client2: '',
-        client3: ''
+        client3: '',
+        importInProgress: true
     }
 
     componentDidMount() {
@@ -84,6 +54,9 @@ class App extends Component {
 
     handleImport = () => {
         console.log('clicked Import');
+
+        // disable clicking import while import in progress
+        this.setState({ importInProgress: false });
         
         // gather client nums into array
         const { client1, client2, client3 } = this.state;
@@ -95,6 +68,9 @@ class App extends Component {
 
     handleClear = () => {
         console.log('clicked Clear');
+
+        // enable import button
+        this.setState({ importInProgress: true });
     }
 
     handleError = (msg) => {
@@ -107,6 +83,11 @@ class App extends Component {
             bkgPort, // port to background page
             sampleData, // test data
         } = this.props;
+
+        const {
+            client1, client2, client3,
+            importInProgress
+        } = this.state;
 
         return (
             <Grid
@@ -129,7 +110,7 @@ class App extends Component {
                                     id="client1"
                                     label="Client StARS #1"
                                     className={classes.textField}
-                                    value={this.state.client1}
+                                    value={client1}
                                     onChange={this.handleInputChange('client1')}
                                 />
                             </Grid>
@@ -138,7 +119,7 @@ class App extends Component {
                                     id="client2"
                                     label="Client StARS #2"
                                     className={classes.textField}
-                                    value={this.state.client2}
+                                    value={client2}
                                     onChange={this.handleInputChange('client2')}
                                 />
                             </Grid>
@@ -147,7 +128,7 @@ class App extends Component {
                                     id="client3"
                                     label="Client StARS #3"
                                     className={classes.textField}
-                                    value={this.state.client3}
+                                    value={client3}
                                     onChange={this.handleInputChange('client3')}
                                 />
                             </Grid>
@@ -164,7 +145,7 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                disabled={!bkgPort}
+                                disabled={!bkgPort || !importInProgress}
                                 onClick={this.handleImport}
                             >
                                 Import
@@ -253,6 +234,37 @@ class App extends Component {
         );
     }
 }
+
+// set up styles
+const styles = theme => ({
+    root: {
+        flexGrow: 1
+    },
+    textCenter: {
+        textAlign: 'center'
+    },
+    button: {
+        margin: theme.spacing.unit
+    },
+    // header styles
+    header: {
+        padding: '1px 0px' // gives it some volume somehow
+    },
+    // input element styles
+    clientNumContainer: {
+        padding: '10px 0 20px 0'
+    },
+    // text-area (input) styles
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+    },
+    // description sections
+    description: {
+        margin: '0 25%'
+    },
+});
 
 const mapStateToProps = state => {
     return {
