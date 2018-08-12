@@ -14,12 +14,12 @@ import {
 } from '@material-ui/core';
 
 // redux store actions
-import * as actions from './store/actions/index';
+import * as actions from './store/actions';
 
 // rips page and field keys
 import {
     RIPS_PAGE_KEYS as P_KEYS
-} from './shared/rips/ripsFieldKeys';
+} from './shared/ripsKeys';
 
 class App extends Component {
     state = {
