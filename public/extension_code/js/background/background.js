@@ -35,10 +35,10 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
 
 const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
+    // TODO: handle CLIENT_INDEX out of bounds (import complete)
     port.postMessage({
         code: BKG_CS_START_IMPORT,
-        clientNums: CLIENT_NUMS,
-        clientIndex: CLIENT_INDEX
+        clientNum: CLIENT_NUMS[CLIENT_INDEX]
     });
 }
 
