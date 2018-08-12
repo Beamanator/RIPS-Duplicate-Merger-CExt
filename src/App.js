@@ -26,7 +26,7 @@ class App extends Component {
         client1: '',
         client2: '',
         client3: '',
-        importInProgress: true
+        importInProgress: false
     }
 
     componentDidMount() {
@@ -56,7 +56,7 @@ class App extends Component {
         console.log('clicked Import');
 
         // disable clicking import while import in progress
-        this.setState({ importInProgress: false });
+        this.setState({ importInProgress: true });
         
         // gather client nums into array
         const { client1, client2, client3 } = this.state;
@@ -70,7 +70,7 @@ class App extends Component {
         console.log('clicked Clear');
 
         // enable import button
-        this.setState({ importInProgress: true });
+        this.setState({ importInProgress: false });
     }
 
     handleError = (msg) => {
@@ -145,7 +145,7 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                disabled={!bkgPort || !importInProgress}
+                                disabled={!bkgPort || importInProgress}
                                 onClick={this.handleImport}
                             >
                                 Import
