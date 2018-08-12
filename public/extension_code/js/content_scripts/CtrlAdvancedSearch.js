@@ -15,8 +15,14 @@ const port = chrome.runtime.connect({ name: PORTNAME_CS_ADVANCED_SEARCH });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = () => {
-    console.log(`[${MESSAGE_SOURCE}] - start import!`);
+const startImport = (clientNums, clientIndex) => {
+    Utils_Log(`[${MESSAGE_SOURCE}] - start import!`);
+    Utils_Log(`[${MESSAGE_SOURCE}]`, clientNums, clientIndex)
+    debugger;
+    // TODO: 1) get client stars # from background
+    // TODO: 2) put stars # into UNHCR field
+    // TODO: 3) process search results (click + move to next page)
+    // -> remember to handle errors along the way
 }
 
 // ===============================================================
@@ -30,11 +36,14 @@ const startImport = () => {
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
-    console.log(`[${MESSAGE_SOURCE}] port msg received`, msg);
+    Utils_Log(`[${MESSAGE_SOURCE}] port msg received`, msg);
 
     switch(msg.code) {
         case BKG_CS_START_IMPORT:
-            startImport();
+            startImport({
+                clientNums: msg.clientNums,
+                clientIndex: msg.clientIndex
+            });
             break;
 
         // case CONTINUE_IMPORT:
@@ -42,12 +51,15 @@ port.onMessage.addListener(function(msg) {
             // break;
         
         case BKG_CS_INIT_PORT:
-            console.log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
-            console.log(`[${MESSAGE_SOURCE}] autostart: `, msg.autoStart);
-            // TODO: if autoStart flag is true, start automatically!
-            // if (msg.autoStart) {
-            //     startImport();
-            // }
+            Utils_Log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
+            Utils_Log(`[${MESSAGE_SOURCE}] autostart: `, msg.autoStart);
+            // if autoStart flag is true, start automatically importing!
+            if (msg.autoStart) {
+                startImport({
+                    clientNums: msg.clientNums,
+                    clientIndex: msg.clientIndex
+                });
+            }
             break;
 
         default: // code not recognized - send error back
