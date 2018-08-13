@@ -77,6 +77,37 @@ class App extends Component {
         console.error(msg)
     }
 
+    checkClientNumValid = (numStr, emptyAllowed=false) => {
+        if (emptyAllowed && numStr.length == 0)
+            return true
+        
+        // else (empty allowed but not empty, or empty not allowed)
+        return (
+            // test number is 9 digits
+            /^[0-9]{9}$/.test(numStr) &&
+            // test that first 2 digits are 20
+            /^20/.test(numStr)
+        );
+    }
+
+    handleImportButtonDisable = () => {
+        const {
+            importInProgress, client1, client2, client3
+        } = this.state;
+
+        return (
+            // disable button if bkgPort is not populated
+            !this.props.bkgPort ||
+            // disable button if import is in progress
+            importInProgress || (   
+                // disable button if any client # is invalid
+                this.checkClientNumValid(client1) &&
+                this.checkClientNumValid(client2) &&
+                this.checkClientNumValid(client3, true)
+            )
+        );
+    }
+
     render() {
         const {
             classes, // styles
@@ -145,7 +176,7 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                disabled={!bkgPort || importInProgress}
+                                disabled={this.handleImportButtonDisable()}
                                 onClick={this.handleImport}
                             >
                                 Import
