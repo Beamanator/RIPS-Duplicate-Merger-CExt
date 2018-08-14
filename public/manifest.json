@@ -35,10 +35,11 @@
                 "extension_code/js/shared/portCodes.js",
                 "extension_code/js/shared/Utils.js",
 
+                "extension_code/js/shared/FieldTranslator.js",
+                "extension_code/js/shared/ripsFieldKeys.js"
+                // "extension_code/js/shared/ripsPageKeys.js"
                 // TODO: evaluate if old scripts are needed
                 // "extension_code/js/content_scripts/min/jquery-3.1.1.min.js",
-                // TODO: maybe get this from React
-				"extension_code/js/shared/FieldTranslator.js"
 			]
         },
 
@@ -51,13 +52,16 @@
                 "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
             ],
-            "js": [ "extension_code/js/shared/CtrlRedirect.js" ]
+            "js": [ "extension_code/js/content_scripts/CtrlRedirect.js" ]
         },
         
         // {}, Registration page
 		{	// Client Basic Information page
 			"matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientDetails" ],
-			"js": [	"extension_code/js/content_scripts/ClientBasicInformation/Ctrl.js" ]
+			"js": [
+                "extension_code/js/content_scripts/ClientBasicInformation/Ctrl.js",
+                "extension_code/js/content_scripts/ClientBasicInformation/FIDs.js"
+            ]
         },
         {   // Addresses page
             "matches": [ "http://rips.247lib.com/Stars/Addresses/Addresses" ],
@@ -85,7 +89,10 @@
 		// {}, Add Action page
 		{	// History page
 			"matches": [ "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList" ],
-			"js": [ "extension_code/js/content_scripts/History/Ctrl.js" ]
+			"js": [
+                "extension_code/js/content_scripts/History/Ctrl.js",
+                "extension_code/js/content_scripts/History/FIDs.js"
+            ]
 		},
 		{	// Advanced Search
 			"matches": [
