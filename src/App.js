@@ -59,10 +59,18 @@ class App extends Component {
             /^20/.test(numStr)
         );
     }
+    onlyAllowNumbers = (str) => str
+        .replace(/o/gi, '0')        // o / O => 0
+        .replace(/[il]/gi, '1')     // i / I / l / L => 1
+        .replace(/[^0-9]/g, '');    // not 0-9 => '' (deleted)
     handleInputChange = (clientKey, event) => {
-        const clientNum = event.target.value;
         // allow only client3 to be empty
         const allowEmpty = clientKey === 'client3' ? true : false
+
+        // get client number from input change event
+        let clientNum = event.target.value;
+        // convert to numbers only
+        clientNum = this.onlyAllowNumbers(clientNum);
 
         this.setState({
             [clientKey]: clientNum,
