@@ -52,7 +52,7 @@
                 "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
             ],
-            "js": [ "extension_code/js/content_scripts/CtrlRedirect.js" ]
+            "js": [ "extension_code/js/content_scripts/Redirect/Ctrl.js" ]
         },
         
         // {}, Registration page
