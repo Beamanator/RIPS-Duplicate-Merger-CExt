@@ -14,7 +14,7 @@ const {
     VULNERABILITY_NOTES, FAMILY_SIZE, UNHCR_CASE_SIZE,
     DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
     // addresses
-    // TODO: dynamic from table
+    // TODO: dynamic from table - add to separate FIDs?
     // notes
     NOTES,
     // TODO: the rest... (aliases, relatives, contacts, etc...)

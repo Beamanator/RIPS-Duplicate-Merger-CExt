@@ -40,9 +40,7 @@ port.onMessage.addListener(function(msg) {
 
     switch(msg.code) {
         case BKG_CS_START_IMPORT:
-            startImport({
-                clientNum: msg.clientNum
-            });
+            startImport( msg.clientNum );
             break;
 
         // case CONTINUE_IMPORT:
@@ -54,9 +52,7 @@ port.onMessage.addListener(function(msg) {
             Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
             // if autoStart flag is true, start automatically importing!
             if (msg.autoStart) {
-                startImport({
-                    clientNum: msg.clientNum
-                });
+                startImport( msg.clientNum );
             }
             break;
 
