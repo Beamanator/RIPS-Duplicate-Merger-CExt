@@ -18,10 +18,28 @@ const port = chrome.runtime.connect({ name: PORTNAME_CS_ADVANCED_SEARCH });
 const startImport = (clientNum) => {
     Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
     
-    // debugger;
-    // TODO: 1) get field translator from somewhere
-    // TODO: 2) put stars # into UNHCR field
-    // TODO: 3) process search results (click + move to next page)
+    // 1) get field translator from somewhere
+    if (!FIELD_IDS_ADVANCED_SEARCH) {
+        Utils_Error(MESSAGE_SOURCE, 'Advanced Search Field IDs not found');
+        // TODO: send error message back to bkg, then to React
+        return;
+    }
+
+    // TODO: 1.5) get import status (search / analyze results)
+    
+    // 2) put stars # into stars # field
+    const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
+    // TODO: handle missing element
+    const searchFieldElem = document.querySelector('#' + searchFieldID);
+    searchFieldElem.value = clientNum;
+
+    // 3) click 'search' button
+    const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON].selector;
+    // TODO: handle missing element
+    const searchButtonElem = document.querySelector(searchButtonSelector);
+    searchButtonElem.click();
+
+    // TODO: 3.5) somewhere else - process search results (click + move to next page)
     // -> remember to handle errors along the way
 }
 
@@ -40,9 +58,7 @@ port.onMessage.addListener(function(msg) {
 
     switch(msg.code) {
         case BKG_CS_START_IMPORT:
-            startImport({
-                clientNum: msg.clientNum
-            });
+            startImport(msg.clientNum);
             break;
 
         // case CONTINUE_IMPORT:
@@ -54,9 +70,7 @@ port.onMessage.addListener(function(msg) {
             Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
             // if autoStart flag is true, start automatically importing!
             if (msg.autoStart) {
-                startImport({
-                    clientNum: msg.clientNum
-                });
+                startImport(msg.clientNum);
             }
             break;
 
