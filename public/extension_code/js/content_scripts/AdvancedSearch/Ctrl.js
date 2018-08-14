@@ -10,7 +10,7 @@ const MESSAGE_SOURCE = 'CtrlAdvancedSearch';
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PORTNAME_CS_ADVANCED_SEARCH });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
@@ -24,13 +24,11 @@ const startImport = (clientNum) => {
         // TODO: send error message back to bkg, then to React
         return;
     }
-
-    // TODO: 1.5) get import status (search / analyze results)
     
     // 2) put stars # into stars # field
     const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
     // TODO: handle missing element
-    const searchFieldElem = document.querySelector('#' + searchFieldID);
+    let searchFieldElem = document.querySelector('#' + searchFieldID);
     searchFieldElem.value = clientNum;
 
     // 3) click 'search' button
