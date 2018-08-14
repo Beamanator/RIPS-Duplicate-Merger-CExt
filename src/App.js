@@ -23,10 +23,11 @@ import {
 
 class App extends Component {
     state = {
-        client1: '',
-        client2: '',
-        client3: '',
-        importInProgress: false
+        client1: '', client1Valid: false,
+        client2: '', client2Valid: false,
+        client3: '', client3Valid: true, // valid cuz client3 can be empty
+        importInProgress: false,
+        nodeEnv: process.env.NODE_ENV
     }
 
     componentDidMount() {
@@ -46,9 +47,35 @@ class App extends Component {
         }
     }
 
-    handleInputChange = name => event => {
+    checkClientNumValid = (numStr, emptyAllowed=false) => {
+        if (emptyAllowed && numStr.length === 0)
+            return true
+        
+        // else (empty allowed but not empty, or empty not allowed)
+        return (
+            // test number is 9 digits
+            /^[0-9]{9}$/.test(numStr) &&
+            // test that first 2 digits are 20
+            /^20/.test(numStr)
+        );
+    }
+    onlyAllowNumbers = (str) => str
+        .replace(/o/gi, '0')        // o / O => 0
+        .replace(/[il]/gi, '1')     // i / I / l / L => 1
+        .replace(/[^0-9]/g, '');    // not 0-9 => '' (deleted)
+    handleInputChange = (clientKey, event) => {
+        // allow only client3 to be empty
+        const allowEmpty = clientKey === 'client3' ? true : false
+
+        // get client number from input change event
+        let clientNum = event.target.value;
+        // convert to numbers only
+        clientNum = this.onlyAllowNumbers(clientNum);
+
         this.setState({
-            [name]: event.target.value
+            [clientKey]: clientNum,
+            [clientKey+'Valid']:
+                this.checkClientNumValid(clientNum, allowEmpty)
         });
     }
 
@@ -86,7 +113,8 @@ class App extends Component {
 
         const {
             client1, client2, client3,
-            importInProgress
+            client1Valid, client2Valid, client3Valid,
+            importInProgress, nodeEnv
         } = this.state;
 
         return (
@@ -111,7 +139,7 @@ class App extends Component {
                                     label="Client StARS #1"
                                     className={classes.textField}
                                     value={client1}
-                                    onChange={this.handleInputChange('client1')}
+                                    onChange={(event) => this.handleInputChange('client1', event)}
                                 />
                             </Grid>
                             <Grid item xs={3}>
@@ -120,7 +148,7 @@ class App extends Component {
                                     label="Client StARS #2"
                                     className={classes.textField}
                                     value={client2}
-                                    onChange={this.handleInputChange('client2')}
+                                    onChange={(event) => this.handleInputChange('client2', event)}
                                 />
                             </Grid>
                             <Grid item xs={3}>
@@ -129,7 +157,7 @@ class App extends Component {
                                     label="Client StARS #3"
                                     className={classes.textField}
                                     value={client3}
-                                    onChange={this.handleInputChange('client3')}
+                                    onChange={(event) => this.handleInputChange('client3', event)}
                                 />
                             </Grid>
                         </Grid>
@@ -145,7 +173,18 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                disabled={!bkgPort || importInProgress}
+                                disabled={
+                                    (
+                                        // this condition SHOULD always
+                                        // -> evaluate to true
+                                        nodeEnv !== 'development' &&
+                                        !bkgPort
+                                    ) ||
+                                    !client1Valid ||
+                                    !client2Valid ||
+                                    !client3Valid ||
+                                    importInProgress
+                                }
                                 onClick={this.handleImport}
                             >
                                 Import
