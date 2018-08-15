@@ -20,6 +20,7 @@ const PCs = {
     //                     REACT APP -> BKG SCRIPT CODES
     // ==============================================================================
     RA_BKG_START_IMPORT: 'RA_BKG_START_IMPORT',
+    RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED: 'RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED',
 
     // ==============================================================================
     //                 BKG SCRIPT -> REACT APP SCRIPT CODES
@@ -32,6 +33,8 @@ const PCs = {
     // ==============================================================================
     CS_BKG_START_PAGE_REDIRECT: 'CS_BKG_START_PAGE_REDIRECT',
     CS_BKG_STOP_IMPORT: 'CS_BKG_STOP_IMPORT',
+    CS_BKG_IMPORT_DONE: 'CS_BKG_IMPORT_DONE',
+    CS_BKG_ERROR_CODE_NOT_RECOGNIZED: 'CS_BKG_ERROR_CODE_NOT_RECOGNIZED',
 
     // ==============================================================================
     //                   BKG SCRIPT -> CONTENT SCRIPT CODES
