@@ -12,11 +12,11 @@ let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
 
 const PORTNAME_HOLDER = [ // container for portnames
-    PORTNAME_REACT_APP,
-    PORTNAME_CS_ADVANCED_SEARCH,
-    PORTNAME_CS_CLIENT_BASIC_INFORMATION,
-    PORTNAME_CS_HISTORY,
-    PORTNAME_CS_REDIRECT
+    PCs.PORTNAME_REACT_APP,
+    PCs.PORTNAME_CS_ADVANCED_SEARCH,
+    PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
+    PCs.PORTNAME_CS_HISTORY,
+    PCs.PORTNAME_CS_REDIRECT
 ];
 
 
@@ -37,7 +37,7 @@ const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
     // TODO: handle CLIENT_INDEX out of bounds (import complete)
     port.postMessage({
-        code: BKG_CS_START_IMPORT,
+        code: PCs.BKG_CS_START_IMPORT,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
     });
 }
@@ -45,7 +45,7 @@ const sendStartImport = (port) => {
 const sendImportErrorToReactApp = (port, message) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
-        code: BKG_RA_STOP_IMPORT_WITH_ERROR,
+        code: PCs.BKG_RA_STOP_IMPORT_WITH_ERROR,
         message: message
     });
 }
@@ -61,7 +61,7 @@ const initContentScriptPort = (port) => {
     }
 
     // send init message to either port
-    sendPortInit(port, BKG_CS_INIT_PORT, IMPORT_IN_PROGRESS);
+    sendPortInit(port, PCs.BKG_CS_INIT_PORT, IMPORT_IN_PROGRESS);
 
     // set global content script port holder
     CSPort = port;
@@ -70,45 +70,45 @@ const initContentScriptPort = (port) => {
         console.log('<background.js> content script port msg received', msg);
 
         switch(msg.code) {
-            case CS_BKG_STOP_IMPORT:
+            case PCs.CS_BKG_STOP_IMPORT:
                 IMPORT_IN_PROGRESS = false;
                 sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
-            case CS_BKG_START_PAGE_REDIRECT:
+            case PCs.CS_BKG_START_PAGE_REDIRECT:
                 const msgTabId = MessageSender.sender.tab.id;
                 const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
                 chrome.tabs.update(msgTabId, { url: url });
                 break;
 
-            case CS_BKG_IMPORT_DONE:
+            case PCs.CS_BKG_IMPORT_DONE:
                 IMPORT_IN_PROGRESS = false;
                 // sendImportDone(RAPort);
                 break;
 
-            case CS_BKG_USER_DATA_PAYLOAD:
+            // case PCs.CS_BKG_USER_DATA_PAYLOAD:
                 // sendUserDataToReact(RAPort, msg.data);
-                break;
+                // break;
 
-            case CS_BKG_NEXT_URL_REDIRECT:
+            // case PCs.CS_BKG_NEXT_URL_REDIRECT:
                 // const msgTabId = MessageSender.sender.tab.id;
 
                 // chrome.tabs.update(msgTabId, { url: msg.url });
-                break;
+                // break;
 
-            case CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
+            case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);
                 // IMPORT_IN_PROGRESS = false;
                 break;
 
-            case CS_BKG_ERROR_HOW_TO_CONTINUE:
+            // case CS_BKG_ERROR_HOW_TO_CONTINUE:
                 // console.error(`Too many '>' elems found on rips page!`);
                 // IMPORT_IN_PROGRESS = false;
-                break;
+                // break;
             
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
-                Utils_SendPortCodeError(port, msg.code, PORTNAME_REACT_APP);
+                Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
         }
     });
 
@@ -126,7 +126,7 @@ const initReactAppPort = (port) => {
     }
 
     // send init message to either port
-    sendPortInit(port, BKG_RA_INIT_PORT);
+    sendPortInit(port, PCs.BKG_RA_INIT_PORT);
 
     // set global react app port holder
     RAPort = port;
@@ -135,25 +135,25 @@ const initReactAppPort = (port) => {
         console.log('<background.js> react app port msg received', msg);
 
         switch(msg.code) {
-            case RA_BKG_START_IMPORT:
+            case PCs.RA_BKG_START_IMPORT:
                 IMPORT_IN_PROGRESS = true;
                 CLIENT_NUMS = msg.clientNums;
                 CLIENT_INDEX = 0;
                 sendStartImport(CSPort);
                 break;
 
-            case RA_BKG_CONTINUE_IMPORT:
+            // case PCs.RA_BKG_CONTINUE_IMPORT:
                 // sendContinueImport(CSPort);
-                break;
+                // break;
 
-            case RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
+            case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
                 IMPORT_IN_PROGRESS = false;
                 // console.error(`Code sent to React <${msg.errCode}> not recognized`);
                 break;
 
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
-                Utils_SendPortCodeError(port, msg.code, PORTNAME_REACT_APP);
+                Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
         }
     });
 
@@ -173,15 +173,15 @@ chrome.runtime.onConnect.addListener(port => {
     console.log(`Port <${port.name}> connected!`);
     
     switch (port.name) {
-        case PORTNAME_CS_ADVANCED_SEARCH:
-        case PORTNAME_CS_CLIENT_BASIC_INFORMATION:
-        case PORTNAME_CS_HISTORY:
-        case PORTNAME_CS_REDIRECT:
+        case PCs.PORTNAME_CS_ADVANCED_SEARCH:
+        case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
+        case PCs.PORTNAME_CS_HISTORY:
+        case PCs.PORTNAME_CS_REDIRECT:
             // init content script port listener
             initContentScriptPort( port );
             break;
 
-        case PORTNAME_REACT_APP:
+        case PCs.PORTNAME_REACT_APP:
             // init react app port listener
             initReactAppPort( port );
             break;
