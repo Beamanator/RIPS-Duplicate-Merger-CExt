@@ -79,6 +79,35 @@ class App extends Component {
         });
     }
 
+    handleImportDisabled = () => {
+        const { bkgPort } = this.props;
+        const {
+            client1Valid, client2Valid, client3Valid,
+            nodeEnv, importInProgress
+        } = this.state;
+
+        const importReady = ((
+                // this condition SHOULD always
+                // -> evaluate to false
+                nodeEnv !== 'development' &&
+                !bkgPort
+            ) ||
+            !client1Valid ||
+            !client2Valid ||
+            !client3Valid ||
+            importInProgress
+        );
+
+        // uncomment if values aren't what you'd expect!
+        // console.warn('import disabled?', importReady);
+        // console.info(
+        //     'values:', nodeEnv, bkgPort, importInProgress,
+        //     client1Valid, client2Valid, client3Valid
+        // );
+
+        return importReady;
+    }
+
     handleImport = () => {
         console.log('clicked Import');
 
@@ -173,18 +202,7 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                disabled={
-                                    (
-                                        // this condition SHOULD always
-                                        // -> evaluate to true
-                                        nodeEnv !== 'development' &&
-                                        !bkgPort
-                                    ) ||
-                                    !client1Valid ||
-                                    !client2Valid ||
-                                    !client3Valid ||
-                                    importInProgress
-                                }
+                                disabled={this.handleImportDisabled()}
                                 onClick={this.handleImport}
                             >
                                 Import
