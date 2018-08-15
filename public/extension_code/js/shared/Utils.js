@@ -106,7 +106,7 @@ const Utils_SendPortCodeError = (port, invalidCode, source='unknown') => {
 		return console.error(msg);
 	}
 	port.postMessage({
-        code: ERROR_CODE_NOT_RECOGNIZED, source: source,
+        code: PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED, source: source,
         data: `Port code <${invalidCode}> not recognized!`
     });
 };
@@ -117,7 +117,7 @@ const Utils_SendRedirectCode = (port, urlPart='unknown') => {
 		return console.error(msg);
 	}
     port.postMessage({
-        code: CS_BKG_START_PAGE_REDIRECT,
+        code: PCs.CS_BKG_START_PAGE_REDIRECT,
         urlPart: urlPart
     });
 }
