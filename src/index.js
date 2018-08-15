@@ -15,8 +15,10 @@ import portReducer from './store/reducers/port';
 // basically, if we're in development mode, show redux store, but if not
 // hide it from that extension.
 const composeEnhancers = process.env.NODE_ENV === 'development'
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    : null
+    ? (
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose
+    ) : null
         || compose;
 
 // combine reducers
