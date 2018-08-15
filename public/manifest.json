@@ -35,7 +35,7 @@
                 "extension_code/js/shared/portCodes.js",
                 "extension_code/js/shared/Utils.js",
 
-                "extension_code/js/shared/FieldTranslator.js",
+                // "extension_code/js/shared/FieldTranslator.js",
                 "extension_code/js/shared/ripsFieldKeys.js"
                 // "extension_code/js/shared/ripsPageKeys.js"
                 // TODO: evaluate if old scripts are needed
@@ -63,27 +63,27 @@
                 "extension_code/js/content_scripts/ClientBasicInformation/FIDs.js"
             ]
         },
-        {   // Addresses page
-            "matches": [ "http://rips.247lib.com/Stars/Addresses/Addresses" ],
-            "js": [ "" ]
-        },
-        {   // Notes page
-            "matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientNotes" ],
-            "js": [ "" ]
-        },
-        // {}, Aliases page (skipping for v1)
-        {   // Relatives page
-            "matches": [ "http://rips.247lib.com/Stars/Relatives/Relatives" ],
-            "js": [ "" ]
-        },
-        {   // Contacts page
-            "matches": [ "http://rips.247lib.com/Stars/Contacts/Contacts" ],
-            "js": [ "" ]
-        },
-        {   // Files page
-            "matches": [ "http://rips.247lib.com/Stars/FilesUpload/FilesUpload" ],
-            "js": [ "" ]
-        },
+        // {   // Addresses page
+        //     "matches": [ "http://rips.247lib.com/Stars/Addresses/Addresses" ],
+        //     "js": [ "" ]
+        // },
+        // {   // Notes page
+        //     "matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientNotes" ],
+        //     "js": [ "" ]
+        // },
+        // // {}, Aliases page (skipping for v1)
+        // {   // Relatives page
+        //     "matches": [ "http://rips.247lib.com/Stars/Relatives/Relatives" ],
+        //     "js": [ "" ]
+        // },
+        // {   // Contacts page
+        //     "matches": [ "http://rips.247lib.com/Stars/Contacts/Contacts" ],
+        //     "js": [ "" ]
+        // },
+        // {   // Files page
+        //     "matches": [ "http://rips.247lib.com/Stars/FilesUpload/FilesUpload" ],
+        //     "js": [ "" ]
+        // },
         // {}, Private Files page (not going to import - maybe add a warning)
 		// {}, Services pages
 		// {}, Add Action page
@@ -95,16 +95,15 @@
             ]
 		},
 		{	// Advanced Search
-			"matches": [
-				"http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
-			],
-			"js": [ "extension_code/js/content_scripts/AdvancedSearch/Ctrl.js" ]
+			"matches": [ "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch" ],
+			"js": [
+                "extension_code/js/content_scripts/AdvancedSearch/Ctrl.js",
+                "extension_code/js/content_scripts/AdvancedSearch/FIDs.js"
+            ]
         },
         {	// Advanced Search Results
-			"matches": [
-				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
-			],
-			"js": [ "" ]
+			"matches": [ "http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult" ],
+            "js": [ "extension_code/js/content_scripts/AdvancedSearchResults/Ctrl.js" ]
         }
 	]
 }
