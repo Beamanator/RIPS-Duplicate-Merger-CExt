@@ -15,7 +15,7 @@ const MESSAGE_SOURCE = 'CtrlRedirect';
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PORTNAME_CS_REDIRECT });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_REDIRECT });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
@@ -28,7 +28,7 @@ const port = chrome.runtime.connect({ name: PORTNAME_CS_REDIRECT });
 // Note: port codes come from "../js/portCodes.js"
 const sendStopImport = (msg) => {
     port.postMessage({
-        code: CS_BKG_STOP_IMPORT,
+        code: PCs.CS_BKG_STOP_IMPORT,
         message: msg
     });
 }
@@ -41,11 +41,11 @@ port.onMessage.addListener(function(msg) {
     console.log(`[${MESSAGE_SOURCE}] port msg received`, msg);
 
     switch(msg.code) {
-        case BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_IMPORT:
             Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
         
-        case BKG_CS_INIT_PORT:
+        case PCs.BKG_CS_INIT_PORT:
             console.log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
             // if autoStart flag is true, send error message bkg because user
             // -> may have moved us off the path of data gathering. Stop
@@ -59,6 +59,6 @@ port.onMessage.addListener(function(msg) {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PORTNAME_CS_REDIRECT);
+			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_REDIRECT);
     }
 });

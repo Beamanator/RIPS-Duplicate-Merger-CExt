@@ -55,7 +55,7 @@ port.onMessage.addListener(function(msg) {
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(msg.code) {
-        case BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_IMPORT:
             startImport( msg.clientNum );
             break;
 
@@ -63,7 +63,7 @@ port.onMessage.addListener(function(msg) {
             // continueImport();
             // break;
         
-        case BKG_CS_INIT_PORT:
+        case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
             // if autoStart flag is true, start automatically importing!
@@ -73,7 +73,7 @@ port.onMessage.addListener(function(msg) {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PORTNAME_CS_ADVANCED_SEARCH);
+			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
     }
 });
 

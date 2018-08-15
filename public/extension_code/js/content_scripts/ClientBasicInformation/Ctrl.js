@@ -10,7 +10,7 @@ const MESSAGE_SOURCE = 'CtrlClientBasicInformation';
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PORTNAME_CS_CLIENT_BASIC_INFORMATION });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
@@ -151,19 +151,19 @@ function insertOptionalClientDetails( client, ci ) {
 // ================================================================
 
 port.onMessage.addListener(function(msg) {
-    console.log(`[${MESSAGE_SOURCE}] port msg received`, msg);
+    Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
 
     switch(msg.code) {
-        case START_IMPORT:
+        case PCs.BKG_CS_START_IMPORT:
             startImport();
             break;
 
-        case CONTINUE_IMPORT:
-            continueImport();
-            break;
+        // case CONTINUE_IMPORT:
+        //     continueImport();
+        //     break;
         
-        case INIT_PORT:
-            console.log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
+        case PCs.BKG_CS_INIT_PORT:
+            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             // if autoStart flag is true, start automatically!
             if (msg.autoStart) {
                 startImport();
@@ -171,6 +171,6 @@ port.onMessage.addListener(function(msg) {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PORTNAME_CS_CLIENT_BASIC_INFORMATION);
+			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION);
     }
 });
