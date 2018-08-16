@@ -23,9 +23,9 @@ import {
 
 class App extends Component {
     state = {
-        client1: '', client1Valid: false,
-        client2: '', client2Valid: false,
-        client3: '', client3Valid: true, // valid cuz client3 can be empty
+        client1: '201813794', client1Valid: false,
+        client2: '201815032', client2Valid: false,
+        client3: '201814527', client3Valid: true, // valid cuz client3 can be empty
         importInProgress: false,
         nodeEnv: process.env.NODE_ENV
     }
