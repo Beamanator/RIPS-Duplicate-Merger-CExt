@@ -95,7 +95,7 @@
  * @param {object} config - config holds active client selector + clientNum
  * @returns {boolean} - true if active client matches client being imported
  */
-function Utils_OnActiveClientMatches( config ) {
+const Utils_OnActiveClientMatches = ( config ) => {
 	const { activeClientSelector, clientNum } = config;
 	const activeClientElem = document.querySelector(activeClientSelector);
 
@@ -113,8 +113,25 @@ function Utils_OnActiveClientMatches( config ) {
 	const matchLocation = activeClientElem.innerText
 		.indexOf(clientNum);
 
-	// if matchLocation is -1, not found!
+	// if matchLocation is -1, not found! fail!
 	return matchLocation !== -1;
+}
+
+const Utils_OnPopupNotThrown = ( config ) => {
+	const { alertSelector, alertVisibleClass } = config;
+	const alertElem = document.querySelector(alertSelector);
+
+	// if alert elem not found, return true (non popup)
+	if (!alertElem) return true;
+
+	// get element's classes
+	const alertClasses = alertElem.classList.value;
+
+	// find if alertVisibleClass exists in class list
+	const classLocation = alertClasses.indexOf(alertVisibleClass);
+
+	// if classLocation is -1, not found! popup not thrown, success!
+	return classLocation === -1;
 }
 
 // ==============================================================================
