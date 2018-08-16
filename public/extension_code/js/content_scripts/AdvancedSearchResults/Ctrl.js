@@ -18,7 +18,6 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 const analyzeSearchResult = ( clientNum ) => {
     Utils_Log(MESSAGE_SOURCE, 'Analyzing client num: ', clientNum);
     // TODO: complete this function
-    debugger;
 
     // TODO: think about waiting 1 - 4 seconds to wait for results
     // -> to load (like Auto Import)
