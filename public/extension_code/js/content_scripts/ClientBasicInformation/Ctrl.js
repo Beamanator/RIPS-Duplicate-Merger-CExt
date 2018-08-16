@@ -37,11 +37,6 @@ function ClientBasicInformation_Controller( config ) {
 			checkClientBasicData(clientIndex, clientData);
 			break;
 
-		// figure out next step
-		case 'DO_NEXT_STEP':
-			MainContent_DoNextStep(clientIndex, clientData);
-			break;
-
 		// Action not handled by ClientBasicInformation.js!
 		default:
 			// console.error('Unhandled action found in CtrlClientBasicInformation.js:', action);
@@ -155,7 +150,8 @@ port.onMessage.addListener(function(msg) {
 
     switch(msg.code) {
         case PCs.BKG_CS_START_IMPORT:
-            startImport();
+			// startImport();
+			debugger;
             break;
 
         // case CONTINUE_IMPORT:
@@ -166,7 +162,8 @@ port.onMessage.addListener(function(msg) {
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             // if autoStart flag is true, start automatically!
             if (msg.autoStart) {
-                startImport();
+				// startImport();
+				debugger;
             }
             break;
 
