@@ -17,29 +17,42 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 // ===============================================================
 const startImport = (clientNum) => {
     // TODO: FIRST, handle potential popup '0'-'100' results found!
+    Utils_WaitForCondition( Utils_OnPopupNotThrown, {
+        alertSelector: '.sweet-alert',
+        alertVisibleClass: 'visible'
+    }, 1000, 1)
+    .then(() => {
+        // popup doesn't exist, so this should be the first time
+        // -> through - search for client!
+        Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
+        
+        // 1) get field translator from somewhere
+        if (!FIELD_IDS_ADVANCED_SEARCH) {
+            Utils_Error(MESSAGE_SOURCE, 'Advanced Search Field IDs not found');
+            // TODO: send error message back to bkg, then to React
+            return;
+        }
+        
+        // 2) put stars # into stars # field
+        const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
+        // TODO: handle possibly missing element
+        let searchFieldElem = document.querySelector('#' + searchFieldID);
+        searchFieldElem.value = clientNum;
 
-    Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
-    
-    // 1) get field translator from somewhere
-    if (!FIELD_IDS_ADVANCED_SEARCH) {
-        Utils_Error(MESSAGE_SOURCE, 'Advanced Search Field IDs not found');
-        // TODO: send error message back to bkg, then to React
-        return;
-    }
-    
-    // 2) put stars # into stars # field
-    const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
-    // TODO: handle possibly missing element
-    let searchFieldElem = document.querySelector('#' + searchFieldID);
-    searchFieldElem.value = clientNum;
+        // 3) click 'search' button
+        const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON].selector;
+        // TODO: handle possibly missing element
+        const searchButtonElem = document.querySelector(searchButtonSelector);
+        searchButtonElem.click();
 
-    // 3) click 'search' button
-    const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON].selector;
-    // TODO: handle possibly missing element
-    const searchButtonElem = document.querySelector(searchButtonSelector);
-    searchButtonElem.click();
-
-    // end -> results analyzed in AdvancedSearchResults/Ctrl.js
+        // end -> results analyzed in AdvancedSearchResults/Ctrl.js
+    })
+    .catch((errMsg) => {
+        // TODO: popup exists! cancel import 'n stuff since the
+        // -> search number was eff'd up!
+        Utils_Error(MESSAGE_SOURCE, 'Popup shown in advanced search',
+            'something must have gone wrong...');
+    });
 }
 
 // ===============================================================
