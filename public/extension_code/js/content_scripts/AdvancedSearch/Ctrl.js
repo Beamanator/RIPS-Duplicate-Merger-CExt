@@ -16,6 +16,8 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startImport = (clientNum) => {
+    // TODO: FIRST, handle potential popup '0'-'100' results found!
+
     Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
     
     // 1) get field translator from somewhere
@@ -27,18 +29,17 @@ const startImport = (clientNum) => {
     
     // 2) put stars # into stars # field
     const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
-    // TODO: handle missing element
+    // TODO: handle possibly missing element
     let searchFieldElem = document.querySelector('#' + searchFieldID);
     searchFieldElem.value = clientNum;
 
     // 3) click 'search' button
     const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON].selector;
-    // TODO: handle missing element
+    // TODO: handle possibly missing element
     const searchButtonElem = document.querySelector(searchButtonSelector);
     searchButtonElem.click();
 
-    // TODO: 3.5) somewhere else - process search results (click + move to next page)
-    // -> remember to handle errors along the way
+    // end -> results analyzed in AdvancedSearchResults/Ctrl.js
 }
 
 // ===============================================================
