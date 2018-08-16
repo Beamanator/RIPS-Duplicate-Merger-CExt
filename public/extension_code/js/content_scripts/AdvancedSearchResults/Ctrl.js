@@ -17,14 +17,13 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 // ===============================================================
 const analyzeSearchResult = ( clientNum ) => {
     Utils_Log(MESSAGE_SOURCE, 'Analyzing client num: ', clientNum);
-    // TODO: complete this function
-
     // TODO: think about waiting 1 - 4 seconds to wait for results
     // -> to load (like Auto Import)
 
     // 1) get all search result rows
     const resultsSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[SEARCH_RESULTS].selector;
     const resultRows = document.querySelectorAll(resultsSelector);
+    
     // if length !== 1, something went wrong!
     if (resultRows.length !== 1) {
         // TODO: stop import
