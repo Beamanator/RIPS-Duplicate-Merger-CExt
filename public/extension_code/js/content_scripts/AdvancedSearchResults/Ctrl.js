@@ -54,11 +54,12 @@ const analyzeSearchResult = ( clientNum ) => {
     .then(() => {
         // 5) navigate to client's CBI page
         const cbiTabSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[TAB_CLIENT_BASIC_INFORMATION].selector;
-        cbiTabSelector.click();
+        const cbiTabElem = document.querySelector(cbiTabSelector);
+        cbiTabElem.click();
     })
     .catch(errMsg => {
         // TODO: stop import w/ error message!
-        Utils_Error(MESSAGE_SOURCE, 'Search Results ERROR', errMsg);
+        Utils_Error(MESSAGE_SOURCE, 'Search Results ERROR:', errMsg);
         debugger;
     });
 }
