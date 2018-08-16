@@ -77,6 +77,11 @@ const RIPS_FIELD_KEYS = {
     SEARCH_CLIENT_NUMBER: 'SEARCH_CLIENT_NUMBER',
     SEARCH_BUTTON: 'SEARCH_BUTTON',
 
+    // =============== ADVANCED SEARCH RESULTS: ===============
+    SEARCH_RESULTS: 'SEARCH_RESULTS',
+    ACTIVE_CLIENT: 'ACTIVE_CLIENT',
+    TAB_CLIENT_BASIC_INFORMATION: 'TAB_CLIENT_BASIC_INFORMATION',
+
     // ======================= HISTORY: =======================
     ACTION_DATE: 'Action Date',
     ACTION_NAME: 'Action Name',
