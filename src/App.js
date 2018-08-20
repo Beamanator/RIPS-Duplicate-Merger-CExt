@@ -148,9 +148,7 @@ class App extends Component {
         } = this.props;
 
         const {
-            client1, client2, client3,
-            client1Valid, client2Valid, client3Valid,
-            importInProgress, nodeEnv
+            client1, client2, client3
         } = this.state;
 
         return (
