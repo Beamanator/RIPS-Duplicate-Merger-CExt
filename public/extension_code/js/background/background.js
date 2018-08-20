@@ -10,6 +10,8 @@ let RAPort = null; // react app port
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
+let CLIENT_DATA_CONTAINER = {};
+let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_REACT_APP,
@@ -19,6 +21,29 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_REDIRECT
 ];
 
+// ==============================================================================
+//                               MAIN FUNCTIONS
+// ==============================================================================
+const storeUserData = (source, data) => {
+    // initialize source container
+    if (!CLIENT_DATA_CONTAINER[source])
+        CLIENT_DATA_CONTAINER[source] = {};
+    
+    // loop through data, adding everything that's non-empty
+    // -> to CLIENT_DATA_CONTAINER
+    for (let [fieldName, value] of Object.entries(data)) {
+        // initialize field array
+        if (!CLIENT_DATA_CONTAINER[source][fieldName])
+            CLIENT_DATA_CONTAINER[source][fieldName] = [];
+        
+        // add field value to container
+        CLIENT_DATA_CONTAINER[source][fieldName]
+            .push(value);
+    }
+    
+    // log update, just for info
+    Utils_Log('BKG', 'New clnt data container:', CLIENT_DATA_CONTAINER);
+}
 
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
@@ -44,6 +69,7 @@ const sendStartImport = (port) => {
 
 const sendImportErrorToReactApp = (port, message) => {
     // TODO: handle invalid / unknown port
+    // TODO: maybe send error array (ERRORS) to React
     port.postMessage({
         code: PCs.BKG_RA_STOP_IMPORT_WITH_ERROR,
         message: message
@@ -75,20 +101,20 @@ const initContentScriptPort = (port) => {
                 sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
-            case PCs.CS_BKG_START_PAGE_REDIRECT:
+            case PCs.CS_BKG_PAGE_REDIRECT:
                 const msgTabId = MessageSender.sender.tab.id;
                 const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
                 chrome.tabs.update(msgTabId, { url: url });
                 break;
 
-            case PCs.CS_BKG_IMPORT_DONE:
-                IMPORT_IN_PROGRESS = false;
-                // sendImportDone(RAPort);
+            case PCs.CS_BKG_DATA_RECEIVED:
+                storeUserData(msg.source, msg.data);
                 break;
 
-            // case PCs.CS_BKG_USER_DATA_PAYLOAD:
-                // sendUserDataToReact(RAPort, msg.data);
-                // break;
+            // case PCs.CS_BKG_IMPORT_DONE:
+            //     IMPORT_IN_PROGRESS = false;
+            //     // sendImportDone(RAPort);
+            //     break;
 
             // case PCs.CS_BKG_NEXT_URL_REDIRECT:
                 // const msgTabId = MessageSender.sender.tab.id;
@@ -125,6 +151,7 @@ const initReactAppPort = (port) => {
         return;
     }
 
+    // TODO: send pre-existing errors to react on port init!
     // send init message to either port
     sendPortInit(port, PCs.BKG_RA_INIT_PORT);
 
