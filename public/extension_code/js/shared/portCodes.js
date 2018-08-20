@@ -5,15 +5,12 @@ const PCs = {
     // name of the react app / background.js port
     PORTNAME_REACT_APP: 'PORT_REACT_APP',
 
-    // name of the content script [advanced search] / background.js port
+    // name of the content script / background.js ports
     PORTNAME_CS_ADVANCED_SEARCH: 'PORT_CS_ADVANCED_SEARCH',
-    // name of the content script [advanced search results] / background.js port
     PORTNAME_CS_ADVANCED_SEARCH_RESULTS: 'PORT_CS_ADVANCED_SEARCH_RESULTS',
-    // name of the content script [client basic information] / background.js port
     PORTNAME_CS_CLIENT_BASIC_INFORMATION: 'PORT_CS_CLIENT_BASIC_INFORMATION',
-    // name of the content script [history] / background.js port
+    PORTNAME_CS_ADDRESSES: 'PORT_CS_ADDRESSES',
     PORTNAME_CS_HISTORY: 'PORT_CS_HISTORY',
-    // name of the content script [other] / background.js port
     PORTNAME_CS_REDIRECT: 'PORT_CS_REDIRECT',
 
     // ==============================================================================

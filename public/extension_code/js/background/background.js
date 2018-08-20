@@ -17,6 +17,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_REACT_APP,
     PCs.PORTNAME_CS_ADVANCED_SEARCH,
     PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
+    PCs.PORTNAME_CS_ADDRESSES,
     PCs.PORTNAME_CS_HISTORY,
     PCs.PORTNAME_CS_REDIRECT
 ];
@@ -197,11 +198,12 @@ const initReactAppPort = (port) => {
 // ==============================================================================
 chrome.runtime.onConnect.addListener(port => {
     console.assert( PORTNAME_HOLDER.includes(port.name) );
-    console.log(`Port <${port.name}> connected!`);
+    Utils_Log('BKG',`Port <${port.name}> connected!`);
     
     switch (port.name) {
         case PCs.PORTNAME_CS_ADVANCED_SEARCH:
         case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
+        case PCs.PORTNAME_CS_ADDRESSES:
         case PCs.PORTNAME_CS_HISTORY:
         case PCs.PORTNAME_CS_REDIRECT:
             // init content script port listener
@@ -215,7 +217,8 @@ chrome.runtime.onConnect.addListener(port => {
         
         default:
             IMPORT_IN_PROGRESS = false;
-            console.error(
+            Utils_Log(
+                'BKG',
                 "ERR: somehow connecting port isn't recognized, but we said assert!",
                 port
             );
