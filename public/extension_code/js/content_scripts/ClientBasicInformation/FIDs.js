@@ -1,5 +1,6 @@
 // destructure field keys
 const {
+    STARS_NUMBER,
     // client basic information
     FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
     EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY,
@@ -16,7 +17,7 @@ const {
     // addresses
     // TODO: dynamic from table - add to separate FIDs?
     // notes
-    NOTES,
+    // NOTES,
     // TODO: the rest... (aliases, relatives, contacts, etc...)
 
 } = RIPS_FIELD_KEYS;
@@ -24,6 +25,7 @@ const {
 // loosely based off RIPS Auto Import CExt
 const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     // ================== CURRENT CONTACT DETAILS: ==================
+    [STARS_NUMBER]: 'NRU_NO',   // (note: hidden input field)
     // ------ TEXTBOXES: ------
     [FIRST_NAME]: 	'LFIRSTNAME',
     [LAST_NAME]: 	'LSURNAME',
