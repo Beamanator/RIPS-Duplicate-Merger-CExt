@@ -20,7 +20,7 @@ const startImport = (clientNum) => {
 	// 1) get CBI's clientNum, make sure we're looking at the right
 	// -> client
 	const starsNumFieldID = FIELD_IDS_CLIENT_BASIC_INFORMATION[STARS_NUMBER];
-	const starsNumElem = document.querySelector('#' + starsNumFieldID);
+	const starsNumElem = document.querySelector(starsNumFieldID);
 	const starsNum = starsNumElem.value;
 
 	// 2.1) if client stars nums don't match, error and stop import
@@ -35,22 +35,68 @@ const startImport = (clientNum) => {
 
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array
+	let allPass = true;
+	const fieldsToSkip = [STARS_NUMBER];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
-		// map field selectors to their field values
-		.map(([key, selector], i) => ({
-			key: document.querySelector('#' + selector).value
-		}));
+		// convert field selectors to their field values
+		.reduce((container, [key, selector]) => {
+			// short-circuit below logic if fatal error found before
+			if (!allPass) return container;
+
+			// skip fields that aren't necessary
+			if (fieldsToSkip.includes(key)) return container;
+
+			const elem = document.querySelector(selector);
+			// TODO: throw error & stop import if elem is null
+			let val = '';
+
+			// TODO: make sure vuln data is imported (somewhere)
+
+			// handle html types differently
+			switch(elem.type) {
+				case 'text':
+				case 'textarea':
+				case 'checkbox':
+					val = elem.value;
+					break;
+
+				case 'select-one':
+					val = elem.selectedOptions[0].innerText;
+					break;
+
+				default:
+					// TODO: stop import!
+					let err = 'ERR: Found an unhandled html elem ' +
+						'type while gathering client data! Stopping' +
+						' here - ' + selector;
+					Utils_Error(MESSAGE_SOURCE, err);
+					allPass = false;
+					return '';
+			}
+			container[key] = val;
+			return container;
+		}, {});
 
 	// 3) data gathered, now send it back to background.js to store
-	debugger;
+	sendDataToBkg(MESSAGE_SOURCE, data);
 
 	// 4) redirect to next page
+	Utils_SendRedirectCode(port, 'Addresses/Addresses');
+	// Note: no need to handle "no vuln / dependent data" popup
+	// -> warning since redirect skips that check
 }
 
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+const sendDataToBkg = (source, data) => {
+	port.postMessage({
+		code: PCs.CS_BKG_DATA_RECEIVED,
+		source: source,
+		data: data
+	});
+}
 
 // ================================================================
 //                          PORT LISTENERS
