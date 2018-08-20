@@ -176,9 +176,9 @@ function Utils_WaitForCondition( Fcondition, params, time = 1000, iter = 5 ) {
 	});
 }
 
-const Utils_Log = (source, ...args) => console.log(source, ...args);
-const Utils_Warn = (source, ...args) => console.warn(source, ...args);
-const Utils_Error = (source, ...args) => console.error(source, ...args); 
+const Utils_Log = (source, ...args) => console.log(source, ':', ...args);
+const Utils_Warn = (source, ...args) => console.warn(source, ':', ...args);
+const Utils_Error = (source, ...args) => console.error(source, ':', ...args); 
 
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
