@@ -3,6 +3,7 @@
 // field keys on each page
 const RIPS_FIELD_KEYS = {
     // ================== CLIENT BASIC INFORMATION: ==================
+    STARS_NUMBER:   'StARS Number',
     // ------ CURRENT CONTACT DETAILS: ------
     FIRST_NAME:     'First Name',
     LAST_NAME:      'Surname',
@@ -30,6 +31,7 @@ const RIPS_FIELD_KEYS = {
     URGENT_NOTES:   'Urgent Notes',
 
     // ------ OTHER INFORMATION: ------
+    APPOINTMENT_SLIP_NUMBER: 'Appointment Slip Number',
     CARITAS_NUMBER: 'Caritas Number',
     CRS_NUMBER:     'CRS Number',
     IOM_NUMBER:     'IOM Number',
