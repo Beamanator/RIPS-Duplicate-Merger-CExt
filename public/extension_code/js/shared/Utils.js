@@ -189,7 +189,7 @@ const Utils_SendPortCodeError = (port, invalidCode, source='unknown') => {
 	if (!port) {
 		const msg = `Could not send message about invalid code <${invalidCode}>.` +
 			' Port not connected. Source: ' + source;
-		return console.error(msg);
+		return Utils_Error('UTILS', msg);
 	}
 	port.postMessage({
         code: PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED, source: source,
@@ -200,10 +200,10 @@ const Utils_SendPortCodeError = (port, invalidCode, source='unknown') => {
 const Utils_SendRedirectCode = (port, urlPart='unknown') => {
 	if (!port) {
 		const msg = `Could not redirect to urlPart <${urlPart}> - port not connected`;
-		return console.error(msg);
+		return Utils_Error('UTILS', msg);
 	}
     port.postMessage({
-        code: PCs.CS_BKG_START_PAGE_REDIRECT,
+        code: PCs.CS_BKG_PAGE_REDIRECT,
         urlPart: urlPart
     });
 }

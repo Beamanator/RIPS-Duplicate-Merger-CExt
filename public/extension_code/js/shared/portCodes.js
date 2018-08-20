@@ -31,15 +31,16 @@ const PCs = {
     // ==============================================================================
     //                   CONTENT SCRIPT -> BKG SCRIPT CODES
     // ==============================================================================
-    CS_BKG_START_PAGE_REDIRECT: 'CS_BKG_START_PAGE_REDIRECT',
+    CS_BKG_PAGE_REDIRECT: 'CS_BKG_PAGE_REDIRECT',
     CS_BKG_STOP_IMPORT: 'CS_BKG_STOP_IMPORT',
     CS_BKG_IMPORT_DONE: 'CS_BKG_IMPORT_DONE',
     CS_BKG_ERROR_CODE_NOT_RECOGNIZED: 'CS_BKG_ERROR_CODE_NOT_RECOGNIZED',
+    CS_BKG_DATA_RECEIVED: 'CS_BKG_DATA_RECEIVED',
 
     // ==============================================================================
     //                   BKG SCRIPT -> CONTENT SCRIPT CODES
     // ==============================================================================
     BKG_CS_DO_SOMETHING: 'BKG_CS_DO_SOMETHING',
     BKG_CS_INIT_PORT: 'BKG_CS_INIT_PORT',
-    BKG_CS_START_IMPORT: 'BKG_CS_START_IMPORT'
+    BKG_CS_IMPORT: 'BKG_CS_START_IMPORT'
 }
