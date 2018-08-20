@@ -45,6 +45,13 @@ class App extends Component {
         } else {
             console.warn('<Main> port already exists', this.props.bkgPort);
         }
+
+        // initialize client#Valid state props
+        const { client1, client2, client3 } = this.state;
+        let client1Valid = this.checkClientNumValid(client1);
+        let client2Valid = this.checkClientNumValid(client2);
+        let client3Valid = this.checkClientNumValid(client3);
+        this.setState({ client1Valid, client2Valid, client3Valid })
     }
 
     checkClientNumValid = (numStr, emptyAllowed=false) => {
