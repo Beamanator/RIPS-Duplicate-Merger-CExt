@@ -70,7 +70,7 @@ const RIPS_FIELD_KEYS = {
     INDIRECT_BENEFICIARIES: 'Indirect Beneficiaries',
 
     // ====================== ADDRESSES: ======================
-    // ------ table columns ------
+    // ------ table column names ------
     FIRST_ADDRESS_LINE: 'First Address Line',
     ADDRESS_TELEPHONE: 'Address Telephone',
     ADDRESS_DATE_FROM: 'Lived here "from"',
@@ -80,9 +80,22 @@ const RIPS_FIELD_KEYS = {
     ADDRESS_TABLE_HEADER_CELL: 'ADDRESS_TABLE_HEADER_CELLS',
     ADDRESS_TABLE_BODY_ROWS: 'ADDRESS_TABLE_BODY_ROWS',
     ADDRESS_TABLE_BODY_CELLS_FROM_ROWS: 'ADDRESS_TABLE_BODY_CELLS_FROM_ROWS',
-
+    
     // ======================== NOTES: ========================
     NOTES: 'Notes',
+    
+    // ====================== RELATIVES: ======================
+    // ------ table column names ------
+    REL_FIRST_NAME: 'First Name (Relative)',
+    REL_SURNAME: 'Surname (Relative)',
+    REL_RELATIONSHIP: 'Relationship to client',
+    REL_DOB: 'Date of Birth',
+    REL_STARS_NUMBER: 'StARS Number',
+
+    // ------ dynamic fields for html table ------
+    REL_TABLE_HEADER_CELL: 'REL_TABLE_HEADER_CELLS',
+    REL_TABLE_BODY_ROWS: 'REL_TABLE_BODY_ROWS',
+    REL_TABLE_BODY_CELLS_FROM_ROWS: 'REL_TABLE_BODY_CELLS_FROM_ROWS',
 
     // =================== ADVANCED SEARCH: ===================
     SEARCH_CLIENT_NUMBER: 'SEARCH_CLIENT_NUMBER',
