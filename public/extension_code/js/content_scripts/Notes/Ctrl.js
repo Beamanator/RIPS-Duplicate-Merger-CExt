@@ -19,7 +19,9 @@ const startImport = () => {
     // get notes from html
     const notesSelector = FIELD_IDS_NOTES[NOTES];
     const notesElem = document.querySelector(notesSelector);
-    const notesData = notesElem.value;
+    const notesData = {
+        [NOTES]: notesElem.value
+    };
 
     // data gathered, now send it back to background.js to store
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, notesData);
