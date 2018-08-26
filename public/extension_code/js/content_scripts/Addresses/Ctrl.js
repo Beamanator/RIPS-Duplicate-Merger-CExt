@@ -77,9 +77,9 @@ const startImport = () => {
     });
 
     // data gathered, now send it back to background.js to store
-    sendDataToBkg(MESSAGE_SOURCE, addressData);
+    Utils_SendDataToBkg(port, MESSAGE_SOURCE, addressData);
 
-    // redirect to next page
+    // redirect to next page (Notes)
     Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
 }
 
@@ -87,14 +87,6 @@ const startImport = () => {
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
-// TODO: make this a util function
-const sendDataToBkg = (source, data) => {
-	port.postMessage({
-		code: PCs.CS_BKG_DATA_RECEIVED,
-		source: source,
-		data: data
-	});
-}
 
 // ================================================================
 //                          PORT LISTENERS

@@ -5,18 +5,27 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlHistory';
+const MESSAGE_SOURCE = 'CtrlNotes';
 
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_HISTORY });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_NOTES });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startImport = () => {
-    Utils_Log(MESSAGE_SOURCE, "Inside!");
+    // get notes from html
+    const notesSelector = FIELD_IDS_NOTES[NOTES];
+    const notesElem = document.querySelector(notesSelector);
+    const notesData = notesElem.value;
+
+    // data gathered, now send it back to background.js to store
+    Utils_SendDataToBkg(port, MESSAGE_SOURCE, notesData);
+
+    // redirect to next page (Relatives - skipping Aliases)
+    Utils_SendRedirectCode(port, 'Relatives/Relatives');
 }
 
 // ================================================================
@@ -27,31 +36,6 @@ const startImport = () => {
 // ================================================================
 //                          PORT LISTENERS
 // ================================================================
-
-/**
- * Controller function for History page - decides what to do
- * based off of passed in action.
- * 
- * @param {object} config 
- */
-Main = ( config ) => {
-	var action = config.action;
-	
-	switch(action) {
-		// redirect to advanced search to start importing next client
-		case 'NEXT_CLIENT_REDIRECT':
-			nextClientRedirect();
-			break;
-
-		// Action not handled by controller!
-		default:
-			// console.error('Unhandled action found in CtrlViewAction.js:', action);
-			console.error(
-				'[DE-DUPLICATOR]', 'in History (no error yet)'
-			)
-	}
-}
-
 port.onMessage.addListener(msg => {
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
@@ -69,6 +53,6 @@ port.onMessage.addListener(msg => {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_HISTORY);
+			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_NOTES);
     }
 });

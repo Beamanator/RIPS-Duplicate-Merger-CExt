@@ -13,5 +13,4 @@ const FIELD_IDS_ADDRESSES = {
     [ADDRESS_TABLE_HEADER_CELLS]: '#gridContent table thead tr th',
     [ADDRESS_TABLE_BODY_ROWS]: '#gridContent table tbody tr',
     [ADDRESS_TABLE_BODY_CELLS_FROM_ROWS]: 'td',
-
 }

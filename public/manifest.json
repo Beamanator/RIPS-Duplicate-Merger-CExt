@@ -49,6 +49,7 @@
                 "http://rips.247lib.com/Stars/User/Login",
                 "http://rips.247lib.com/Stars/ClientDetails/ClientDetails",
                 "http://rips.247lib.com/Stars/Addresses/Addresses",
+                "http://rips.247lib.com/Stars/ClientDetails/ClientNotes",
                 "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList",
                 "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
@@ -71,10 +72,13 @@
                 "extension_code/js/content_scripts/Addresses/FIDs.js"
             ]
         },
-        // {   // Notes page
-        //     "matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientNotes" ],
-        //     "js": [ "" ]
-        // },
+        {   // Notes page
+            "matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientNotes" ],
+            "js": [ 
+                "extension_code/js/content_scripts/Notes/Ctrl.js",
+                "extension_code/js/content_scripts/Notes/FIDs.js"
+             ]
+        },
         // // {}, Aliases page (skipping for v1)
         // {   // Relatives page
         //     "matches": [ "http://rips.247lib.com/Stars/Relatives/Relatives" ],

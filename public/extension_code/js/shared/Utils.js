@@ -207,3 +207,16 @@ const Utils_SendRedirectCode = (port, urlPart='unknown') => {
         urlPart: urlPart
     });
 }
+
+const Utils_SendDataToBkg = (port, source="unknkown", data) => {
+	if (!port) {
+		const msg = `Could not send data from <${source}> - port ` +
+			'not connected.';
+		return Utils_Error('UTILS', msg);
+	}
+	port.postMessage({
+		code: PCs.CS_BKG_DATA_RECEIVED,
+		source: source,
+		data: data
+	})
+}
