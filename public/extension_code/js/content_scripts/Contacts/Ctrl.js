@@ -5,12 +5,12 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlRelatives';
+const MESSAGE_SOURCE = 'CtrlContacts';
 
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_RELATIVES });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CONTACTS });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
@@ -18,17 +18,16 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_RELATIVES });
 const startImport = () => {
     const columnNames = [];
     const columnNameMap = {
-        'First Name': REL_FIRST_NAME,
-        'Surname': REL_SURNAME,
-        'Relationship': REL_RELATIONSHIP,
-        'Date of Birth': REL_DOB,
-        'StARS No.': REL_STARS_NUMBER,
+        'First Name': CONTACT_FIRST_NAME,
+        'Surname': CONTACT_SURNAME,
+        'Contact Type': CONTACT_TYPE,
+        'StARS No.': '',
         '': ''
     }
 
     // populate column names array
     const tableHeaderCellsSelector =
-        FIELD_IDS_RELATIVES[REL_TABLE_HEADER_CELLS];
+        FIELD_IDS_CONTACTS[CONTACT_TABLE_HEADER_CELLS];
     document.querySelectorAll(tableHeaderCellsSelector)
     .forEach(cell => {
         const cellName = cell.innerText.trim();
@@ -45,18 +44,18 @@ const startImport = () => {
         }
     });
 
-    // search through relative data and send to bkg
-    const relativeData = [];
+    // search through contact data and send to bkg
+    const contactData = [];
     const tableBodyRowsSelector =
-        FIELD_IDS_RELATIVES[REL_TABLE_BODY_ROWS];
+        FIELD_IDS_CONTACTS[CONTACT_TABLE_BODY_ROWS];
     document.querySelectorAll(tableBodyRowsSelector)
     .forEach(row => {
         // make new objects for each row
-        const relativeRowData = {};
+        const contactRowData = {};
 
-        // get relative data from specific row
+        // get contact data from specific row
         const tableBodyCellsFromRowsSelector =
-            FIELD_IDS_RELATIVES[REL_TABLE_BODY_CELLS_FROM_ROWS];
+            FIELD_IDS_CONTACTS[CONTACT_TABLE_BODY_CELLS_FROM_ROWS];
         row.querySelectorAll(tableBodyCellsFromRowsSelector)
         .forEach((cell, colIndex) => {
             // if there's no column name, skip this cell's data
@@ -68,19 +67,20 @@ const startImport = () => {
                 const cellData = cell.innerText;
                 const cellMapName = columnNames[colIndex];
                 // map data to columnNameMap in row data obj
-                relativeRowData[cellMapName] = cellData;
+                contactRowData[cellMapName] = cellData;
             }
         });
         
-        // push row data onto relativeData array
-        relativeData.push(relativeRowData);
+        // push row data onto contactData array
+        contactData.push(contactRowData);
     });
 
     // data gathered, now send it back to background.js to store
-    Utils_SendDataToBkg(port, MESSAGE_SOURCE, relativeData);
+    Utils_SendDataToBkg(port, MESSAGE_SOURCE, contactData);
 
-    // redirect to next page (Contacts)
-    Utils_SendRedirectCode(port, 'Contacts/Contacts');
+    debugger;
+    // redirect to next page (Files)
+    // Utils_SendRedirectCode(port, 'Contacts/Contacts');
 }
 
 // ================================================================
@@ -109,6 +109,6 @@ port.onMessage.addListener(msg => {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_RELATIVES);
+			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_CONTACTS);
     }
 });

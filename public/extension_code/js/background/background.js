@@ -19,7 +19,8 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
     PCs.PORTNAME_CS_ADDRESSES,
     PCs.PORTNAME_CS_NOTES,
-    PCs.PORTNAME_CS_RELAVITES,
+    PCs.PORTNAME_CS_RELATIVES,
+    PCs.PORTNAME_CS_CONTACTS,
     PCs.PORTNAME_CS_HISTORY,
     PCs.PORTNAME_CS_REDIRECT
 ];
@@ -208,6 +209,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_ADDRESSES:
         case PCs.PORTNAME_CS_NOTES:
         case PCs.PORTNAME_CS_RELATIVES:
+        case PCs.PORTNAME_CS_CONTACTS:
         case PCs.PORTNAME_CS_HISTORY:
         case PCs.PORTNAME_CS_REDIRECT:
             // init content script port listener

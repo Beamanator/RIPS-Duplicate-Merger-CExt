@@ -93,9 +93,23 @@ const RIPS_FIELD_KEYS = {
     REL_STARS_NUMBER: 'StARS Number',
 
     // ------ dynamic fields for html table ------
+    // TODO: combine with similar keys above (addresses)
     REL_TABLE_HEADER_CELL: 'REL_TABLE_HEADER_CELLS',
     REL_TABLE_BODY_ROWS: 'REL_TABLE_BODY_ROWS',
     REL_TABLE_BODY_CELLS_FROM_ROWS: 'REL_TABLE_BODY_CELLS_FROM_ROWS',
+    
+    // ======================= CONTACTS: ======================
+    // ------ table column names ------
+    CONTACT_FIRST_NAME: 'First Name (Contact)',
+    CONTACT_SURNAME: 'Surname (Contact)',
+    CONTACT_TYPE: 'Contact Type',
+    // CONTACT_STARS_NUMBER: 'StARS Number',
+
+    // ------ dynamic fields for html table ------
+    // TODO: combine with similar keys above (addresses)
+    CONTACT_TABLE_HEADER_CELL: 'CONTACT_TABLE_HEADER_CELLS',
+    CONTACT_TABLE_BODY_ROWS: 'CONTACT_TABLE_BODY_ROWS',
+    CONTACT_TABLE_BODY_CELLS_FROM_ROWS: 'CONTACT_TABLE_BODY_CELLS_FROM_ROWS',
 
     // =================== ADVANCED SEARCH: ===================
     SEARCH_CLIENT_NUMBER: 'SEARCH_CLIENT_NUMBER',
