@@ -29,7 +29,7 @@ const PORTNAME_HOLDER = [ // container for portnames
 // ==============================================================================
 //                               MAIN FUNCTIONS
 // ==============================================================================
-const storeUserData = (source, data) => {
+const storeClientData = (source, data) => {
     // initialize source container
     if (!CLIENT_DATA_CONTAINER[source])
         CLIENT_DATA_CONTAINER[source] = {};
@@ -65,7 +65,8 @@ const sendPortInit = (port, code, autoStartFlag=false) => {
 
 const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
-    // TODO: handle CLIENT_INDEX out of bounds (import complete)
+    // CLIENT_INDEX out of bounds (import complete) handled in
+    // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
@@ -113,13 +114,25 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_DATA_RECEIVED:
-                storeUserData(msg.source, msg.data);
+                storeClientData(msg.source, msg.data);
                 break;
 
-            // case PCs.CS_BKG_IMPORT_DONE:
-            //     IMPORT_IN_PROGRESS = false;
-            //     // sendImportDone(RAPort);
-            //     break;
+            case PCs.CS_BKG_CLIENT_IMPORT_DONE:
+                // check if import should keep going
+                if (CLIENT_NUMS && CLIENT_INDEX+1 < CLIENT_NUMS.length) {
+                    // increment client index
+                    CLIENT_INDEX++;
+                    IMPORT_IN_PROGRESS = true; // no change
+                    sendStartImport(CSPort);
+                }
+                // else, import should stop & analysis should be done
+                else {
+                    IMPORT_IN_PROGRESS = false;
+                    // sendImportDone(RAPort);
+                    console.warn('TMP - ALL ALL DONE??',
+                    CLIENT_DATA_CONTAINER);
+                }
+                break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);

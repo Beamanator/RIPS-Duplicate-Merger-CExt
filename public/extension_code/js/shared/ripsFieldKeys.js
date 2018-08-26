@@ -118,22 +118,30 @@ const RIPS_FIELD_KEYS = {
     
     // ------ dynamic fields for selectors ------
     FILE_LINK: 'FILE_TABLE_FILENAME',
-
+    
     // =================== ADVANCED SEARCH: ===================
     SEARCH_CLIENT_NUMBER: 'SEARCH_CLIENT_NUMBER',
     SEARCH_BUTTON: 'SEARCH_BUTTON',
-
+    
     // =============== ADVANCED SEARCH RESULTS: ===============
     SEARCH_RESULTS: 'SEARCH_RESULTS',
     ACTIVE_CLIENT: 'ACTIVE_CLIENT',
     TAB_CLIENT_BASIC_INFORMATION: 'TAB_CLIENT_BASIC_INFORMATION',
-
+    
     // ======================= HISTORY: =======================
+    // ------ table column names ------
     ACTION_DATE: 'Action Date',
     ACTION_NAME: 'Action Name',
-    ACTION_CASEWORKER: 'Action Caseworker',
-    ACTION_NOTES: 'Action Notes',
+    ACTION_SERVICE: 'Associated Service',
+    ACTION_CASEWORKER: 'Caseworker',
+    ACTION_NOTES: 'Attendance Notes',
 
-    // ====================== ... ======================
-    // TODO: add the rest here
+    // ------ dynamic fields for selectors ------
+    // TODO: combine with similar keys above (addresses)
+    ACTION_TABLE_HEADER_CELLS: 'ACTION_TABLE_HEADER_CELLS',
+    ACTION_TABLE_BODY_ROWS: 'ACTION_TABLE_BODY_ROWS',
+    ACTION_TABLE_BODY_CELLS_FROM_ROWS: 'ACTION_TABLE_BODY_CELLS_FROM_ROWS',
+
+    // ======================= GENERAL: =======================
+    // TODO: add the generic "fields" here
 }

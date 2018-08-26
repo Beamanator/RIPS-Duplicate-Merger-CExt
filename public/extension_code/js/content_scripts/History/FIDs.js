@@ -1,10 +1,17 @@
 // destructure field keys
 const {
-    ACTION_DATE, ACTION_NAME, ACTION_CASEWORKER, ACTION_NOTES
+    // just field names (no selectors used / needed)
+    ACTION_DATE, ACTION_NAME, ACTION_SERVICE,
+    ACTION_CASEWORKER, ACTION_NOTES,
+
+    // selectors needed for table elements
+    ACTION_TABLE_HEADER_CELLS, ACTION_TABLE_BODY_ROWS,
+    ACTION_TABLE_BODY_CELLS_FROM_ROWS
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
 const FIELD_IDS_HISTORY = {
-    // TODO: add history page's field keys
-    // -> dynamic, based off table, not html ids
+    [ACTION_TABLE_HEADER_CELLS]: '#gridContent table thead tr th',
+    [ACTION_TABLE_BODY_ROWS]: '#gridContent table tbody tr',
+    [ACTION_TABLE_BODY_CELLS_FROM_ROWS]: 'td',
 }
