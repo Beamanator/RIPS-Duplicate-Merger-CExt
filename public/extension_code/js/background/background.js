@@ -176,7 +176,7 @@ const initReactAppPort = (port) => {
         switch(msg.code) {
             case PCs.RA_BKG_START_IMPORT:
                 IMPORT_IN_PROGRESS = true;
-                CLIENT_NUMS = msg.clientNums;
+                CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 sendStartImport(CSPort);
                 break;
