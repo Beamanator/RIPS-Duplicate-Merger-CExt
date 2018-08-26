@@ -70,7 +70,16 @@ const RIPS_FIELD_KEYS = {
     INDIRECT_BENEFICIARIES: 'Indirect Beneficiaries',
 
     // ====================== ADDRESSES: ======================
-    // TODO: dynamic from table
+    // ------ table columns ------
+    FIRST_ADDRESS_LINE: 'First Address Line',
+    ADDRESS_TELEPHONE: 'Address Telephone',
+    ADDRESS_DATE_FROM: 'Lived here "from"',
+    ADDRESS_DATE_TO: 'Lived here "to"',
+
+    // ------ dynamic fields for html table ------
+    ADDRESS_TABLE_HEADER_CELL: 'ADDRESS_TABLE_HEADER_CELLS',
+    ADDRESS_TABLE_BODY_ROWS: 'ADDRESS_TABLE_BODY_ROWS',
+    ADDRESS_TABLE_BODY_CELLS_FROM_ROWS: 'ADDRESS_TABLE_BODY_CELLS_FROM_ROWS',
 
     // ======================== NOTES: ========================
     NOTES: 'Notes',

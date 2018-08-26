@@ -14,10 +14,8 @@ const {
     LAST_RSD_UPDATE, // TODO: dynamic vulns
     VULNERABILITY_NOTES, FAMILY_SIZE, UNHCR_CASE_SIZE,
     DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
-    // addresses
-    // TODO: dynamic from table - add to separate FIDs?
-    // notes
     // NOTES,
+    // TODO: dynamic from table - add to separate FIDs?
     // TODO: the rest... (aliases, relatives, contacts, etc...)
 
 } = RIPS_FIELD_KEYS;

@@ -16,20 +16,85 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADDRESSES });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startImport = () => {
-    // TODO: get selectors from FIDs.js
-    document.querySelectorAll('#gridContent table tbody tr').forEach(row => {
-        // TODO: make new arrays for each row
-        row.querySelectorAll('td').forEach(cell => {
-            // TODO: add cells (cell.innerText) to arrays
-            debugger;   
-        })
+    const columnNames = [];
+    const columnNameMap = {
+        'First Line of Address': FIRST_ADDRESS_LINE,
+        'Telephone': ADDRESS_TELEPHONE,
+        'From': ADDRESS_DATE_FROM,
+        'Until': ADDRESS_DATE_TO,
+        'Current?': '',
+        '': ''
+    }
+
+    // populate column names array
+    const tableHeaderCellsSelector =
+        FIELD_IDS_ADDRESSES[ADDRESS_TABLE_HEADER_CELLS];
+    document.querySelectorAll(tableHeaderCellsSelector)
+    .forEach(cell => {
+        const cellName = cell.innerText.trim();
+        
+        // push all mapped column names to columnNames array
+        const mappedName = columnNameMap[cellName];
+
+        if (mappedName === undefined) {
+            // TODO: throw error, stop the import - mapping failed
+            const err = `Cell "${cellName}" failed to map!`;
+            Utils_Error(MESSAGE_SOURCE, err);
+        } else {
+            columnNames.push(mappedName);
+        }
     });
+
+    // search through address data and send to bkg
+    const addressData = [];
+    const tableBodyRowsSelector =
+        FIELD_IDS_ADDRESSES[ADDRESS_TABLE_BODY_ROWS];
+    document.querySelectorAll(tableBodyRowsSelector)
+    .forEach(row => {
+        // make new objects for each row
+        const addressRowData = {};
+
+        // get address data from specific row
+        const tableBodyCellsFromRowsSelector =
+            FIELD_IDS_ADDRESSES[ADDRESS_TABLE_BODY_CELLS_FROM_ROWS];
+        row.querySelectorAll(tableBodyCellsFromRowsSelector)
+        .forEach((cell, colIndex) => {
+            // if there's no column name, skip this cell's data
+            if (columnNames[colIndex] == '') {
+                // do nothing - not a useful column
+            }
+            // add cell data (cell.innerText) to row object
+            else {
+                const cellData = cell.innerText;
+                const cellMapName = columnNames[colIndex];
+                // map data to columnNameMap in row data obj
+                addressRowData[cellMapName] = cellData;
+            }
+        });
+        
+        // push row data onto addressData array
+        addressData.push(addressRowData);
+    });
+
+    // data gathered, now send it back to background.js to store
+    sendDataToBkg(MESSAGE_SOURCE, addressData);
+
+    // redirect to next page
+    Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
 }
 
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+// TODO: make this a util function
+const sendDataToBkg = (source, data) => {
+	port.postMessage({
+		code: PCs.CS_BKG_DATA_RECEIVED,
+		source: source,
+		data: data
+	});
+}
 
 // ================================================================
 //                          PORT LISTENERS

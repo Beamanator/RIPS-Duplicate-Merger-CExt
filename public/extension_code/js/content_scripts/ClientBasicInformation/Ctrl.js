@@ -90,6 +90,7 @@ const startImport = (clientNum) => {
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+// TODO: make this a util function
 const sendDataToBkg = (source, data) => {
 	port.postMessage({
 		code: PCs.CS_BKG_DATA_RECEIVED,
