@@ -21,6 +21,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_NOTES,
     PCs.PORTNAME_CS_RELATIVES,
     PCs.PORTNAME_CS_CONTACTS,
+    PCs.PORTNAME_CS_FILES,
     PCs.PORTNAME_CS_HISTORY,
     PCs.PORTNAME_CS_REDIRECT
 ];
@@ -120,12 +121,6 @@ const initContentScriptPort = (port) => {
             //     // sendImportDone(RAPort);
             //     break;
 
-            // case PCs.CS_BKG_NEXT_URL_REDIRECT:
-                // const msgTabId = MessageSender.sender.tab.id;
-
-                // chrome.tabs.update(msgTabId, { url: msg.url });
-                // break;
-
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);
                 // IMPORT_IN_PROGRESS = false;
@@ -210,6 +205,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_NOTES:
         case PCs.PORTNAME_CS_RELATIVES:
         case PCs.PORTNAME_CS_CONTACTS:
+        case PCs.PORTNAME_CS_FILES:
         case PCs.PORTNAME_CS_HISTORY:
         case PCs.PORTNAME_CS_REDIRECT:
             // init content script port listener

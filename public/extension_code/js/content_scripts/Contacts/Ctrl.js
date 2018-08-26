@@ -78,9 +78,8 @@ const startImport = () => {
     // data gathered, now send it back to background.js to store
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, contactData);
 
-    debugger;
     // redirect to next page (Files)
-    // Utils_SendRedirectCode(port, 'Contacts/Contacts');
+    Utils_SendRedirectCode(port, 'FilesUpload/FilesUpload');
 }
 
 // ================================================================

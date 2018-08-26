@@ -104,12 +104,20 @@ const RIPS_FIELD_KEYS = {
     CONTACT_SURNAME: 'Surname (Contact)',
     CONTACT_TYPE: 'Contact Type',
     // CONTACT_STARS_NUMBER: 'StARS Number',
-
+    
     // ------ dynamic fields for html table ------
     // TODO: combine with similar keys above (addresses)
     CONTACT_TABLE_HEADER_CELL: 'CONTACT_TABLE_HEADER_CELLS',
     CONTACT_TABLE_BODY_ROWS: 'CONTACT_TABLE_BODY_ROWS',
     CONTACT_TABLE_BODY_CELLS_FROM_ROWS: 'CONTACT_TABLE_BODY_CELLS_FROM_ROWS',
+    
+    // ======================== FILES: ========================
+    // ------ table column names ------
+    FILE_NAME: 'Filename',
+    FILE_DATE_MODIFIED: 'Date Modified',
+    
+    // ------ dynamic fields for selectors ------
+    FILE_LINK: 'FILE_TABLE_FILENAME',
 
     // =================== ADVANCED SEARCH: ===================
     SEARCH_CLIENT_NUMBER: 'SEARCH_CLIENT_NUMBER',
