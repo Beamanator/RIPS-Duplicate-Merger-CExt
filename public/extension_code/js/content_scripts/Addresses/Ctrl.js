@@ -22,7 +22,7 @@ const startImport = () => {
         'Telephone': ADDRESS_TELEPHONE,
         'From': ADDRESS_DATE_FROM,
         'Until': ADDRESS_DATE_TO,
-        'Current?': '',
+        'Current?': '', // skip
         '': ''
     }
 
@@ -46,7 +46,7 @@ const startImport = () => {
     });
 
     // search through address data and send to bkg
-    const addressData = [];
+    const addresses = [];
     const tableBodyRowsSelector =
         FIELD_IDS_ADDRESSES[ADDRESS_TABLE_BODY_ROWS];
     document.querySelectorAll(tableBodyRowsSelector)
@@ -72,11 +72,14 @@ const startImport = () => {
             }
         });
         
-        // push row data onto addressData array
-        addressData.push(addressRowData);
+        // push row data onto addresses array
+        addresses.push(addressRowData);
     });
 
     // data gathered, now send it back to background.js to store
+    const addressData = {
+        [ADDRESSES]: addresses
+    };
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, addressData);
 
     // redirect to next page (Notes)

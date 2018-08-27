@@ -1,5 +1,6 @@
 // destructure field keys
 const {
+    FILES,
     // just field names (no selectors used / needed)
     FILE_NAME, FILE_DATE_MODIFIED,
     // selectors needed for table elements

@@ -1,5 +1,6 @@
 // destructure field keys
 const {
+    RELATIVES,
     // just field names (no selectors used / needed)
     REL_FIRST_NAME, REL_SURNAME,
     REL_RELATIONSHIP, REL_DOB, REL_STARS_NUMBER,

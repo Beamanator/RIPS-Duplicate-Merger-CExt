@@ -46,7 +46,7 @@ const startImport = () => {
     });
 
     // search through relative data and send to bkg
-    const relativeData = [];
+    const relatives = [];
     const tableBodyRowsSelector =
         FIELD_IDS_RELATIVES[REL_TABLE_BODY_ROWS];
     document.querySelectorAll(tableBodyRowsSelector)
@@ -72,11 +72,14 @@ const startImport = () => {
             }
         });
         
-        // push row data onto relativeData array
-        relativeData.push(relativeRowData);
+        // push row data onto relatives array
+        relatives.push(relativeRowData);
     });
 
     // data gathered, now send it back to background.js to store
+    const relativeData = {
+        [RELATIVES]: relatives
+    }
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, relativeData);
 
     // redirect to next page (Contacts)

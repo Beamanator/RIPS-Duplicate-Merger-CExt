@@ -1,5 +1,6 @@
 // destructure field keys
 const {
+    CONTACTS,
     // just field names (no selectors used / needed)
     CONTACT_FIRST_NAME, CONTACT_SURNAME,
     CONTACT_TYPE,

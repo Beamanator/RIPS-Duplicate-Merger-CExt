@@ -70,6 +70,7 @@ const RIPS_FIELD_KEYS = {
     INDIRECT_BENEFICIARIES: 'Indirect Beneficiaries',
 
     // ====================== ADDRESSES: ======================
+    ADDRESSES: 'ADDRESSES',
     // ------ table column names ------
     FIRST_ADDRESS_LINE: 'First Address Line',
     ADDRESS_TELEPHONE: 'Address Telephone',
@@ -85,6 +86,7 @@ const RIPS_FIELD_KEYS = {
     NOTES: 'Notes',
     
     // ====================== RELATIVES: ======================
+    RELATIVES: 'RELATIVES',
     // ------ table column names ------
     REL_FIRST_NAME: 'First Name (Relative)',
     REL_SURNAME: 'Surname (Relative)',
@@ -99,6 +101,7 @@ const RIPS_FIELD_KEYS = {
     REL_TABLE_BODY_CELLS_FROM_ROWS: 'REL_TABLE_BODY_CELLS_FROM_ROWS',
     
     // ======================= CONTACTS: ======================
+    CONTACTS: 'CONTACTS',
     // ------ table column names ------
     CONTACT_FIRST_NAME: 'First Name (Contact)',
     CONTACT_SURNAME: 'Surname (Contact)',
@@ -112,6 +115,7 @@ const RIPS_FIELD_KEYS = {
     CONTACT_TABLE_BODY_CELLS_FROM_ROWS: 'CONTACT_TABLE_BODY_CELLS_FROM_ROWS',
     
     // ======================== FILES: ========================
+    FILES: 'FILES',
     // ------ table column names ------
     FILE_NAME: 'Filename',
     FILE_DATE_MODIFIED: 'Date Modified',

@@ -16,7 +16,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_FILES });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startImport = () => {
-    const fileData = [];
+    const files = [];
     const fileLinkSelector = FIELD_IDS_FILES[FILE_LINK];
     const fileLinkList = document.querySelectorAll(fileLinkSelector);
 
@@ -28,13 +28,16 @@ const startImport = () => {
         const fileName = linkElem.innerText;
         const dateModified = dateModifiedElem.innerText;
         
-        fileData.push({
+        files.push({
             [FILE_NAME]: fileName,
             [FILE_DATE_MODIFIED]: dateModified
         });
     });
 
     // data gathered, now send it back to background.js to store
+    const fileData = {
+        [FILES]: files
+    }
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, fileData);
 
     // redirect to next page (History - skip Private Files)

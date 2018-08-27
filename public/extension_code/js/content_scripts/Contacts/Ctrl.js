@@ -45,7 +45,7 @@ const startImport = () => {
     });
 
     // search through contact data and send to bkg
-    const contactData = [];
+    const contacts = [];
     const tableBodyRowsSelector =
         FIELD_IDS_CONTACTS[CONTACT_TABLE_BODY_ROWS];
     document.querySelectorAll(tableBodyRowsSelector)
@@ -71,11 +71,14 @@ const startImport = () => {
             }
         });
         
-        // push row data onto contactData array
-        contactData.push(contactRowData);
+        // push row data onto contacts array
+        contacts.push(contactRowData);
     });
 
     // data gathered, now send it back to background.js to store
+    const contactData = {
+        [CONTACTS]: contacts
+    }
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, contactData);
 
     // redirect to next page (Files)
