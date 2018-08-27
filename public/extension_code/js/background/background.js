@@ -42,8 +42,9 @@ const storeClientData = (source, data) => {
             CLIENT_DATA_CONTAINER[source][fieldName] = [];
         
         // add field value to container
+        // CLIENT_DATA_CONTAINER[source][fieldName].push(value);
         CLIENT_DATA_CONTAINER[source][fieldName]
-            .push(value);
+            [CLIENT_INDEX] = value;
     }
     
     // log update, just for info

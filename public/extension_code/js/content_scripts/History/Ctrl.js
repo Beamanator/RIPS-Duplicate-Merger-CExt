@@ -51,13 +51,16 @@ const startImport = () => {
 	});
 	
 	// search through history data and send to bkg
-    const historyData = [];
+    const historyData = {};
     const tableBodyRowsSelector =
         FIELD_IDS_HISTORY[ACTION_TABLE_BODY_ROWS];
     document.querySelectorAll(tableBodyRowsSelector)
     .forEach(row => {
         // make new objects for each row
         const historyRowData = {};
+        
+        // store actionName for each row
+        let actionName = '';
 
         // get history data from specific row
         const tableBodyCellsFromRowsSelector =
@@ -74,11 +77,27 @@ const startImport = () => {
                 const cellMapName = columnNames[colIndex];
                 // map data to columnNameMap in row data obj
                 historyRowData[cellMapName] = cellData;
+
+                // if cellMapName == ACTION_NAME, store action name
+                if (cellMapName === ACTION_NAME) {
+                    actionName = cellData;
+                }
             }
         });
+
+        // throw error if actionName wasn't found
+        if (actionName == '') {
+            // ERROR - somehow there wasn't anything listed in 
+            // -> the ACTION_NAME column??
+            let err = `Error! No Action Name found in row among` +
+                ` rowData:`;
+            Utils_Error(MESSAGE_SOURCE, err, historyRowData);
+        }
         
-        // push row data onto historyData array
-        historyData.push(historyRowData);
+        // add actionName to historyData if not present yet
+        if (!historyData[actionName]) historyData[actionName] = [];
+        // push row data onto history array
+        historyData[actionName].push(historyRowData);
 	});
 	
 	// data gathered, now send it back to background.js to store
