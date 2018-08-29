@@ -83,6 +83,14 @@ const sendImportErrorToReactApp = (port, message) => {
     });
 }
 
+const sendImportDone = (port, clientData) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: PCs.BKG_RA_IMPORT_DONE,
+        data: clientData
+    });
+}
+
 // ==============================================================================
 //                           PORT MESSAGE LISTENERS
 // ==============================================================================
@@ -129,9 +137,8 @@ const initContentScriptPort = (port) => {
                 // else, import should stop & analysis should be done
                 else {
                     IMPORT_IN_PROGRESS = false;
-                    // sendImportDone(RAPort);
-                    console.warn('TMP - ALL ALL DONE??',
-                    CLIENT_DATA_CONTAINER);
+                    sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
+                    // console.warn('TMP - ALL ALL DONE??', CLIENT_DATA_CONTAINER);
                 }
                 break;
 
@@ -165,6 +172,7 @@ const initReactAppPort = (port) => {
     }
 
     // TODO: send pre-existing errors to react on port init!
+    // TODO: also send client data? just in case options page closes?
     // send init message to either port
     sendPortInit(port, PCs.BKG_RA_INIT_PORT);
 

@@ -7,5 +7,6 @@ export {
 } from './port';
 
 export {
-    ripsFetchData
+    ripsFetchData,
+    ripsFetchSuccess
 } from './rips';

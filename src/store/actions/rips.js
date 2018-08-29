@@ -14,16 +14,17 @@ const ripsFetchFail = (error) => {
         error: error
     };
 };
-// success! done! - called in port.js actions
-export const ripsFetchSuccess = () => {
+// success! done! - called by port.js actions
+export const ripsFetchSuccess = (ripsData) => {
     return {
-        type: actionTypes.RIPS_FETCH_SUCCESS
+        type: actionTypes.RIPS_FETCH_SUCCESS,
+        data: ripsData
     };
 };
-// KICK OFF PROCESS - collect rips words from the website
+// KICK OFF PROCESS - collect rips data
 export const ripsFetchData = (port, clientNums) => {
     return dispatch => {
-        // begin collecting words
+        // begin collecting data
         dispatch(ripsFetchStart());
 
         // if in development mode, port may not be available
@@ -43,10 +44,3 @@ export const ripsFetchData = (port, clientNums) => {
         // -> and handled in actions/port.js - via a port listener
     };
 };
-// add payload data to store!
-// export const ripsAddUserData = (data) => {
-//     return {
-//         type: actionTypes.RIPS_ADD_USER_DATA,
-//         userData: data
-//     };
-// };

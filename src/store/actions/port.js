@@ -61,22 +61,12 @@ export const backgroundPortInit = (chrome) => {
                     console.error('<port action.js> import error message:', message);
                     break;
 
-                // called when user data comes back from background.js
-                // case portCodes.USER_DATA_PAYLOAD:
-                //     // store user data in store / dispatch action to do that
-                //     const userData = msg.data;
-                //     dispatch(actions.ripsAddUserData(userData));
-
-                //     // send message back, indicating data was received &
-                //     //  data fetch can continue
-                //     port.postMessage({ code: portCodes.CONTINUE_IMPORT });
-                //     break;
-
-                // called when rips word import has completed
+                // called when rips data import has completed
                 case portCodes.BKG_RA_IMPORT_DONE:
                     // tell import we're done and are successful
-                    // dispatch(actions.ripsFetchSuccess());
-                    console.log('done?');
+                    dispatch(actions.ripsFetchSuccess(msg.data));
+                    console.warn('done - data:', msg.data);
+                    // TODO: something with the data now!
                     break;
 
                 // invalid msg code recognized in background.js

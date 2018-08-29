@@ -4,8 +4,8 @@ import { updateObject } from '../../shared/utils';
 import { sampleData } from './ripsHelper';
 
 const initialState = {
-    // TODO: get fake state from ripsHelper.js
-    data: sampleData,
+    // TODO: get rid of fake state from ripsHelper.js
+    // data: sampleData,
     loading: false,
     error: null
 };
@@ -25,7 +25,7 @@ const ripsFetchFail = (state, action) => {
 const ripsFetchSuccess = (state, action) => {
     return updateObject(state, {
         loading: false,
-        // make sure action is the correct format in rips actions, not here!
+        // make sure data is the correct format elsewhere, not here!
         data: action.data
     });
 };

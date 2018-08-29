@@ -27,6 +27,7 @@ const PCs = {
     //                 BKG SCRIPT -> REACT APP SCRIPT CODES
     // ==============================================================================
     BKG_RA_INIT_PORT: 'BKG_RA_INIT_PORT',
+    BKG_RA_IMPORT_DONE: 'BKG_RA_IMPORT_DONE',
     BKG_RA_STOP_IMPORT_WITH_ERROR: 'BKG_RA_STOP_IMPORT_WITH_ERROR',
 
     // ==============================================================================
