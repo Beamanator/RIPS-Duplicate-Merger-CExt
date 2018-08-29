@@ -1,8 +1,7 @@
 // TODO: delete this file after importing data from rips
 // rips page and field keys
 import {
-    RIPS_PAGE_KEYS as P_KEYS,
-    RIPS_FIELD_KEYS as F_KEYS
+    RIPS_KEYS as R_KEYS
 } from '../../shared/ripsKeys';
 
 /**
@@ -53,17 +52,17 @@ const {
 // create empty, initial data
 export const sampleData = {
     // client basic information
-    [P_KEYS.CLIENT_BASIC_INFORMATION]: createEmptyData([
+    [R_KEYS.CLIENT_BASIC_INFORMATION]: createEmptyData([
         FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
         EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
         ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS
     ], 3),
 
     // TODO: Addresses (dynamic)
-    // [P_KEYS.ADDRESSES]: createEmptyData([ ... ]),
+    // [R_KEYS.ADDRESSES]: createEmptyData([ ... ]),
 
     // Notes
-    [P_KEYS.NOTES]: createEmptyData([
+    [R_KEYS.NOTES]: createEmptyData([
         NOTES
     ]),
 

@@ -18,7 +18,7 @@ import * as actions from './store/actions';
 
 // rips page and field keys
 import {
-    RIPS_PAGE_KEYS as P_KEYS
+    RIPS_KEYS as R_KEYS
 } from './shared/ripsKeys';
 
 class App extends Component {
@@ -105,7 +105,7 @@ class App extends Component {
             importInProgress
         );
 
-        // uncomment if values aren't what you'd expect!
+        // KEEP! uncomment if values aren't what you'd expect!
         // console.warn('import disabled?', importReady);
         // console.info(
         //     'values:', nodeEnv, bkgPort, importInProgress,
@@ -144,7 +144,7 @@ class App extends Component {
         const {
             classes, // styles
             bkgPort, // port to background page
-            sampleData, // test data
+            ripsData, // data from RIPS
         } = this.props;
 
         const {
@@ -230,26 +230,26 @@ class App extends Component {
                 {/* Instructions */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <h1>Select the "correct" client data below!</h1>
-                    <h4 className={classes.description}>
+                    <h3 className={classes.description}>
                         Each table below shows data that is inconsistent
                         between client records. Therefore, please select
                         a cell in each row that represents the accurate
                         data for that field.
-                    </h4>
-                    <h4 className={classes.description}>
+                    </h3>
+                    <h3 className={classes.description}>
                         Example: If the Date of Birth field is shown below,
                         that means the clients entered have different Date of
                         Birth saved in their RIPS record. Select the
                         correct Date of Birth that will be saved in the
                         merged record.
-                    </h4>
+                    </h3>
                 </Grid>
 
                 {/* <Client Basic Information> Table */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Client Basic Information"
-                        rawData={sampleData[P_KEYS.CLIENT_BASIC_INFORMATION]}
+                        rawData={ripsData[R_KEYS.CLIENT_BASIC_INFORMATION]}
                         errorHandler={this.handleError}
                     />
                 </Grid>
@@ -263,7 +263,7 @@ class App extends Component {
                 <Grid item xs={12} className={classes.textCenter}>
                     <CustomTable
                         title="Notes"
-                        rawData={sampleData[P_KEYS.NOTES]}
+                        rawData={ripsData[R_KEYS.NOTES]}
                         errorHandler={this.handleError}
                     />
                 </Grid>
@@ -331,7 +331,7 @@ const styles = theme => ({
 const mapStateToProps = state => {
     return {
         // isAuthenticated...
-        sampleData: state.rips.data,
+        ripsData: state.rips.data,
         bkgPort: state.port.port,
     };
 };

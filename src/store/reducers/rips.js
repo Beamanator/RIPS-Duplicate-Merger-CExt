@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../shared/utils';
 
-import { sampleData } from './ripsHelper';
+// import { sampleData } from './ripsHelper';
 
 const initialState = {
     // TODO: get rid of fake state from ripsHelper.js
