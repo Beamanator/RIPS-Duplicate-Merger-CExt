@@ -270,10 +270,10 @@ class App extends Component {
                 )}
 
                 {/* <Addresses> Table */}
-                {this.buildGridTable(
+                {/* {this.buildGridTable(
                     R_KEYS.ADDRESSES,
                     'Addresses'
-                )}
+                )} */}
                 
                 {/* <Notes> Table */}
                 {this.buildGridTable(
@@ -282,28 +282,28 @@ class App extends Component {
                 )}
 
                 {/* <Relatives> Table */}
-                {this.buildGridTable(
+                {/* {this.buildGridTable(
                     R_KEYS.RELATIVES,
                     'Relatives'
-                )}
+                )} */}
 
                 {/* <Contacts> Table */}
-                {this.buildGridTable(
+                {/* {this.buildGridTable(
                     R_KEYS.CONTACTS,
                     'Contacts'
-                )}
+                )} */}
 
                 {/* <Files (normal)> Table */}
-                {this.buildGridTable(
+                {/* {this.buildGridTable(
                     R_KEYS.FILES,
                     'Files'
-                )}
+                )} */}
 
                 {/* <History> Table */}
-                {this.buildGridTable(
+                {/* {this.buildGridTable(
                     R_KEYS.HISTORY,
                     'Action History'
-                )}
+                )} */}
 
                 {/* Skipping for now - <Aliases> and
                 <Private Files> Tables */}

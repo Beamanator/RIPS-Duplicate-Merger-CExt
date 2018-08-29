@@ -71,7 +71,7 @@ const convertRawData = (rawData, errorHandler, title) => {
     return Object.entries( rawData )
     // add raw data arrays to category
     .map(e => [e[0], ...e[1]])
-    // TODO: if elements (index 1, 2, or 3) are arrays, go further
+    // TODO: if elements (index 1, 2, or 3) are arrays, go deeper
 }
 
 const CustomTable = (props) => {
