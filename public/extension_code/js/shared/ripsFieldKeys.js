@@ -8,8 +8,8 @@ const RIPS_FIELD_KEYS = {
     FIRST_NAME:     'First Name',
     LAST_NAME:      'Surname',
     PHONE_NUMBER:   'Phone Number',
-    ADDRESS1:       'Address1',
-    ADDRESS2:       'Address2',
+    ADDRESS1:       'Address (line 1)',
+    ADDRESS2:       'Address (line 2)',
     OTHER_PHONE_NUMBER: 'Other Phone Number',
     EMAIL_ADDRESS:  'Email Address',
     

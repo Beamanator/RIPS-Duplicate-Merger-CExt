@@ -56,8 +56,11 @@ const startImport = (clientNum) => {
 			switch(elem.type) {
 				case 'text':
 				case 'textarea':
-				case 'checkbox':
 					val = elem.value;
+					break;
+
+				case 'checkbox':
+					val = elem.checked;
 					break;
 
 				case 'select-one':

@@ -70,7 +70,69 @@ const convertRawData = (rawData, errorHandler, title) => {
     // get array of entries in raw data
     return Object.entries( rawData )
     // add raw data arrays to category
-    .map(e => [e[0], ...e[1]])
+    .map(dataCategory => {
+        const key = dataCategory[0];
+        let data = dataCategory[1];
+
+        const { pass: dataTypesMatch, dataType } =
+        // convert data elements into their native "types"
+        data.map(e => typeof(e))
+        // remove undefined elements (typeof(undefined) is "undefined")
+        .filter(type => type !== 'undefined')
+        // pass if defined data's types are all the same!
+        .reduce((container, dataType) => {
+            // if type hasn't been set, pass the dataType
+            if (!container.dataType) {
+                return {
+                    pass: container.pass,
+                    dataType: dataType
+                }
+            }
+            // dataType has ben set - only pass if current
+            // -> dataType matches old dataType
+            else {
+                return {
+                    pass: dataType === container.dataType,
+                    dataType: container.dataType
+                }
+            }
+        }, { pass: true, dataType: '' });
+        
+        // If not all elements have same data type (or are undefined),
+        // -> something probably went wrong. Throw error.
+        if (!dataTypesMatch) {
+            let err = key + ' has mismatched data types' +
+                ' in data array! why?? fix this!';
+            console.error(err, dataCategory);
+            // add errors to output
+            return [key, ...data.map(e => 'ERROR')]
+        }
+        // else, all dataTypes are the same! onward!
+        else {
+            // depending on the type, return different data
+            switch(dataType) {
+                case 'string': // do nothing, just display data!
+                    break;
+                case 'number': // do nothing, except add "confused" warning
+                    console.warn('Huh? How is there a "number" dataType?');
+                    break;
+                case 'object':
+                    // TODO: throw warning if it's an object, not array :D
+                    break;
+                case 'boolean':
+                    data = data.map(e => e ? 'checked' : 'not checked');
+                    break;
+                case 'undefined': // all undefined - these will get
+                    // -> filtered out later - don't worry now
+                    break;
+                default:
+                    console.error('How did we get here?? Data doesnt match' +
+                    ' any expected values somehow...', key, dataType);
+            }
+            return [key, ...data]
+        }
+    })
+    // TODO: filter -> hide if all values are empty (e[1], e[2], e[3])
     // TODO: if elements (index 1, 2, or 3) are arrays, go deeper
 }
 
