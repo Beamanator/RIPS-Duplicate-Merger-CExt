@@ -6,6 +6,7 @@ import { updateObject } from '../../shared/utils';
 const initialState = {
     // TODO: get rid of fake state from ripsHelper.js
     // data: sampleData,
+    data: {},
     loading: false,
     error: null
 };

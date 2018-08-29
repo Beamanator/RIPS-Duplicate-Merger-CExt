@@ -60,10 +60,18 @@ const styles = theme => ({
  * @param {string} title - table title
  */
 const convertRawData = (rawData, errorHandler, title) => {
+    // throw error if data is empty
+    if (!rawData || Object.keys(rawData).length === 0) {
+        let msg = `Data passed to ${title} table is empty!`;
+        errorHandler(msg);
+        return;
+    }
+
     // get array of entries in raw data
     return Object.entries( rawData )
     // add raw data arrays to category
     .map(e => [e[0], ...e[1]])
+    // TODO: if elements (index 1, 2, or 3) are arrays, go further
 }
 
 const CustomTable = (props) => {
@@ -76,14 +84,16 @@ const CustomTable = (props) => {
     const data = convertRawData(rawData, errorHandler, title);
 
     // if data is empty, don't display table!
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         let msg =
             `[${title}] Table Error: Raw data passed to CustomTable is empty. ` +
-            'Check implementation of that component for errors.';
+            'Check implementation of this component for errors.';
         errorHandler(msg);
 
         return (
-            <div className={classes.error}>{`Error in '${title}' data`}</div>
+            <div className={classes.error}>
+                {`Error in '${title}' data`}
+            </div>
         );
     }
 

@@ -140,6 +140,24 @@ class App extends Component {
         console.error(msg)
     }
 
+    buildGridTable = (key, title) => {
+        const { ripsData, classes } = this.props;
+        // if data exists, build grid item!
+        if (ripsData[key]) {
+            return (
+                <Grid item xs={12} className={classes.textCenter}>
+                    <CustomTable
+                        title={title}
+                        rawData={ripsData[key]}
+                        errorHandler={this.handleError}
+                    />
+                </Grid>
+            );
+        }
+        // otherwise, just return nothing
+        else return null;
+    }
+
     render() {
         const {
             classes, // styles
@@ -230,68 +248,65 @@ class App extends Component {
                 {/* Instructions */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <h1>Select the "correct" client data below!</h1>
-                    <h3 className={classes.description}>
+                    <h4 className={classes.description}>
                         Each table below shows data that is inconsistent
                         between client records. Therefore, please select
                         a cell in each row that represents the accurate
                         data for that field.
-                    </h3>
-                    <h3 className={classes.description}>
+                    </h4>
+                    <h4 className={classes.description}>
                         Example: If the Date of Birth field is shown below,
                         that means the clients entered have different Date of
                         Birth saved in their RIPS record. Select the
                         correct Date of Birth that will be saved in the
                         merged record.
-                    </h3>
+                    </h4>
                 </Grid>
 
                 {/* <Client Basic Information> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    <CustomTable
-                        title="Client Basic Information"
-                        rawData={ripsData[R_KEYS.CLIENT_BASIC_INFORMATION]}
-                        errorHandler={this.handleError}
-                    />
-                </Grid>
+                {this.buildGridTable(
+                    R_KEYS.CLIENT_BASIC_INFORMATION,
+                    'Client Basic Information'
+                )}
 
-                {/* TODO: <Addresses> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Addresses
-                </Grid>
+                {/* <Addresses> Table */}
+                {this.buildGridTable(
+                    R_KEYS.ADDRESSES,
+                    'Addresses'
+                )}
                 
                 {/* <Notes> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    <CustomTable
-                        title="Notes"
-                        rawData={ripsData[R_KEYS.NOTES]}
-                        errorHandler={this.handleError}
-                    />
-                </Grid>
-                
-                {/* TODO: <Aliases> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Aliases
-                </Grid>
+                {this.buildGridTable(
+                    R_KEYS.NOTES,
+                    'Basic Notes'
+                )}
 
-                {/* TODO: <Relatives> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Relatives
-                </Grid>
+                {/* <Relatives> Table */}
+                {this.buildGridTable(
+                    R_KEYS.RELATIVES,
+                    'Relatives'
+                )}
 
-                {/* TODO: <Contacts> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Contacts
-                </Grid>
+                {/* <Contacts> Table */}
+                {this.buildGridTable(
+                    R_KEYS.CONTACTS,
+                    'Contacts'
+                )}
 
-                {/* TODO: <Files (normal and private)> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Files (normal and pivate)
-                </Grid>
+                {/* <Files (normal)> Table */}
+                {this.buildGridTable(
+                    R_KEYS.FILES,
+                    'Files'
+                )}
 
-                {/* TODO: <Actions / services> Table */}
-                <Grid item xs={12} className={classes.textCenter}>
-                    Actions / Services
-                </Grid>
+                {/* <History> Table */}
+                {this.buildGridTable(
+                    R_KEYS.HISTORY,
+                    'Action History'
+                )}
+
+                {/* Skipping for now - <Aliases> and
+                <Private Files> Tables */}
             </Grid>
         );
     }

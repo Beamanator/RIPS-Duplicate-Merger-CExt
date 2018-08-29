@@ -2,17 +2,20 @@
 
 // page names
 export const RIPS_KEYS = {
-    // client details
-    CLIENT_BASIC_INFORMATION: 'CtrlClientBasicInformation',
-    ADDRESSES: 'CtrlAddresses',
-    NOTES: 'CtrlNotes',
-    // ALIASES: 'CtrlAliases',
-    RELATIVES: 'CtrlRelatives',
-    CONTACTS: 'CtrlContacts',
-    FILES: 'CtrlFiles',
-    // PRIVATE_FILES: 'PRIVATE_FILES',
-    // case notes
+    // currently imported pages
+    CLIENT_BASIC_INFORMATION:
+                'CtrlClientBasicInformation',
+    ADDRESSES:  'CtrlAddresses',
+    NOTES:      'CtrlNotes',
+    RELATIVES:  'CtrlRelatives',
+    CONTACTS:   'CtrlContacts',
+    FILES:      'CtrlFiles',
     HISTORY:    'CtrlHistory',
-    // maybe services
+    
+    // skipped for now:
+    // ALIASES: 'CtrlAliases',
+    // PRIVATE_FILES: 'PRIVATE_FILES',
+    
+    // not needed:
     // ADVANCED_SEARCH: 'ADVANCED_SEARCH'
 }
