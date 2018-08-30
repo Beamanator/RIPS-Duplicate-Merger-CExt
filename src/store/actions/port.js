@@ -64,8 +64,8 @@ export const backgroundPortInit = (chrome) => {
                 // called when rips data import has completed
                 case portCodes.BKG_RA_IMPORT_DONE:
                     // tell import we're done and are successful
-                    dispatch(actions.ripsFetchSuccess(msg.data));
                     console.warn('done - data:', msg.data);
+                    dispatch(actions.ripsFetchSuccess(msg.data));
                     // TODO: something with the data now!
                     break;
 

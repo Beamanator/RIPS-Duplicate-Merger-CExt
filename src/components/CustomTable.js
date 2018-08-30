@@ -170,16 +170,19 @@ const convertRawData = (props) => {
         // TODO: comment this out to make it more clear!! plzzz
         return Object.entries(Object.entries(rawData)
             .reduce((output, [_, data_container]) => {
+                // if (data_container.length === 0) return {};
                 data_container.forEach((client_data_array, client_index) => {
-                    client_data_array.forEach((client_data, data_type_index) => {
-                        // console.log(client_data, index);
-                        Object.entries(client_data).forEach(([data_key, data_value]) => {
-                            const data_key_index = `${data_type_index + 1}. ${data_key} `;
-                            if (!output[data_key_index]) output[data_key_index] = [];
-                            output[data_key_index][client_index] = data_value;
+                    if (client_data_array) {
+                        client_data_array.forEach((client_data, data_type_index) => {
+                            // console.log(client_data, index);
+                            Object.entries(client_data).forEach(([data_key, data_value]) => {
+                                const data_key_index = `${data_type_index + 1}. ${data_key} `;
+                                if (!output[data_key_index]) output[data_key_index] = [];
+                                output[data_key_index][client_index] = data_value;
+                            })
                         })
-                    })
-                })
+                    }
+                });
                 return output
             }, {})
         )
