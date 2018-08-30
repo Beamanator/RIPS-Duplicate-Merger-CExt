@@ -8,7 +8,7 @@ import {
 // custom table Component
 const CustomTableCell = (props) => {
     return (
-        <TableCell {...props} onClick={props.cellClick} />
+        <TableCell {...props} />
     )
 }
 

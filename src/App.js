@@ -141,8 +141,14 @@ class App extends Component {
     }
 
     buildGridTable = (config) => {
-        const { key, title, type="basic" } = config;
+        const {
+            key, title,
+            type="basic",
+            multiSelect=false
+        } = config;
+        
         const { ripsData, classes } = this.props;
+        
         // if data exists, build grid item!
         if (ripsData[key]) {
             return (
@@ -152,6 +158,7 @@ class App extends Component {
                         rawData={ripsData[key]}
                         errorHandler={this.handleError}
                         type={type}
+                        multiSelect={multiSelect}
                     />
                 </Grid>
             );
@@ -163,8 +170,8 @@ class App extends Component {
     render() {
         const {
             classes, // styles
-            bkgPort, // port to background page
-            ripsData, // data from RIPS
+            // bkgPort, // port to background page
+            // ripsData, // data from RIPS
         } = this.props;
 
         const {
@@ -275,7 +282,8 @@ class App extends Component {
                 {this.buildGridTable({
                     key: R_KEYS.ADDRESSES,
                     title: 'Addresses',
-                    type: 'lists'
+                    type: 'lists',
+                    multiSelect: true
                 })}
                 
                 {/* <Notes> Table */}
