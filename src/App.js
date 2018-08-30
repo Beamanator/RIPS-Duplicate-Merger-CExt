@@ -140,7 +140,8 @@ class App extends Component {
         console.error(msg)
     }
 
-    buildGridTable = (key, title) => {
+    buildGridTable = (config) => {
+        const { key, title, type="basic" } = config;
         const { ripsData, classes } = this.props;
         // if data exists, build grid item!
         if (ripsData[key]) {
@@ -150,6 +151,7 @@ class App extends Component {
                         title={title}
                         rawData={ripsData[key]}
                         errorHandler={this.handleError}
+                        type={type}
                     />
                 </Grid>
             );
@@ -264,46 +266,51 @@ class App extends Component {
                 </Grid>
 
                 {/* <Client Basic Information> Table */}
-                {this.buildGridTable(
-                    R_KEYS.CLIENT_BASIC_INFORMATION,
-                    'Client Basic Information'
-                )}
+                {this.buildGridTable({
+                    key: R_KEYS.CLIENT_BASIC_INFORMATION,
+                    title: 'Client Basic Information'
+                })}
 
                 {/* <Addresses> Table */}
-                {/* {this.buildGridTable(
-                    R_KEYS.ADDRESSES,
-                    'Addresses'
-                )} */}
+                {this.buildGridTable({
+                    key: R_KEYS.ADDRESSES,
+                    title: 'Addresses',
+                    type: 'lists'
+                })}
                 
                 {/* <Notes> Table */}
-                {this.buildGridTable(
-                    R_KEYS.NOTES,
-                    'Basic Notes'
-                )}
+                {this.buildGridTable({
+                    key: R_KEYS.NOTES,
+                    title: 'Basic Notes'
+                })}
 
                 {/* <Relatives> Table */}
-                {/* {this.buildGridTable(
-                    R_KEYS.RELATIVES,
-                    'Relatives'
-                )} */}
+                {this.buildGridTable({
+                    key: R_KEYS.RELATIVES,
+                    title: 'Relatives',
+                    type: 'lists'
+                })}
 
                 {/* <Contacts> Table */}
-                {/* {this.buildGridTable(
-                    R_KEYS.CONTACTS,
-                    'Contacts'
-                )} */}
+                {this.buildGridTable({
+                    key: R_KEYS.CONTACTS,
+                    title: 'Contacts',
+                    type: 'lists'
+                })}
 
                 {/* <Files (normal)> Table */}
-                {/* {this.buildGridTable(
-                    R_KEYS.FILES,
-                    'Files'
-                )} */}
+                {this.buildGridTable({
+                    key: R_KEYS.FILES,
+                    title: 'Files',
+                    type: 'lists'
+                })}
 
                 {/* <History> Table */}
-                {/* {this.buildGridTable(
-                    R_KEYS.HISTORY,
-                    'Action History'
-                )} */}
+                {this.buildGridTable({
+                    key: R_KEYS.HISTORY,
+                    title: 'Action History',
+                    type: 'lists'
+                })}
 
                 {/* Skipping for now - <Aliases> and
                 <Private Files> Tables */}

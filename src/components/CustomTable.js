@@ -59,7 +59,11 @@ const styles = theme => ({
  * @param {function} errorHandler - error handler function
  * @param {string} title - table title
  */
-const convertRawData = (rawData, errorHandler, title) => {
+const convertRawData = (props) => {
+    const {
+        rawData, errorHandler, title, type
+    } = props;
+
     // throw error if data is empty
     if (!rawData || Object.keys(rawData).length === 0) {
         let msg = `Data passed to ${title} table is empty!`;
@@ -67,83 +71,150 @@ const convertRawData = (rawData, errorHandler, title) => {
         return;
     }
 
-    // get array of entries in raw data
-    return Object.entries( rawData )
-    // add raw data arrays to category
-    .map(dataCategory => {
-        const key = dataCategory[0];
-        let data = dataCategory[1];
+    if (type === "basic") {
+        // get array of entries in raw data
+        return Object.entries( rawData )
+        // add raw data arrays to category
+        .map(dataCategory => {
+            const key = dataCategory[0];
+            let data = dataCategory[1];
 
-        const { pass: dataTypesMatch, dataType } =
-        // convert data elements into their native "types"
-        data.map(e => typeof(e))
-        // remove undefined elements (typeof(undefined) is "undefined")
-        .filter(type => type !== 'undefined')
-        // pass if defined data's types are all the same!
-        .reduce((container, dataType) => {
-            // if type hasn't been set, pass the dataType
-            if (!container.dataType) {
-                return {
-                    pass: container.pass,
-                    dataType: dataType
+            const { pass: dataTypesMatch, dataType } =
+            // convert data elements into their native "types"
+            data.map(e => typeof(e))
+            // remove undefined elements (typeof(undefined) is "undefined")
+            .filter(type => type !== 'undefined')
+            // pass if defined data's types are all the same!
+            .reduce((container, dataType) => {
+                // if type hasn't been set, pass the dataType
+                if (!container.dataType) {
+                    return {
+                        pass: container.pass,
+                        dataType: dataType
+                    }
                 }
+                // dataType has ben set - only pass if current
+                // -> dataType matches old dataType
+                else {
+                    return {
+                        pass: dataType === container.dataType,
+                        dataType: container.dataType
+                    }
+                }
+            }, { pass: true, dataType: '' });
+            
+            // If not all elements have same data type (or are undefined),
+            // -> something probably went wrong. Throw error.
+            if (!dataTypesMatch) {
+                let err = key + ' has mismatched data types' +
+                    ' in data array! why?? fix this!';
+                console.error(err, dataCategory);
+                // add errors to output
+                return [key, ...data.map(e => 'ERROR')]
             }
-            // dataType has ben set - only pass if current
-            // -> dataType matches old dataType
+            // else, all dataTypes are the same! onward!
             else {
-                return {
-                    pass: dataType === container.dataType,
-                    dataType: container.dataType
+                // depending on the type, return different data
+                switch(dataType) {
+                    case 'string': // do nothing, just display data!
+                        break;
+                    case 'number': // do nothing, except add "confused" warning
+                        console.warn('Huh? How is there a "number" dataType?');
+                        break;
+                    case 'object':
+                        // throw warning if it's an object, not array :D
+                        if (Array.isArray(data[0])) {
+                            console.warn(
+                                'UNSURE HOW TO HANDLE THESE OBJECTS!',
+                                'Should they be Arrays? Hmmmm...'
+                            );
+                        } else {
+                            // arrays will be handled later - at the end
+                            // -> of this handling function. So skip
+                            // -> processing now
+                            return dataCategory;
+                        }
+                        break;
+                    case 'boolean':
+                        data = data.map(e => e ? 'checked' : 'not checked');
+                        break;
+                    case 'undefined': // all undefined - these will get
+                        // -> filtered out later - don't worry now
+                        break;
+                    default:
+                        console.error(
+                            'How did we get here?? Data doesnt match' +
+                            ' any expected values somehow...',
+                            key, dataType
+                        );
                 }
+                // finally, return the new array format
+                return [key, ...data]
             }
-        }, { pass: true, dataType: '' });
-        
-        // If not all elements have same data type (or are undefined),
-        // -> something probably went wrong. Throw error.
-        if (!dataTypesMatch) {
-            let err = key + ' has mismatched data types' +
-                ' in data array! why?? fix this!';
-            console.error(err, dataCategory);
-            // add errors to output
-            return [key, ...data.map(e => 'ERROR')]
-        }
-        // else, all dataTypes are the same! onward!
-        else {
-            // depending on the type, return different data
-            switch(dataType) {
-                case 'string': // do nothing, just display data!
-                    break;
-                case 'number': // do nothing, except add "confused" warning
-                    console.warn('Huh? How is there a "number" dataType?');
-                    break;
-                case 'object':
-                    // TODO: throw warning if it's an object, not array :D
-                    break;
-                case 'boolean':
-                    data = data.map(e => e ? 'checked' : 'not checked');
-                    break;
-                case 'undefined': // all undefined - these will get
-                    // -> filtered out later - don't worry now
-                    break;
-                default:
-                    console.error('How did we get here?? Data doesnt match' +
-                    ' any expected values somehow...', key, dataType);
-            }
-            return [key, ...data]
-        }
-    })
-    // TODO: filter -> hide if all values are empty (e[1], e[2], e[3])
-    // TODO: if elements (index 1, 2, or 3) are arrays, go deeper
+        })
+        // filter -> hide row if all values are "blank"
+        .filter(data => {
+            // make array holding 'blank' values (0 and false are not blank!)
+            const blankTypes = [undefined, null, ''];
+            
+            // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
+            return !(
+                blankTypes.includes(data[1]) &&
+                blankTypes.includes(data[2]) &&
+                blankTypes.includes(data[3])
+            );
+        });
+    }
+    // handle arrays of arrays
+    else if (type === 'lists') {
+        // TODO: comment this out to make it more clear!! plzzz
+        return Object.entries(Object.entries(rawData)
+            .reduce((output, [_, data_container]) => {
+                data_container.forEach((client_data_array, client_index) => {
+                    client_data_array.forEach((client_data, data_type_index) => {
+                        // console.log(client_data, index);
+                        Object.entries(client_data).forEach(([data_key, data_value]) => {
+                            const data_key_index = `${data_type_index + 1}. ${data_key} `;
+                            if (!output[data_key_index]) output[data_key_index] = [];
+                            output[data_key_index][client_index] = data_value;
+                        })
+                    })
+                })
+                return output
+            }, {})
+        )
+        // change objs to correct format arr format
+        .map(e => [e[0], ...e[1]])
+        // filter -> hide row if all values are "blank"
+        .filter(data => {
+            // make array holding 'blank' values (0 and false are not blank!)
+            const blankTypes = [undefined, null, ''];
+            
+            // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
+            return !(
+                blankTypes.includes(data[1]) &&
+                blankTypes.includes(data[2]) &&
+                blankTypes.includes(data[3])
+            );
+        });
+
+    }
+    // handle unknown type
+    else {
+        const msg = `Type <${type}> unknown?? What is this??`;
+        errorHandler(msg);
+    }
 }
 
 const CustomTable = (props) => {
     const {
         classes,
-        rawData,
+        // rawData,
         errorHandler,
-        title
+        title,
     } = props;
-    const data = convertRawData(rawData, errorHandler, title);
+    const data = convertRawData(props);
+    console.log('Converted data:', data);
 
     // if data is empty, don't display table!
     if (!data || data.length === 0) {

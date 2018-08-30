@@ -56,7 +56,7 @@ const startImport = (clientNum) => {
 			switch(elem.type) {
 				case 'text':
 				case 'textarea':
-					val = elem.value;
+					val = elem.value.trim();
 					break;
 
 				case 'checkbox':
@@ -64,7 +64,7 @@ const startImport = (clientNum) => {
 					break;
 
 				case 'select-one':
-					val = elem.selectedOptions[0].innerText;
+					val = elem.selectedOptions[0].innerText.trim();
 					break;
 
 				default:
