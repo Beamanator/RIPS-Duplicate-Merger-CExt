@@ -1,72 +1,98 @@
-// TODO: delete this file after importing data from rips
-// rips page and field keys
-import {
-    RIPS_KEYS as R_KEYS
-} from '../../shared/ripsKeys';
+// TODO: comment out this file for production
+let initialData = {}
 
-/**
- * Function creates empty arrays next to each field name to make table populating
- * easy.
- * Example: Takes data like this:
- * ['FIRST_NAME', 'LAST_NAME', ...]
- * and turns it into something like this:
- * {
- *  'FIRST_NAME': ['', '', ''],
- *  'LAST_NAME' : ['', '', ''], ...
- * }
- *
- * @param {object} fieldArr - array of RIPS fields
- * @param {number} numEmpty - number of empty slots to add next to each field
- * @returns converted array (see function description)
- */
-const createEmptyData = (fieldArr, numEmpty) => {
-    let container = {};
-
-    // build array of empty strings, with length numEmpty
-    const emptyStrArr = [...Array(numEmpty)]
-        .map(_ => '');
-
-    // map empty string arrays to each data category
-    fieldArr.forEach(category => {
-        container[category] = emptyStrArr
-    });
-
-    return container;
+if (process.env.NODE_ENV === 'development') {
+    initialData = {
+        CtrlAddresses: {
+            ADDRESSES: [
+                [
+                    {'first line': '', phone: ''},
+                    {'first line': 'NOT empty', phone: '1234'}
+                ],
+                [],
+                [
+                    {'first line': '', phone: ''}
+                ]
+            ]
+        },
+        CtrlClientBasicInformation: {
+            'First Name': ["Alex", "Joe", "Bill"],
+            'Date of Birth': ["The Man", "Schmoe", "Sacket"],
+            'Check1?': [false, true, true],
+            'Check2?': [true, false, false],
+            'Empty1': ["", "", ""],
+            'Middle': ["", 'Here!', ""],
+            'First': ["Here!", "", ""],
+            'End': ["", "", "Here!"],
+            'Crazy text': ['oh\nbaby!', 'next oneis long', 'OIWENFAOIWNEF AINWEFO NIAWEOI FNAOIWENF AOIWNEF OAIN'],
+        },
+        CtrlContacts: {
+            CONTACTS: [
+                [],
+                [
+                    {'first name': 'bill', type: 'save children'},
+                    {'first name': '', type: ''}
+                ],
+                [
+                    {'first name': 'john', type: 'eat waffles'}
+                ]
+            ]
+        },
+        CtrlFiles: {
+            FILES: [
+                [],
+                [
+                    {filename: 'remove comments', date: 'never'},
+                    {filename: 'do something', date: 'idk'}
+                ],
+                [
+                    {filename: '', date: ''}
+                ]
+            ]
+        },
+        CtrlHistory: {
+            action1: [
+                // skip
+                ,[
+                    {date: 'yesterday', name: 'action1'}
+                ],
+            ],
+            action2: [
+                [
+                    {date: '1-2', name: 'action2'},
+                    {date: '1-3', name: 'action2'},
+                    {date: '1-4', name: 'action2'}
+                ],
+                // skip
+                ,[
+                    {date: '2-1', name: 'action2'},
+                    {date: '2-2', name: 'action2'}
+                ]
+            ],
+            action3: [
+                [
+                    {date: '3333', name: 'action3'}
+                ],,
+            ]
+        },
+        CtrlNotes: {
+            Notes: [
+                'oofda this is a long ish note. just seeing what happens when we go big',
+                'note with \ttabs and\nnewlines ;)',
+                ''
+            ]
+        },
+        CtrlRelatives: {
+            RELATIVES: [
+                [
+                    {name: 'bill', relation: 'bro'},
+                    {name: 'jane', relation: 'mom'}
+                ],
+                [],
+                []
+            ]
+        }
+    }
 }
-
-// destructure keys from F_KEYS so we don't have to do F_KEYS.FIRST_NAME, ...
-const {
-    // client basic information
-    FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
-    EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
-    ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS,
-    // addresses (dynamic - TODO)
-
-    // notes
-    NOTES
-    // TODO: add the rest here...
-
-} = F_KEYS;
-
-// TODO: replace test data with real data from background.js?
-// create empty, initial data
-export const sampleData = {
-    // client basic information
-    [R_KEYS.CLIENT_BASIC_INFORMATION]: createEmptyData([
-        FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
-        EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY, COUNTRY_OF_ORIGIN,
-        ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS
-    ], 3),
-
-    // TODO: Addresses (dynamic)
-    // [R_KEYS.ADDRESSES]: createEmptyData([ ... ]),
-
-    // Notes
-    [R_KEYS.NOTES]: createEmptyData([
-        NOTES
-    ]),
-
-    // TODO: add the rest here...
-};
-
-// export default sampleData;
+// else {} // -> do nothing
+export default initialData;

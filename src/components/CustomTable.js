@@ -7,17 +7,7 @@ import {
     Paper
 } from '@material-ui/core';
 
-// custom table Component
-const CustomTableCell = withStyles(theme => ({
-    head: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-        fontSize: 16
-    },
-    body: {
-        fontSize: 14,
-    },
-}))(TableCell);
+import CustomTableCell from './CustomTableCell';
 
 // regular component styles
 const styles = theme => ({
@@ -209,6 +199,10 @@ const convertRawData = (props) => {
     }
 }
 
+const onCellClick = () => {
+    console.log('clicked');
+}
+
 const CustomTable = (props) => {
     const {
         classes,
@@ -251,9 +245,15 @@ const CustomTable = (props) => {
                             <CustomTableCell component="th" scope="row">
                                 {n[0]}
                             </CustomTableCell>
-                            <CustomTableCell>{n[1]}</CustomTableCell>
-                            <CustomTableCell>{n[2]}</CustomTableCell>
-                            <CustomTableCell>{n[3]}</CustomTableCell>
+                            <CustomTableCell
+                                cellClick={onCellClick}
+                            >{n[1]}</CustomTableCell>
+                            <CustomTableCell
+                                cellClick={onCellClick}
+                            >{n[2]}</CustomTableCell>
+                            <CustomTableCell
+                                cellClick={onCellClick}
+                            >{n[3]}</CustomTableCell>
                         </TableRow>
                     )}
                 </TableBody>
