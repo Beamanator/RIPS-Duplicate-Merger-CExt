@@ -133,7 +133,7 @@ class App extends Component {
     }
 
     handleClear = () => {
-        // TODO: also clear client data?
+        // TODO: also clear client / rips data? 
         // Clear client nums, and reset client#Valid variables
         this.setState({
             client1: '', client1Valid: false,
@@ -150,6 +150,8 @@ class App extends Component {
         this.setState({ mergeDialogOpen: false });
     }
     handleMergeDialogAgree = () => {
+        // close dialog
+        this.handleMergeDialogClose();
         // TODO: call action
         // TODO: throw warning for any / all sections that aren't selected?
         console.log('DO MERGE');
@@ -384,6 +386,7 @@ class App extends Component {
                 </Grid> : null}
 
                 {/* "Merge?" dialog! */}
+                {/* TODO: populate with ... my own text & stuff */}
                 <Dialog
                     open={mergeDialogOpen}
                     onClose={this.handleMergeDialogClose}
@@ -401,7 +404,7 @@ class App extends Component {
                         <Button onClick={this.handleMergeDialogClose} color="primary">
                             Disagree
                         </Button>   
-                        <Button onClick={this.handleMergeDialogClose} color="primary" autoFocus>
+                        <Button onClick={this.handleMergeDialogAgree} color="primary" autoFocus>
                             Agree
                         </Button>
                     </DialogActions>
