@@ -10,7 +10,9 @@ import {
     Button,
     Grid,
     Paper,
-    TextField
+    TextField,
+    Dialog, DialogActions, DialogContent,
+    DialogContentText, DialogTitle
 } from '@material-ui/core';
 
 // redux store actions
@@ -27,7 +29,8 @@ class App extends Component {
         client2: '201815032', client2Valid: false,
         client3: '201814527', client3Valid: true, // valid cuz client3 can be empty
         importInProgress: false,
-        nodeEnv: process.env.NODE_ENV
+        nodeEnv: process.env.NODE_ENV,
+        mergeDialogOpen: false
     }
 
     componentDidMount() {
@@ -140,10 +143,16 @@ class App extends Component {
         });
     }
 
-    handleMerge = () => {
+    handleMergeDialogOpen = () => {
+        this.setState({ mergeDialogOpen: true });
+    }
+    handleMergeDialogClose = () => {
+        this.setState({ mergeDialogOpen: false });
+    }
+    handleMergeDialogAgree = () => {
         // TODO: call action
         // TODO: throw warning for any / all sections that aren't selected?
-        console.log('merge time?');
+        console.log('DO MERGE');
     }
 
     handleError = (msg) => {
@@ -189,7 +198,8 @@ class App extends Component {
 
         const {
             client1, client2, client3,
-            importInProgress
+            importInProgress,
+            mergeDialogOpen
         } = this.state;
 
         return (
@@ -365,13 +375,37 @@ class App extends Component {
                                 className={classes.button}
                                 variant="contained"
                                 size="large"
-                                onClick={this.handleMerge}
+                                onClick={this.handleMergeDialogOpen}
                             >
                                 Merge
                             </Button>
                         </Grid>
                     </Grid>
                 </Grid> : null}
+
+                {/* "Merge?" dialog! */}
+                <Dialog
+                    open={mergeDialogOpen}
+                    onClose={this.handleMergeDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Let Google help apps determine location. This means sending anonymous location data to
+                            Google, even when no apps are running.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleMergeDialogClose} color="primary">
+                            Disagree
+                        </Button>   
+                        <Button onClick={this.handleMergeDialogClose} color="primary" autoFocus>
+                            Agree
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Grid>
         );
     }

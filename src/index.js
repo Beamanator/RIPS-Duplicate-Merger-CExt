@@ -35,7 +35,12 @@ const store = createStore(rootReducer, composeEnhancers(
 const app = (
     <Provider store={store}>
         {/* router wraps app, inside provider - if needed */}
-        <App />
+        
+        {/* div container solves appbar padding issue. */}
+        {/* See github issue: https://github.com/mui-org/material-ui/issues/7466 */}
+        <div style={{ padding: 20 }}>
+            <App />
+        </div>
     </Provider>
 )
 
