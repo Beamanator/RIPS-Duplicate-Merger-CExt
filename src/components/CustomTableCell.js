@@ -7,6 +7,14 @@ import {
 
 // custom table Component
 const CustomTableCell = (props) => {
+    // console.log(props)
+    // const { selected } = props;
+
+    // // TODO: what do we do here??
+    // if (selected) {
+    //     return <TableCell {...props} />
+    // }
+
     return (
         <TableCell {...props} />
     )
@@ -21,9 +29,9 @@ const styles = theme => ({
     body: {
         fontSize: 14,
         '&:hover': {
-            background: '#33eb91'
+            backgroundColor: '#33eb91'
         }
     }
-})
+});
 
 export default withStyles(styles)(CustomTableCell);

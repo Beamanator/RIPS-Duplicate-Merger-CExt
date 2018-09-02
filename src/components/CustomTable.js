@@ -27,6 +27,9 @@ const styles = theme => ({
         color: 'red',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    selected: {
+        backgroundColor: '#00a152'
     }
 });
 
@@ -222,12 +225,7 @@ class CustomTable extends Component {
     }
 
     onCellSelect = (row, col) => (event) => {
-        const cellElem = event.target;
         let selected = [...this.state.selected];
-
-        // change cell color
-        // TODO: only change color if the cell HAS DATA IN IT
-        cellElem.style.backgroundColor = '#00a152';
 
         // change logic depending on multiSelect
         if (this.props.multiSelect) {
@@ -239,7 +237,9 @@ class CustomTable extends Component {
             else {
                 selected[row][col] = null;
             }
-        } else {
+        }
+        // handle select / delect for single-select table
+        else {
             // if not selected, select!
             if (selected[row] !== col) {
                 selected[row] = col;
@@ -250,11 +250,24 @@ class CustomTable extends Component {
             }
         }
 
-        console.log('hi', row, col, selected )
+        this.setState({ selected: selected })
+    }
 
-        this.setState({
-            selected: selected
-        })
+    isSelected = (row, col) => {
+        const { selected } = this.state;
+        const { multiSelect, classes } = this.props;
+        // multi-select logic
+        if (multiSelect) {
+            // console.log('multi',selected[row][col])
+            return selected[row][col] === true ?
+                classes.selected : null
+        }
+        // single-select logic
+        else {
+            // console.log('single',selected[row], col)
+            return selected[row] === col ?
+                classes.selected : null
+        }
     }
     
     render() {
@@ -305,15 +318,15 @@ class CustomTable extends Component {
                                 </CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 0)}
-                                    // TODO: color these here!
+                                    className={this.isSelected(i, 0)}
                                 >{n[1]}</CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 1)}
-                                    // TODO: color these here!
+                                    className={this.isSelected(i, 1)}
                                 >{n[2]}</CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 2)}
-                                    // TODO: color these here!
+                                    className={this.isSelected(i, 2)}
                                 >{n[3]}</CustomTableCell>
                             </TableRow>
                         )}
