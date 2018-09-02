@@ -52,19 +52,20 @@ if (process.env.NODE_ENV === 'development') {
         },
         CtrlHistory: {
             action1: [
-                // skip
-                ,[
+                undefined,
+                [
                     {date: 'yesterday', name: 'action1'}
                 ],
+                undefined   
             ],
             action2: [
                 [
-                    {date: '1-2', name: 'action2'},
+                    {date: '1-2', name: 'action2', 3: 'three'},
                     {date: '1-3', name: 'action2'},
                     {date: '1-4', name: 'action2'}
                 ],
-                // skip
-                ,[
+                undefined,
+                [
                     {date: '2-1', name: 'action2'},
                     {date: '2-2', name: 'action2'}
                 ]
@@ -72,7 +73,9 @@ if (process.env.NODE_ENV === 'development') {
             action3: [
                 [
                     {date: '3333', name: 'action3'}
-                ],,
+                ],
+                undefined,
+                undefined
             ]
         },
         CtrlNotes: {

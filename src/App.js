@@ -130,14 +130,24 @@ class App extends Component {
     }
 
     handleClear = () => {
-        console.log('clicked Clear');
+        // TODO: also clear client data?
+        // Clear client nums, and reset client#Valid variables
+        this.setState({
+            client1: '', client1Valid: false,
+            client2: '', client2Valid: false,
+            client3: '', client3Valid: true,
+            importInProgress: false
+        });
+    }
 
-        // TODO: also clear tables and client nums, and 
-        // -> reset client#Valid variables
-        this.setState({ importInProgress: false });
+    handleMerge = () => {
+        // TODO: call action
+        // TODO: throw warning for any / all sections that aren't selected?
+        console.log('merge time?');
     }
 
     handleError = (msg) => {
+        // TODO: display these errors / warnings somewhere?
         console.error(msg)
     }
 
@@ -174,7 +184,7 @@ class App extends Component {
         const {
             classes, // styles
             // bkgPort, // port to background page
-            // ripsData, // data from RIPS
+            ripsData, // data from RIPS
         } = this.props;
 
         const {
@@ -334,8 +344,34 @@ class App extends Component {
                     multiSelect: true
                 })}
 
-                {/* Skipping for now - <Aliases> and
-                <Private Files> Tables */}
+                {/* Skipping for now - <Aliases> / <Private Files> Tables */}
+
+                {/* "Merge" button - begin RIPS merge! */}
+                {ripsData && Object.keys(ripsData).length > 0 ?
+                <Grid item xs={12} className={classes.textCenter}>
+                    <Grid container justify="center">
+                        <h4 className={classes.mergeDescriptionPadding}>
+                            When you're ready to merge two (or 3) client records
+                            in RIPS, make sure you've selected all of the data
+                            you want to be saved in the final record! You'll see
+                            all green boxes in the "Field Names" column when
+                            there's no forgotten data! Finally, just
+                            press "Merge" below!
+                        </h4>
+
+                        <Grid item xs={4}>
+                            <Button
+                                color="secondary"
+                                className={classes.button}
+                                variant="contained"
+                                size="large"
+                                onClick={this.handleMerge}
+                            >
+                                Merge
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid> : null}
             </Grid>
         );
     }
@@ -370,6 +406,10 @@ const styles = theme => ({
     description: {
         margin: '0 25%'
     },
+    mergeDescriptionPadding: {
+        margin: '0 25%',
+        padding: '20px'
+    }
 });
 
 const mapStateToProps = state => {

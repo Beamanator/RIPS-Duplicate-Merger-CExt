@@ -2,34 +2,6 @@
 //                           FUNCTIONS
 //--------------------------------------------------------------
 
-
-/**
- * Function converts month names into month numbers. Month names can either
- * be 3 letters (Ex: Jan, Mar, Sep...)
- * or full names (Ex: January, March, September...)
- * 
- * @param {string} month - 3 letter month, or full month name
- * @returns month number (Jan = 1, Sep = 9, etc...)
- */
-function Utils_GetMonthNumberFromName( month ) {
-	let monthTransObj = {
-		'JAN': 1,	'JANUARY': 	1,
-		'FEB': 2,	'FEBRUARY': 2,
-		'MAR': 3,	'MARCH': 	3,
-		'APR': 4,	'APRIL': 	4,
-		'MAY': 5,
-		'JUN': 6,	'JUNE': 	6,
-		'JUL': 7,	'JULY': 	7,
-		'AUG': 8,	'AUGUST': 	8,
-		'SEP': 9,	'SEPTEMBER': 9, 'SEPT': 9,
-		'OCT': 10,	'OCTOBER': 	10,
-		'NOV': 11,	'NOVEMBER': 11,
-		'DEC': 12,	'DECEMBER': 12
-	};
-
-	return monthTransObj[ month.toUpperCase() ];
-}
-
 /**
  * Returns a copy of the old object, with new properties from updatedProperties obj
  * @param {object} oldObject 
