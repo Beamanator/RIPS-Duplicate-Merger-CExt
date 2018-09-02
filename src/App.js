@@ -264,6 +264,9 @@ class App extends Component {
                         data for that field.
                     </h4>
                     <h4 className={classes.description}>
+                        ----------------------------------
+                    </h4>
+                    <h4 className={classes.description}>
                         Example: If the Date of Birth field is shown below,
                         that means the clients entered have different Date of
                         Birth saved in their RIPS record. Select the
@@ -296,28 +299,32 @@ class App extends Component {
                 {this.buildGridTable({
                     key: R_KEYS.RELATIVES,
                     title: 'Relatives',
-                    type: 'lists'
+                    type: 'lists',
+                    multiSelect: true
                 })}
 
                 {/* <Contacts> Table */}
                 {this.buildGridTable({
                     key: R_KEYS.CONTACTS,
                     title: 'Contacts',
-                    type: 'lists'
+                    type: 'lists',
+                    multiSelect: true
                 })}
 
                 {/* <Files (normal)> Table */}
                 {this.buildGridTable({
                     key: R_KEYS.FILES,
                     title: 'Files',
-                    type: 'lists'
+                    type: 'lists',
+                    multiSelect: true
                 })}
 
                 {/* <History> Table */}
                 {this.buildGridTable({
                     key: R_KEYS.HISTORY,
                     title: 'Action History',
-                    type: 'lists'
+                    type: 'lists',
+                    multiSelect: true
                 })}
 
                 {/* Skipping for now - <Aliases> and

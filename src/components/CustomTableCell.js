@@ -27,10 +27,7 @@ const styles = theme => ({
         fontSize: 16
     },
     body: {
-        fontSize: 14,
-        '&:hover': {
-            backgroundColor: '#33eb91'
-        }
+        fontSize: 14
     }
 });
 

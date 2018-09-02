@@ -28,8 +28,19 @@ const styles = theme => ({
         fontSize: 20,
         fontWeight: 'bold'
     },
-    selected: {
-        backgroundColor: '#00a152'
+    cellIsSelected: {
+        backgroundColor: '#357a38'
+    },
+    rowIsSelected: {
+        backgroundColor: '#6fbf73'
+    },
+    rowNotSelected: {
+        backgroundColor: '#ffcd38'
+    },
+    cellHover: {
+        '&:hover': {
+            backgroundColor: '#4caf50'
+        }
     }
 });
 
@@ -258,15 +269,37 @@ class CustomTable extends Component {
         const { multiSelect, classes } = this.props;
         // multi-select logic
         if (multiSelect) {
-            // console.log('multi',selected[row][col])
             return selected[row][col] === true ?
-                classes.selected : null
+                classes.cellIsSelected : null
         }
         // single-select logic
         else {
-            // console.log('single',selected[row], col)
             return selected[row] === col ?
-                classes.selected : null
+                classes.cellIsSelected : null
+        }
+    }
+
+    isRowSelected = (row) => {
+        const { selected } = this.state;
+        const {
+            multiSelect,
+            classes: {
+                rowIsSelected, rowNotSelected
+            }
+        } = this.props;
+
+        // multi-select logic
+        if (multiSelect) {
+            return (
+                selected[row][0] === true ||
+                selected[row][1] === true ||
+                selected[row][2] === true
+            ) ? rowIsSelected : rowNotSelected;
+        }
+        // single-select logic
+        else {
+            return selected[row] !== null ?
+                rowIsSelected : rowNotSelected;
         }
     }
     
@@ -313,20 +346,33 @@ class CustomTable extends Component {
                     <TableBody>
                         {data.map((n, i) =>
                             <TableRow className={classes.row} key={i}>
-                                <CustomTableCell component="th" scope="row">
+                                <CustomTableCell
+                                    component="th"
+                                    scope="row"
+                                    className={this.isRowSelected(i)}
+                                >
                                     {n[0]}
                                 </CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 0)}
-                                    className={this.isSelected(i, 0)}
+                                    className={[
+                                        this.isSelected(i, 0),
+                                        classes.cellHover
+                                    ].join(' ')}
                                 >{n[1]}</CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 1)}
-                                    className={this.isSelected(i, 1)}
+                                    className={[
+                                        this.isSelected(i, 1),
+                                        classes.cellHover
+                                    ].join(' ')}
                                 >{n[2]}</CustomTableCell>
                                 <CustomTableCell
                                     onClick={this.onCellSelect(i, 2)}
-                                    className={this.isSelected(i, 2)}
+                                    className={[
+                                        this.isSelected(i, 2),
+                                        classes.cellHover
+                                    ].join(' ')}
                                 >{n[3]}</CustomTableCell>
                             </TableRow>
                         )}
