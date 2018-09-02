@@ -9,41 +9,6 @@ import {
 
 import CustomTableCell from './CustomTableCell';
 
-// regular component styles
-const styles = theme => ({
-    root: {
-        width: '100%',
-        overflowX: 'auto'
-    },
-    table: {
-        minWidth: 700,
-    },
-    row: {
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.background.default
-        }
-    },
-    error: {
-        color: 'red',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-    cellIsSelected: {
-        backgroundColor: '#357a38'
-    },
-    rowIsSelected: {
-        backgroundColor: '#6fbf73'
-    },
-    rowNotSelected: {
-        backgroundColor: '#ffcd38'
-    },
-    cellHover: {
-        '&:hover': {
-            backgroundColor: '#4caf50'
-        }
-    }
-});
-
 class CustomTable extends Component {
     state = {
         selected: null,
@@ -54,7 +19,8 @@ class CustomTable extends Component {
         // format raw data as we like
         const data = this.convertRawData();
 
-        // initialize empty array of correct length and girth
+        // initialize empty array of correct length and girth for
+        // -> selected indices to be placed in
         const emptySelectionArr = data.map(e =>
             this.props.multiSelect ? [] : null);
 
@@ -62,7 +28,7 @@ class CustomTable extends Component {
         this.setState({
             data: data,
             selected: emptySelectionArr
-        })
+        });
     }
 
     /**
@@ -97,13 +63,14 @@ class CustomTable extends Component {
         }
 
         if (type === "basic") {
-            // get array of entries in raw data
+            // get array of Obj's props in raw data
             return Object.entries( rawData )
-            // add raw data arrays to category
+            // add raw data arrays to category / field name / key
             .map(dataCategory => {
                 const key = dataCategory[0];
                 let data = dataCategory[1];
 
+                // destructure vars from final .reduce function
                 const { pass: dataTypesMatch, dataType } =
                 // convert data elements into their native "types"
                 data.map(e => typeof(e))
@@ -111,7 +78,7 @@ class CustomTable extends Component {
                 .filter(type => type !== 'undefined')
                 // pass if defined data's types are all the same!
                 .reduce((container, dataType) => {
-                    // if type hasn't been set, pass the dataType
+                    // if type hasn't been set, set dataType
                     if (!container.dataType) {
                         return {
                             pass: container.pass,
@@ -161,6 +128,8 @@ class CustomTable extends Component {
                             }
                             break;
                         case 'boolean':
+                            // for checkboxes. turn 'true' into 'checked', false
+                            // -> into 'not checked'
                             data = data.map(e => e ? 'checked' : 'not checked');
                             break;
                         case 'undefined': // all undefined - these will get
@@ -179,7 +148,8 @@ class CustomTable extends Component {
             })
             // filter -> hide row if all values are "blank"
             .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank!)
+                // make array holding 'blank' values (0 and false are not blank
+                // -> since they are valid numbers / boolean values)
                 const blankTypes = [undefined, null, ''];
                 
                 // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
@@ -192,21 +162,40 @@ class CustomTable extends Component {
         }
         // handle arrays of arrays
         else if (type === 'lists') {
-            // TODO: comment this out to make it more clear!! plzzz
-            return Object.entries(Object.entries(rawData)
+            return Object.entries(
+                // get array of Obj's props in raw data
+                Object.entries(rawData)
+                // don't worry about keys, process inner arrays
                 .reduce((output, [_, data_container]) => {
                     // if (data_container.length === 0) return {};
+                    // for each data container array...
                     data_container.forEach((client_data_array, client_index) => {
-                        if (client_data_array) {
-                            client_data_array.forEach((client_data, data_type_index) => {
-                                // console.log(client_data, index);
-                                Object.entries(client_data).forEach(([data_key, data_value]) => {
-                                    const data_key_index = `${data_type_index + 1}. ${data_key} `;
-                                    if (!output[data_key_index]) output[data_key_index] = [];
-                                    output[data_key_index][client_index] = data_value;
-                                })
-                            })
-                        }
+                        // quit if data array doesn't exist (this happens often in
+                        // -> history arrays
+                        if (!client_data_array) return;
+                        // for client's data array...
+                        client_data_array.forEach((client_data, data_index) => {
+                            // convert each object's props to array
+                            Object.entries(client_data)
+                            // for each data prob, get key and value
+                            .forEach(([data_key, data_value]) => {
+                                // calculate new field key name (including
+                                // -> client index
+                                const data_index_key = `${data_index + 1}. ${data_key}`;
+                                
+                                // create empty array if not present yet
+                                if (!output[data_index_key]) {
+                                    output[data_index_key] = [];
+                                }
+
+                                // add data to correct index in output object & arrays
+                                output[data_index_key][client_index] = data_value;
+                                
+                                // also add a 5th col value (data_index) - should
+                                // -> not display, just to help selecting data
+                                output[data_index_key][3] = data_index;
+                            });
+                        });
                     });
                     return output
                 }, {})
@@ -215,7 +204,8 @@ class CustomTable extends Component {
             .map(e => [e[0], ...e[1]])
             // filter -> hide row if all values are "blank"
             .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank!)
+                // make array holding 'blank' values (0 and false are not blank
+                // -> since they are valid numbers / boolean values)
                 const blankTypes = [undefined, null, ''];
                 
                 // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
@@ -236,18 +226,34 @@ class CustomTable extends Component {
     }
 
     onCellSelect = (row, col) => (event) => {
-        let selected = [...this.state.selected];
+        const { selected: oldSelected, data } = this.state;
+
+        // FIXME: is this deep enough cloning?
+        let selected = [...oldSelected];
 
         // change logic depending on multiSelect
         if (this.props.multiSelect) {
-            // if not selected, select!
-            if (!selected[row][col]) {
-                selected[row][col] = true;
-            }
-            // else, de-select
-            else {
-                selected[row][col] = null;
-            }
+            // Select all rows of
+            // -> the specified column at the same time
+            // 1) get selected row's client index
+            const selectedClientIndex = data[row][4];
+            // 1) loop through data, looking for same client index
+            data.forEach((dataRow, dataRowIndex) => {
+                const clientIndex = dataRow[4];
+
+                // only worry about rows that match selected
+                // -> client index
+                if (clientIndex === selectedClientIndex) {
+                    // if not selected, select!
+                    if (!selected[dataRowIndex][col]) {
+                        selected[dataRowIndex][col] = true;
+                    }
+                    else {
+                        // else, de-select
+                        selected[dataRowIndex][col] = null;
+                    }
+                }
+            });
         }
         // handle select / delect for single-select table
         else {
@@ -302,20 +308,29 @@ class CustomTable extends Component {
                 rowIsSelected : rowNotSelected;
         }
     }
+
+    // set up click listener & className(s) for custom table cell with
+    // -> populated text!
+    getInteractiveTableCellProps = (row, col) => ({
+        onClick: this.onCellSelect(row, col),
+        className: [
+            this.isSelected(row, col),
+            this.props.classes.cellHover
+        ].join(' ')
+    })
     
     render() {
         const {
             classes,
             errorHandler,
-            // multiSelect
             title,
+            numCols
         } = this.props;
 
         const {
             data,
-            selected
+            // selected
         } = this.state;
-
 
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
@@ -340,40 +355,37 @@ class CustomTable extends Component {
                             <CustomTableCell>Field Names</CustomTableCell>
                             <CustomTableCell>Client #1</CustomTableCell>
                             <CustomTableCell>Client #2</CustomTableCell>
-                            <CustomTableCell>Client #3</CustomTableCell>
+                            {numCols === 2 ? null : 
+                                <CustomTableCell>Client #3</CustomTableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map((n, i) =>
-                            <TableRow className={classes.row} key={i}>
+                        {data.map((n, row) =>
+                            <TableRow className={classes.row} key={row}>
                                 <CustomTableCell
                                     component="th"
                                     scope="row"
-                                    className={this.isRowSelected(i)}
+                                    className={this.isRowSelected(row)}
                                 >
                                     {n[0]}
                                 </CustomTableCell>
-                                <CustomTableCell
-                                    onClick={this.onCellSelect(i, 0)}
-                                    className={[
-                                        this.isSelected(i, 0),
-                                        classes.cellHover
-                                    ].join(' ')}
-                                >{n[1]}</CustomTableCell>
-                                <CustomTableCell
-                                    onClick={this.onCellSelect(i, 1)}
-                                    className={[
-                                        this.isSelected(i, 1),
-                                        classes.cellHover
-                                    ].join(' ')}
-                                >{n[2]}</CustomTableCell>
-                                <CustomTableCell
-                                    onClick={this.onCellSelect(i, 2)}
-                                    className={[
-                                        this.isSelected(i, 2),
-                                        classes.cellHover
-                                    ].join(' ')}
-                                >{n[3]}</CustomTableCell>
+                                {[1,2,3].map((i, col) => {
+                                    if (i > numCols) return null;
+
+                                    let props = { key: `${row}-${col}` };
+                                    
+                                    if (n[i] && n[i].length > 0) {
+                                        props = {
+                                            ...props,
+                                            ...this.getInteractiveTableCellProps(row, col)
+                                        }
+                                    }
+
+                                    return <CustomTableCell {...props} >
+                                        {n[i]}
+                                    </CustomTableCell>
+                                })}
                             </TableRow>
                         )}
                     </TableBody>
@@ -382,5 +394,40 @@ class CustomTable extends Component {
         );
     }
 };
+
+// regular component styles
+const styles = theme => ({
+    root: {
+        width: '100%',
+        overflowX: 'auto'
+    },
+    table: {
+        minWidth: 700,
+    },
+    row: {
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.background.default
+        }
+    },
+    error: {
+        color: 'red',
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    cellIsSelected: {
+        backgroundColor: '#357a38'
+    },
+    rowIsSelected: {
+        backgroundColor: '#6fbf73'
+    },
+    rowNotSelected: {
+        backgroundColor: '#ffcd38'
+    },
+    cellHover: {
+        '&:hover': {
+            backgroundColor: '#4caf50'
+        }
+    }
+});
 
 export default withStyles(styles)(CustomTable);

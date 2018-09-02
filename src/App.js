@@ -132,7 +132,8 @@ class App extends Component {
     handleClear = () => {
         console.log('clicked Clear');
 
-        // enable import button
+        // TODO: also clear tables and client nums, and 
+        // -> reset client#Valid variables
         this.setState({ importInProgress: false });
     }
 
@@ -148,6 +149,7 @@ class App extends Component {
         } = config;
         
         const { ripsData, classes } = this.props;
+        const { client3, client3Valid } = this.state;
         
         // if data exists, build grid item!
         if (ripsData[key]) {
@@ -159,6 +161,7 @@ class App extends Component {
                         errorHandler={this.handleError}
                         type={type}
                         multiSelect={multiSelect}
+                        numCols={client3 && client3Valid ? 3 : 2}
                     />
                 </Grid>
             );
@@ -175,7 +178,8 @@ class App extends Component {
         } = this.props;
 
         const {
-            client1, client2, client3
+            client1, client2, client3,
+            importInProgress
         } = this.state;
 
         return (
@@ -196,6 +200,7 @@ class App extends Component {
                         <Grid container justify="center" spacing={40}>
                             <Grid item xs={3}>
                                 <TextField
+                                    disabled={importInProgress}
                                     id="client1"
                                     label="Client StARS #1"
                                     className={classes.textField}
@@ -205,6 +210,7 @@ class App extends Component {
                             </Grid>
                             <Grid item xs={3}>
                                 <TextField
+                                    disabled={importInProgress}
                                     id="client2"
                                     label="Client StARS #2"
                                     className={classes.textField}
@@ -214,6 +220,7 @@ class App extends Component {
                             </Grid>
                             <Grid item xs={3}>
                                 <TextField
+                                    disabled={importInProgress}
                                     id="client3"
                                     label="Client StARS #3"
                                     className={classes.textField}
