@@ -228,10 +228,16 @@ class CustomTable extends Component {
 
     onCellSelect = (row, col) => (event) => {
         const {
+            cellSelectHandler,
+            tableKey
+        } = this.props;
+
+        const {
             clientData: data,
             selectedRows
         } = this.state;
 
+        let isAllSelected = true;
         // FIXME: is this deep enough cloning?
         let selected = [...selectedRows];
 
@@ -245,17 +251,25 @@ class CustomTable extends Component {
             data.forEach((dataRow, dataRowIndex) => {
                 const clientIndex = dataRow[4];
 
-                // only worry about rows that match selected
-                // -> client index
+                // indices match, set or unset value for client cells
                 if (clientIndex === selectedClientIndex) {
                     // if not selected, select!
                     if (!selected[dataRowIndex][col]) {
                         selected[dataRowIndex][col] = true;
+                        // check other cells selected in bottom 'else'
                     }
                     else {
                         // else, de-select
                         selected[dataRowIndex][col] = null;
+                        // check if ALL are de-selected
+                        if (!selected[dataRowIndex].includes(true))
+                            isAllSelected = false;
                     }
+                }
+                // no match, still check if all table is selected
+                else {
+                    if (!selected[dataRowIndex].includes(true))
+                        isAllSelected = false;
                 }
             });
         }
@@ -264,13 +278,20 @@ class CustomTable extends Component {
             // if not selected, select!
             if (selected[row] !== col) {
                 selected[row] = col;
+                // check if all other cells are selected too!
+                selected.forEach((data, i) => {
+                    if (data === null) isAllSelected = false;
+                });
             }
             // else, de-select
             else {
                 selected[row] = null;
+                isAllSelected = false;
             }
         }
-
+        // pass 'allselected' status back to App.js, save 'selected'
+        // -> to current state
+        cellSelectHandler(tableKey, isAllSelected);
         this.setState({ selectedRows: selected })
     }
 

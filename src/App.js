@@ -30,7 +30,16 @@ class App extends Component {
         client3: '201814527', client3Valid: true, // valid cuz client3 can be empty
         importInProgress: false,
         nodeEnv: process.env.NODE_ENV,
-        mergeDialogOpen: false
+        mergeDialogOpen: false,
+        tablesAllSelected: {
+            [R_KEYS.CLIENT_BASIC_INFORMATION]: false,
+            [R_KEYS.ADDRESSES]: false,
+            [R_KEYS.NOTES]: false,
+            [R_KEYS.RELATIVES]: false,
+            [R_KEYS.CONTACTS]: false,
+            [R_KEYS.FILES]: false,
+            [R_KEYS.HISTORY]: false,
+        }
     }
 
     componentWillMount() {
@@ -53,7 +62,7 @@ class App extends Component {
         const { client1, client2, client3 } = this.state;
         let client1Valid = this.checkClientNumValid(client1);
         let client2Valid = this.checkClientNumValid(client2);
-        let client3Valid = this.checkClientNumValid(client3);
+        let client3Valid = this.checkClientNumValid(client3, true);
         this.setState({ client1Valid, client2Valid, client3Valid })
     }
 
@@ -169,8 +178,18 @@ class App extends Component {
             console[type](msg);
         }
     }
+    handleCellSelected = (tableTitle, isAllSelected) => {
+        const newTablesSelectedContainer = {
+            ...this.state.tablesAllSelected,
+            [tableTitle]: isAllSelected
+        };
 
-    buildGridTable = (config) => {
+        this.setState({
+            tablesAllSelected: newTablesSelectedContainer
+        });
+    }
+
+    buildGridTable = (config, tableIndex) => {
         const {
             key, title,
             type="basic",
@@ -183,11 +202,13 @@ class App extends Component {
         // if data exists, build grid item!
         if (ripsData[key]) {
             return (
-                <Grid item xs={12} className={classes.textCenter}>
+                <Grid item xs={12} className={classes.textCenter} key={title}>
                     <CustomTable
                         title={title}
+                        tableKey={key}
                         rawData={ripsData[key]}
                         errorHandler={this.handleError}
+                        cellSelectHandler={this.handleCellSelected}
                         type={type}
                         multiSelect={multiSelect}
                         numCols={client3 && client3Valid ? 3 : 2}
@@ -314,60 +335,42 @@ class App extends Component {
                     </h4>
                 </Grid>
 
-                {/* <Client Basic Information> Table */}
-                {this.buildGridTable({
+                {/* Build all data tables :) */}
+                {[{
+                    title: 'Client Basic Information',
                     key: R_KEYS.CLIENT_BASIC_INFORMATION,
-                    title: 'Client Basic Information'
-                })}
-
-                {/* <Addresses> Table */}
-                {this.buildGridTable({
-                    key: R_KEYS.ADDRESSES,
+                }, {
                     title: 'Addresses',
+                    key: R_KEYS.ADDRESSES,
                     type: 'lists',
-                    multiSelect: true
-                })}
-                
-                {/* <Notes> Table */}
-                {this.buildGridTable({
+                    multiSelect: true,
+                }, {
+                    title: 'Basic Notes',
                     key: R_KEYS.NOTES,
-                    title: 'Basic Notes'
-                })}
-
-                {/* <Relatives> Table */}
-                {this.buildGridTable({
-                    key: R_KEYS.RELATIVES,
+                }, {
                     title: 'Relatives',
+                    key: R_KEYS.RELATIVES,
                     type: 'lists',
                     multiSelect: true
-                })}
-
-                {/* <Contacts> Table */}
-                {this.buildGridTable({
-                    key: R_KEYS.CONTACTS,
+                }, {
                     title: 'Contacts',
+                    key: R_KEYS.CONTACTS,
                     type: 'lists',
                     multiSelect: true
-                })}
-
-                {/* <Files (normal)> Table */}
-                {this.buildGridTable({
-                    key: R_KEYS.FILES,
+                }, {
                     title: 'Files',
+                    key: R_KEYS.FILES,
                     type: 'lists',
                     multiSelect: true
-                })}
-
-                {/* <History> Table */}
-                {this.buildGridTable({
-                    key: R_KEYS.HISTORY,
+                }, {
                     title: 'Action History',
+                    key: R_KEYS.HISTORY,
                     type: 'lists',
                     multiSelect: true
+                }].map((tableConfig, tableIndex) => {
+                    return this.buildGridTable(tableConfig, tableIndex);
                 })}
-
-                {/* Skipping for now - <Aliases> / <Private Files> Tables */}
-
+ 
                 {/* "Merge" button - begin RIPS merge! */}
                 {ripsData && Object.keys(ripsData).length > 0 ?
                 <Grid item xs={12} className={classes.textCenter}>
