@@ -160,9 +160,13 @@ class App extends Component {
         console.log('DO MERGE');
     }
 
-    handleError = (msg) => {
+    handleError = (msg, type='error') => {
         // TODO: display these errors / warnings somewhere?
-        console.error(msg)
+        if (!['error','warn','info'].includes(type)) {
+            console.error('[handleError] has error! shit!');
+        } else {
+            console[type](msg);
+        }
     }
 
     buildGridTable = (config) => {

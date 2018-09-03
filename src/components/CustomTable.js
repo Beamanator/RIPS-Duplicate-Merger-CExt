@@ -361,7 +361,7 @@ class CustomTable extends Component {
             let msg =
                 `[${title}] Table Error: Raw data passed to CustomTable is empty. ` +
                 'If this error doesn\'t go away, check implementation of this component for errors.';
-            errorHandler(msg);
+            errorHandler(msg, 'warn');
 
             return null;
         }
