@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 // import core components
@@ -7,15 +8,20 @@ import {
     Paper
 } from '@material-ui/core';
 
+// redux store actions
+import * as actions from '../store/actions';
+
 import CustomTableCell from './CustomTableCell';
 
 class CustomTable extends Component {
-    state = {
-        selected: null,
-        data: []
-    };
+    // state = {
+    //     selected: null,
+    //     data: []
+    // };
 
     componentWillMount = () => {
+        const { title } = this.props;
+
         // format raw data as we like
         const data = this.convertRawData();
 
@@ -24,11 +30,13 @@ class CustomTable extends Component {
         const emptySelectionArr = data.map(e =>
             this.props.multiSelect ? [] : null);
 
+        this.props.onTableAddClientData(title, data);
+        this.props.onTableAddSelected(title, emptySelectionArr);
         // update state
-        this.setState({
-            data: data,
-            selected: emptySelectionArr
-        });
+        // this.setState({
+        //     data: data,
+        //     selected: emptySelectionArr
+        // });
     }
 
     /**
@@ -226,10 +234,16 @@ class CustomTable extends Component {
     }
 
     onCellSelect = (row, col) => (event) => {
-        const { selected: oldSelected, data } = this.state;
+        const {
+            selectedRows,
+            clientData,
+            title: key
+        } = this.props;
+
+        const data = clientData[key];
 
         // FIXME: is this deep enough cloning?
-        let selected = [...oldSelected];
+        let selected = [...selectedRows[key]];
 
         // change logic depending on multiSelect
         if (this.props.multiSelect) {
@@ -267,12 +281,20 @@ class CustomTable extends Component {
             }
         }
 
-        this.setState({ selected: selected })
+        this.props.onTableAddSelected(key, selected);
+        // this.setState({ selected: selected })
     }
 
     isSelected = (row, col) => {
-        const { selected } = this.state;
-        const { multiSelect, classes } = this.props;
+        // const { selected } = this.props;
+        const {
+            multiSelect, classes,
+            selectedRows,
+            title: key
+        } = this.props;
+
+        const selected = selectedRows[key];
+
         // multi-select logic
         if (multiSelect) {
             return selected[row][col] === true ?
@@ -286,13 +308,17 @@ class CustomTable extends Component {
     }
 
     isRowSelected = (row) => {
-        const { selected } = this.state;
+        // const { selected } = this.state;
         const {
             multiSelect,
             classes: {
                 rowIsSelected, rowNotSelected
-            }
+            },
+            selectedRows,
+            title: key
         } = this.props;
+
+        const selected = selectedRows[key];
 
         // multi-select logic
         if (multiSelect) {
@@ -324,26 +350,20 @@ class CustomTable extends Component {
             classes,
             errorHandler,
             title,
-            numCols
+            numCols,
+            clientData
         } = this.props;
 
-        const {
-            data,
-            // selected
-        } = this.state;
+        const data = clientData[title];
 
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
             let msg =
                 `[${title}] Table Error: Raw data passed to CustomTable is empty. ` +
-                'Check implementation of this component for errors.';
+                'If this error doesn\'t go away, check implementation of this component for errors.';
             errorHandler(msg);
 
-            return (
-                <div className={classes.error}>
-                    {`Error in '${title}' data`}
-                </div>
-            );
+            return null;
         }
 
         return (
@@ -430,4 +450,20 @@ const styles = theme => ({
     }
 });
 
-export default withStyles(styles)(CustomTable);
+const mapStateToProps = state => {
+    return {
+        clientData: state.tables.clientData,
+        selectedRows: state.tables.selected
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onTableAddClientData: (key, data) => dispatch(actions.tableAddClientData(key, data)),
+        onTableAddSelected: (key, data) => dispatch(actions.tableAddSelected(key, data))
+    };
+};
+
+export default connect(
+    mapStateToProps, mapDispatchToProps
+)(withStyles(styles)(CustomTable));

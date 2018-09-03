@@ -1,5 +1,5 @@
 /*global chrome*/
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -144,6 +144,9 @@ class App extends Component {
     }
 
     handleMergeDialogOpen = () => {
+        // get some data and set some state!
+        // TODO: calculate table names w/ non-selected values
+        this.props.onTableCalcUnselected(this.props.selectedRows);
         this.setState({ mergeDialogOpen: true });
     }
     handleMergeDialogClose = () => {
@@ -152,7 +155,7 @@ class App extends Component {
     handleMergeDialogAgree = () => {
         // close dialog
         this.handleMergeDialogClose();
-        // TODO: call action
+        // call action - maybe
         // TODO: throw warning for any / all sections that aren't selected?
         console.log('DO MERGE');
     }
@@ -204,11 +207,13 @@ class App extends Component {
             mergeDialogOpen
         } = this.state;
 
-        return (
+        return <Fragment>
             <Grid
                 container 
                 className={classes.root}
-                spacing={16}
+                // note: padding added in parent (in index.js) to make
+                // -> spacing not cause issues in the Grid component
+                spacing={16} 
             >
                 {/* Title */}
                 <Grid item xs={12} className={classes.textCenter}>
@@ -384,33 +389,42 @@ class App extends Component {
                         </Grid>
                     </Grid>
                 </Grid> : null}
-
-                {/* "Merge?" dialog! */}
-                {/* TODO: populate with ... my own text & stuff */}
-                <Dialog
-                    open={mergeDialogOpen}
-                    onClose={this.handleMergeDialogClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Let Google help apps determine location. This means sending anonymous location data to
-                            Google, even when no apps are running.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleMergeDialogClose} color="primary">
-                            Disagree
-                        </Button>   
-                        <Button onClick={this.handleMergeDialogAgree} color="primary" autoFocus>
-                            Agree
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </Grid>
-        );
+
+            {/* "Merge?" dialog! */}
+            {/* TODO: populate with ... my own text & stuff */}
+            <Dialog
+                open={mergeDialogOpen}
+                onClose={this.handleMergeDialogClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Are you sure you're ready to merge?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Let Google help apps determine location.
+                        This means sending anonymous location data to
+                        Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={this.handleMergeDialogClose}
+                        color="primary"
+                    >
+                        Take me back
+                    </Button>   
+                    <Button
+                        onClick={this.handleMergeDialogAgree}
+                        color="primary" autoFocus
+                    >
+                        Merge
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Fragment>
     }
 }
 
@@ -451,16 +465,18 @@ const styles = theme => ({
 
 const mapStateToProps = state => {
     return {
-        // isAuthenticated...
-        ripsData: state.rips.data,
+        // TODO: isAuthenticated...
         bkgPort: state.port.port,
+        ripsData: state.rips.data,
+        selectedRows: state.tables.selected
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
-        onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums))
+        onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
+        onTableCalcUnselected: (selected) => dispatch(actions.tableCalcUnselected(selected))
     };
 };
 

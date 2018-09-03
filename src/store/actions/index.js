@@ -10,3 +10,9 @@ export {
     ripsFetchData,
     ripsFetchSuccess
 } from './rips';
+
+export {
+    tableAddClientData,
+    tableAddSelected,
+    tableCalcUnselected
+} from './tables';

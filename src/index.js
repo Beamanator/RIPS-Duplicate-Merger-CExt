@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import App from './App';
 import ripsReducer from './store/reducers/rips';
 import portReducer from './store/reducers/port';
+import tablesReducer from './store/reducers/tables';
 
 // change to create-react-act dev environment specific code
 // process.env.NODE_ENV comes from config folder, env.js file
@@ -24,7 +25,8 @@ const composeEnhancers = process.env.NODE_ENV === 'development'
 // combine reducers
 const rootReducer = combineReducers({
     rips: ripsReducer,
-    port: portReducer
+    port: portReducer,
+    tables: tablesReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(
