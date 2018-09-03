@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 // import core components
@@ -8,20 +7,15 @@ import {
     Paper
 } from '@material-ui/core';
 
-// redux store actions
-import * as actions from '../store/actions';
-
 import CustomTableCell from './CustomTableCell';
 
 class CustomTable extends Component {
-    // state = {
-    //     selected: null,
-    //     data: []
-    // };
+    state = {
+        clientData: [],
+        selectedRows: []
+    }
 
-    componentWillMount = () => {
-        const { title } = this.props;
-
+    componentWillMount() {
         // format raw data as we like
         const data = this.convertRawData();
 
@@ -30,13 +24,10 @@ class CustomTable extends Component {
         const emptySelectionArr = data.map(e =>
             this.props.multiSelect ? [] : null);
 
-        this.props.onTableAddClientData(title, data);
-        this.props.onTableAddSelected(title, emptySelectionArr);
-        // update state
-        // this.setState({
-        //     data: data,
-        //     selected: emptySelectionArr
-        // });
+        this.setState({
+            clientData: data,
+            selectedRows: emptySelectionArr
+        });
     }
 
     /**
@@ -66,8 +57,9 @@ class CustomTable extends Component {
         // throw error if data is empty
         if (!rawData || Object.keys(rawData).length === 0) {
             let msg = `Data passed to ${title} table is empty!`;
+            console.error(msg);
             errorHandler(msg);
-            return;
+            return [];
         }
 
         if (type === "basic") {
@@ -228,6 +220,7 @@ class CustomTable extends Component {
         // handle unknown type
         else {
             const msg = `Type <${type}> unknown?? What is this??`;
+            console.error(msg);
             errorHandler(msg);
             return [];
         }
@@ -235,15 +228,12 @@ class CustomTable extends Component {
 
     onCellSelect = (row, col) => (event) => {
         const {
-            selectedRows,
-            clientData,
-            title: key
-        } = this.props;
-
-        const data = clientData[key];
+            clientData: data,
+            selectedRows
+        } = this.state;
 
         // FIXME: is this deep enough cloning?
-        let selected = [...selectedRows[key]];
+        let selected = [...selectedRows];
 
         // change logic depending on multiSelect
         if (this.props.multiSelect) {
@@ -281,28 +271,26 @@ class CustomTable extends Component {
             }
         }
 
-        this.props.onTableAddSelected(key, selected);
-        // this.setState({ selected: selected })
+        this.setState({ selectedRows: selected })
     }
 
     isSelected = (row, col) => {
-        // const { selected } = this.props;
         const {
-            multiSelect, classes,
-            selectedRows,
-            title: key
+            multiSelect, classes
         } = this.props;
 
-        const selected = selectedRows[key];
+        const {
+            selectedRows
+        } = this.state;
 
         // multi-select logic
         if (multiSelect) {
-            return selected[row][col] === true ?
+            return selectedRows[row][col] === true ?
                 classes.cellIsSelected : null
         }
         // single-select logic
         else {
-            return selected[row] === col ?
+            return selectedRows[row] === col ?
                 classes.cellIsSelected : null
         }
     }
@@ -314,23 +302,23 @@ class CustomTable extends Component {
             classes: {
                 rowIsSelected, rowNotSelected
             },
-            selectedRows,
-            title: key
         } = this.props;
 
-        const selected = selectedRows[key];
+        const {
+            selectedRows
+        } = this.state;
 
         // multi-select logic
         if (multiSelect) {
             return (
-                selected[row][0] === true ||
-                selected[row][1] === true ||
-                selected[row][2] === true
+                selectedRows[row][0] === true ||
+                selectedRows[row][1] === true ||
+                selectedRows[row][2] === true
             ) ? rowIsSelected : rowNotSelected;
         }
         // single-select logic
         else {
-            return selected[row] !== null ?
+            return selectedRows[row] !== null ?
                 rowIsSelected : rowNotSelected;
         }
     }
@@ -351,10 +339,16 @@ class CustomTable extends Component {
             errorHandler,
             title,
             numCols,
-            clientData
+            // clientData
         } = this.props;
 
-        const data = clientData[title];
+        const {
+            clientData: data
+        } = this.state;
+
+        // const data = clientData[title];
+
+        // console.log('[CustomTable] render', title, data);
 
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
@@ -450,20 +444,4 @@ const styles = theme => ({
     }
 });
 
-const mapStateToProps = state => {
-    return {
-        clientData: state.tables.clientData,
-        selectedRows: state.tables.selected
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onTableAddClientData: (key, data) => dispatch(actions.tableAddClientData(key, data)),
-        onTableAddSelected: (key, data) => dispatch(actions.tableAddSelected(key, data))
-    };
-};
-
-export default connect(
-    mapStateToProps, mapDispatchToProps
-)(withStyles(styles)(CustomTable));
+export default withStyles(styles)(CustomTable);

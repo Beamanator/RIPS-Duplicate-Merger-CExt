@@ -33,7 +33,7 @@ class App extends Component {
         mergeDialogOpen: false
     }
 
-    componentDidMount() {
+    componentWillMount() {
         // Warn user if we're in development environment
         if (process.env.NODE_ENV === 'development') {
             console.warn(
@@ -146,7 +146,8 @@ class App extends Component {
     handleMergeDialogOpen = () => {
         // get some data and set some state!
         // TODO: calculate table names w/ non-selected values
-        this.props.onTableCalcUnselected(this.props.selectedRows);
+        // this.props.onTableCalcUnselected(this.props.selectedRows);
+        // this.props.onTableCalcUnselected();
         this.setState({ mergeDialogOpen: true });
     }
     handleMergeDialogClose = () => {
@@ -178,7 +179,7 @@ class App extends Component {
         
         const { ripsData, classes } = this.props;
         const { client3, client3Valid } = this.state;
-        
+
         // if data exists, build grid item!
         if (ripsData[key]) {
             return (
@@ -472,7 +473,7 @@ const mapStateToProps = state => {
         // TODO: isAuthenticated...
         bkgPort: state.port.port,
         ripsData: state.rips.data,
-        selectedRows: state.tables.selected
+        // selectedRows: state.tables.selected
     };
 };
 
@@ -480,7 +481,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onTableCalcUnselected: (selected) => dispatch(actions.tableCalcUnselected(selected))
+        // onTableCalcUnselected: (selected) => dispatch(actions.tableCalcUnselected(selected))
+        // onTableCalcUnselected: () => dispatch(actions.tableCalcUnselected())
     };
 };
 

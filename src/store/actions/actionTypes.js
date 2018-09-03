@@ -11,6 +11,7 @@ export const BACKGROUND_PORT_ERROR = 'BACKGROUND_PORT_ERROR';
 export const PORT_INIT_COLLECT = 'PORT_INIT_COLLECT';
 // const BACKGROUND_PORT_INIT... (container - no action connected to reducer)
 
-export const TABLE_ADD_CLIENT_DATA = 'TABLE_ADD_CLIENT_DATA';
-export const TABLE_ADD_SELECTED = 'TABLE_ADD_SELECTED';
-export const TABLE_CALC_UNSELECTED = 'TABLE_CALC_UNSELECTED';
+// export const TABLE_ADD_CLIENT_DATA = 'TABLE_ADD_CLIENT_DATA';
+// export const TABLE_ADD_SELECTED = 'TABLE_ADD_SELECTED';
+// export const TABLE_SAVE_UNSELECTED = 'TABLE_SAVE_UNSELECTED';
+// export const TABLE_CALC_UNSELECTED... (container - no action connected to reducer);

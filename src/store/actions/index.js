@@ -11,8 +11,8 @@ export {
     ripsFetchSuccess
 } from './rips';
 
-export {
-    tableAddClientData,
-    tableAddSelected,
-    tableCalcUnselected
-} from './tables';
+// export {
+//     // tableAddClientData,
+//     tableAddSelected,
+//     tableCalcUnselected
+// } from './tables';
