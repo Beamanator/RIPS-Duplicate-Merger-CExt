@@ -16,17 +16,29 @@ class CustomTable extends Component {
     }
 
     componentWillMount() {
+        const { multiSelect } = this.props;
+
         // format raw data as we like
         const data = this.convertRawData();
 
         // initialize empty array of correct length and girth for
-        // -> selected indices to be placed in
-        const emptySelectionArr = data.map(e =>
-            this.props.multiSelect ? [] : null);
+        // -> selected indices to be placed in.
+        const initialSelectionArr = data.map(row =>
+            // check if first data elem is populated / not empty
+            row[1] && row[1].length > 0
+                // first cell has data, so pre-populate
+                ? multiSelect
+                    ? [true]
+                    : 0
+                // first cell empty, so initialize empty
+                : multiSelect
+                    ? []
+                    : null
+        );
 
         this.setState({
             clientData: data,
-            selectedRows: emptySelectionArr
+            selectedRows: initialSelectionArr
         });
     }
 
@@ -298,11 +310,7 @@ class CustomTable extends Component {
     isSelected = (row, col) => {
         const {
             multiSelect,
-            classes: {
-                cellIsSelected,
-                // cellNotSelectedAndLocked
-            },
-            // locked
+            classes: { cellIsSelected },
         } = this.props;
 
         const {
@@ -423,10 +431,12 @@ class CustomTable extends Component {
                                     {n[0]}
                                 </CustomTableCell>
                                 {[1,2,3].map((i, col) => {
+                                    // conditionally render column #4
                                     if (i > numCols) return null;
 
                                     let props = { key: `${row}-${col}` };
                                     
+                                    // make cell interactive if it has data
                                     if (n[i] && n[i].length > 0) {
                                         props = {
                                             ...props,

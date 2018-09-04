@@ -216,9 +216,7 @@ class App extends Component {
         this.handleMergeDialogClose();
         // call action for triggering merge
         console.log('DO MERGE');
-        // TODO: make table selections turn grey and not be
-        // -> hoverable / clickable since these are now set
-        // -> in stone!
+        
         this.setState({
             mergeInProgress: true
         });
@@ -456,8 +454,7 @@ class App extends Component {
                 </Grid> : null}
             </Grid>
 
-            {/* "Merge?" dialog! */}
-            {/* TODO: populate with ... my own text & stuff */}
+            {/* "Merge" dialog! */}
             <Dialog
                 open={mergeDialogOpen}
                 onClose={this.handleMergeDialogClose}
