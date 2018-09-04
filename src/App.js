@@ -12,7 +12,8 @@ import {
     Paper,
     TextField,
     Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle
+    DialogContentText, DialogTitle,
+    List, ListItem
 } from '@material-ui/core';
 
 // redux store actions
@@ -29,6 +30,7 @@ class App extends Component {
         client2: '201815032', client2Valid: false,
         client3: '201814527', client3Valid: true, // valid cuz client3 can be empty
         importInProgress: false,
+        mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
         tablesAllSelected: {
@@ -39,7 +41,8 @@ class App extends Component {
             [R_KEYS.CONTACTS]: false,
             [R_KEYS.FILES]: false,
             [R_KEYS.HISTORY]: false,
-        }
+        },
+        dialogNotAllSelectedContent: ''
     }
 
     componentWillMount() {
@@ -128,7 +131,7 @@ class App extends Component {
     }
 
     handleImport = () => {
-        console.log('clicked Import');
+        console.log('Begin Import');
 
         // disable clicking import while import in progress
         this.setState({ importInProgress: true });
@@ -148,26 +151,73 @@ class App extends Component {
             client1: '', client1Valid: false,
             client2: '', client2Valid: false,
             client3: '', client3Valid: true,
-            importInProgress: false
+            importInProgress: false,
+            mergeInProgress: false
         });
     }
 
     handleMergeDialogOpen = () => {
-        // get some data and set some state!
-        // TODO: calculate table names w/ non-selected values
-        // this.props.onTableCalcUnselected(this.props.selectedRows);
-        // this.props.onTableCalcUnselected();
-        this.setState({ mergeDialogOpen: true });
+        const { tablesAllSelected } = this.state;
+        const { classes: { dialogListStyles } } = this.props;
+        
+        let emptyTableNames = [];
+        let emptyTablesMessage = 'Warning: The following tables do ' +
+            'not have ALL rows selected, so there will be some data' +
+            ' LEFT OUT of the merge:';
+
+        // loop through state prop [tablesAllSelected] and
+        // -> add a note that mentions which tables are not totally
+        // -> selected. User should think about closing the modal
+        // -> and selecting some more values to be 100% accurate
+        Object.entries(tablesAllSelected)
+        .forEach(([tableKey, isAllSelected]) => {
+            if (!isAllSelected) {
+                emptyTableNames.push(tableKey);
+            }
+        });
+
+        // create some jsx - if there are some empty tables, display
+        // -> them in a list w/ description. else, null!
+        const newDialogNotAllSelectedContent = (
+            emptyTableNames.length > 0 ? (
+                <Fragment>
+                    <br />
+                    <DialogContentText>
+                        {emptyTablesMessage}
+                    </DialogContentText>
+                    <List>
+                        {emptyTableNames.map(name => (
+                            <ListItem
+                                key={name}
+                                className={dialogListStyles}
+                            >
+                                {name}
+                            </ListItem>
+                        ))}
+                    </List>
+                </Fragment>
+            ) : null
+        );
+        
+        this.setState({
+            mergeDialogOpen: true,
+            dialogNotAllSelectedContent: newDialogNotAllSelectedContent
+        });
     }
     handleMergeDialogClose = () => {
-        this.setState({ mergeDialogOpen: false });
+        this.setState({
+            mergeDialogOpen: false,
+            dialogNotAllSelectedMessage: ''
+        });
     }
     handleMergeDialogAgree = () => {
         // close dialog
         this.handleMergeDialogClose();
-        // call action - maybe
-        // TODO: throw warning for any / all sections that aren't selected?
+        // call action for triggering merge
         console.log('DO MERGE');
+        this.setState({
+            mergeInProgress: true
+        });
     }
 
     handleError = (msg, type='error') => {
@@ -375,7 +425,7 @@ class App extends Component {
                 {ripsData && Object.keys(ripsData).length > 0 ?
                 <Grid item xs={12} className={classes.textCenter}>
                     <Grid container justify="center">
-                        <h4 className={classes.mergeDescriptionPadding}>
+                        <h4 className={classes.dialogDescriptionPadding}>
                             When you're ready to merge two (or 3) client records
                             in RIPS, make sure you've selected all of the data
                             you want to be saved in the final record! You'll see
@@ -404,18 +454,21 @@ class App extends Component {
             <Dialog
                 open={mergeDialogOpen}
                 onClose={this.handleMergeDialogClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby="merge-dialog-title"
+                aria-describedby="merge-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">
+                <DialogTitle id="merge-dialog-title">
                     {"Are you sure you're ready to merge?"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location.
-                        This means sending anonymous location data to
-                        Google, even when no apps are running.
+                    <DialogContentText id="merge-dialog-description">
+                        If you're 100% sure you selected all of the correct
+                        client data that should be merged into one RIPS
+                        record, select "Merge". IF YOU HAVE ANY QUESTIONS
+                        AT ALL, please talk to your coordinator or to
+                        the RIPS guy.
                     </DialogContentText>
+                    {this.state.dialogNotAllSelectedContent}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -465,9 +518,15 @@ const styles = theme => ({
     description: {
         margin: '0 25%'
     },
-    mergeDescriptionPadding: {
+    dialogDescriptionPadding: {
         margin: '0 25%',
         padding: '20px'
+    },
+    dialogListStyles: {
+        paddingTop: '4px',
+        paddingBottom: '4px',
+        color: '#e53935',
+        fontWeight: 'bold'
     }
 });
 
