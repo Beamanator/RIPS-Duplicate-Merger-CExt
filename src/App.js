@@ -285,6 +285,7 @@ class App extends Component {
         const {
             client1, client2, client3,
             importInProgress,
+            mergeInProgress,
             mergeDialogOpen
         } = this.state;
 
@@ -446,6 +447,7 @@ class App extends Component {
                                 variant="contained"
                                 size="large"
                                 onClick={this.handleMergeDialogOpen}
+                                disabled={mergeInProgress}
                             >
                                 Merge
                             </Button>
