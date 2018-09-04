@@ -297,7 +297,12 @@ class CustomTable extends Component {
 
     isSelected = (row, col) => {
         const {
-            multiSelect, classes
+            multiSelect,
+            classes: {
+                cellIsSelected,
+                // cellNotSelectedAndLocked
+            },
+            // locked
         } = this.props;
 
         const {
@@ -306,28 +311,29 @@ class CustomTable extends Component {
 
         // multi-select logic
         if (multiSelect) {
-            return selectedRows[row][col] === true ?
-                classes.cellIsSelected : null
+            return selectedRows[row][col] === true
+                ? cellIsSelected
+                : null
         }
         // single-select logic
         else {
-            return selectedRows[row] === col ?
-                classes.cellIsSelected : null
+            return selectedRows[row] === col
+                ? cellIsSelected
+                : null
         }
     }
 
     isRowSelected = (row) => {
-        // const { selected } = this.state;
+        const { selectedRows } = this.state;
         const {
             multiSelect,
             classes: {
-                rowIsSelected, rowNotSelected
+                rowIsSelected,
+                rowNotSelectedAndLocked,
+                rowNotSelected
             },
+            locked
         } = this.props;
-
-        const {
-            selectedRows
-        } = this.state;
 
         // multi-select logic
         if (multiSelect) {
@@ -335,24 +341,39 @@ class CustomTable extends Component {
                 selectedRows[row][0] === true ||
                 selectedRows[row][1] === true ||
                 selectedRows[row][2] === true
-            ) ? rowIsSelected : rowNotSelected;
+            ) ? rowIsSelected
+            : locked
+                ? rowNotSelectedAndLocked
+                : rowNotSelected;
         }
         // single-select logic
         else {
-            return selectedRows[row] !== null ?
-                rowIsSelected : rowNotSelected;
+            return selectedRows[row] !== null
+                ? rowIsSelected
+                : locked
+                    ? rowNotSelectedAndLocked
+                    : rowNotSelected;
         }
     }
 
     // set up click listener & className(s) for custom table cell with
     // -> populated text!
-    getInteractiveTableCellProps = (row, col) => ({
-        onClick: this.onCellSelect(row, col),
-        className: [
-            this.isSelected(row, col),
-            this.props.classes.cellHover
-        ].join(' ')
-    })
+    getInteractiveTableCellProps = (row, col) => {
+        const { classes, locked } = this.props;
+
+        // set up onClick function
+        let clickFn = () => console.log('clicked! but locked');
+        if (!locked) clickFn = this.onCellSelect(row, col);
+
+        // set up classes
+        const cellClasses = [this.isSelected(row, col)];
+        if (!locked) cellClasses.push(classes.cellHover);
+
+        return {
+            onClick: clickFn,
+            className: cellClasses.join(' ')
+        }
+    }
     
     render() {
         const {
@@ -366,10 +387,6 @@ class CustomTable extends Component {
         const {
             clientData: data
         } = this.state;
-
-        // const data = clientData[title];
-
-        // console.log('[CustomTable] render', title, data);
 
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
@@ -454,6 +471,9 @@ const styles = theme => ({
     },
     rowIsSelected: {
         backgroundColor: '#6fbf73'
+    },
+    rowNotSelectedAndLocked: {
+        backgroundColor: '#F44336' // red 500
     },
     rowNotSelected: {
         backgroundColor: '#ffcd38'

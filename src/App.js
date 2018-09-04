@@ -145,7 +145,8 @@ class App extends Component {
     }
 
     handleClear = () => {
-        // TODO: also clear client / rips data? 
+        // TODO: also clear rips data from redux store?
+        // -> including from bkg.js 
         // Clear client nums, and reset client#Valid variables
         this.setState({
             client1: '', client1Valid: false,
@@ -215,6 +216,9 @@ class App extends Component {
         this.handleMergeDialogClose();
         // call action for triggering merge
         console.log('DO MERGE');
+        // TODO: make table selections turn grey and not be
+        // -> hoverable / clickable since these are now set
+        // -> in stone!
         this.setState({
             mergeInProgress: true
         });
@@ -247,7 +251,7 @@ class App extends Component {
         } = config;
         
         const { ripsData, classes } = this.props;
-        const { client3, client3Valid } = this.state;
+        const { client3, client3Valid, mergeInProgress } = this.state;
 
         // if data exists, build grid item!
         if (ripsData[key]) {
@@ -260,6 +264,7 @@ class App extends Component {
                         errorHandler={this.handleError}
                         cellSelectHandler={this.handleCellSelected}
                         type={type}
+                        locked={mergeInProgress}
                         multiSelect={multiSelect}
                         numCols={client3 && client3Valid ? 3 : 2}
                     />
