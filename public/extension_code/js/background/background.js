@@ -190,9 +190,18 @@ const initReactAppPort = (port) => {
                 sendStartImport(CSPort);
                 break;
 
-            // case PCs.RA_BKG_CONTINUE_IMPORT:
-                // sendContinueImport(CSPort);
-                // break;
+            case PCs.RA_BKG_START_MERGE:
+                const {
+                    data: mergeData,
+                    targetClientNum,
+                    archiveClientNums
+                } = msg;
+
+                console.log(
+                    'in background',
+                    mergeData, targetClientNum, archiveClientNums
+                );
+                break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
                 IMPORT_IN_PROGRESS = false;

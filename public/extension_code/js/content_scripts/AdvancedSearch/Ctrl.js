@@ -72,10 +72,6 @@ port.onMessage.addListener(function(msg) {
         case PCs.BKG_CS_START_IMPORT:
             startImport( msg.clientNum );
             break;
-
-        // case CONTINUE_IMPORT:
-            // continueImport();
-            // break;
         
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);

@@ -25,16 +25,38 @@ import {
 } from './shared/ripsKeys';
 
 class App extends Component {
-    // note: '<table>_AllSelected' is where these keys are used!
-    tableKeysHolder = [
-        [R_KEYS.CLIENT_BASIC_INFORMATION],
-        [R_KEYS.ADDRESSES],
-        [R_KEYS.NOTES],
-        [R_KEYS.RELATIVES],
-        [R_KEYS.CONTACTS],
-        [R_KEYS.FILES],
-        [R_KEYS.HISTORY]
-    ]
+    tableConfigHolder = [{
+        title: 'Client Basic Information',
+        key: R_KEYS.CLIENT_BASIC_INFORMATION,
+    }, {
+        title: 'Addresses',
+        key: R_KEYS.ADDRESSES,
+        type: 'lists',
+        multiSelect: true,
+    }, {
+        title: 'Basic Notes',
+        key: R_KEYS.NOTES,
+    }, {
+        title: 'Relatives',
+        key: R_KEYS.RELATIVES,
+        type: 'lists',
+        multiSelect: true
+    }, {
+        title: 'Contacts',
+        key: R_KEYS.CONTACTS,
+        type: 'lists',
+        multiSelect: true
+    }, {
+        title: 'Files',
+        key: R_KEYS.FILES,
+        type: 'lists',
+        multiSelect: true
+    }, {
+        title: 'Action History',
+        key: R_KEYS.HISTORY,
+        type: 'lists',
+        multiSelect: true
+    }]
 
     state = {
         client1: '201813794', client1Valid: false,
@@ -44,10 +66,30 @@ class App extends Component {
         mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
-        dialogNotAllSelectedContent: ''
+        dialogNotAllSelectedContent: '',
+        formattedData: null,
+        /**
+         * <tableKey>_AllSelected,
+         * -> Boolean values describing when a table has all rows
+         * -> selected.
+         */
+        /**
+         * <tableKey>_SelectedArr,
+         * -> Array of bools / integers (depending on table type)
+         * -> depicting which rows are selected
+         */
     }
 
     componentWillMount() {
+        const {
+            client1, client2, client3
+        } = this.state;
+        const {
+            bkgPort, ripsData,
+            onBackgroundPortInit
+        } = this.props;
+
+
         // Warn user if we're in development environment
         if (process.env.NODE_ENV === 'development') {
             console.warn(
@@ -56,19 +98,34 @@ class App extends Component {
             );
         }
         // Check if port exists. Set one up if not!
-        else if (!this.props.bkgPort) {
+        else if (!bkgPort) {
             // begin port init
-            this.props.onBackgroundPortInit(chrome);
+            onBackgroundPortInit(chrome);
         } else {
-            console.warn('<Main> port already exists', this.props.bkgPort);
+            console.warn('<Main> port already exists', bkgPort);
         }
 
         // initialize client#Valid state props
-        const { client1, client2, client3 } = this.state;
-        let client1Valid = this.checkClientNumValid(client1);
-        let client2Valid = this.checkClientNumValid(client2);
-        let client3Valid = this.checkClientNumValid(client3, true);
-        this.setState({ client1Valid, client2Valid, client3Valid })
+        const client1Valid = this.checkClientNumValid(client1);
+        const client2Valid = this.checkClientNumValid(client2);
+        const client3Valid = this.checkClientNumValid(client3, true);
+        
+        // convert raw data into desired format
+        let formattedData = {};
+        // loop through keys, adding in converted data
+        this.tableConfigHolder.forEach(({ key, title, type }) => {
+            formattedData[key] = this.convertRawData(
+                ripsData[key], title, type
+            )
+        })
+        
+        // update any values that need updating :)
+        this.setState({
+            client1Valid,
+            client2Valid,
+            client3Valid,
+            formattedData: formattedData
+        })
     }
 
     checkClientNumValid = (numStr, emptyAllowed=false) => {
@@ -135,6 +192,8 @@ class App extends Component {
     handleImport = () => {
         console.log('Begin Import');
 
+        const { bkgPort, onRipsFetchData } = this.props;
+
         // disable clicking import while import in progress
         this.setState({ importInProgress: true });
         
@@ -143,7 +202,7 @@ class App extends Component {
         const clientNums = [ client1, client2, client3 ];
 
         // call action to start fetching data from rips
-        this.props.onRipsFetchData(this.props.bkgPort, clientNums);
+        onRipsFetchData(bkgPort, clientNums);
     }
 
     handleClear = () => {
@@ -167,16 +226,16 @@ class App extends Component {
             'not have ALL rows selected, so there will be some data' +
             ' LEFT OUT of the merge:';
 
-        // loop through table keys [this.tableKeysHolder] and
+        // loop through table keys [this.tableConfigHolder] and
         // -> add a note that mentions which tables are not totally
         // -> selected. User should think about closing the modal
         // -> and selecting some more values to be 100% accurate
-        this.tableKeysHolder.forEach(tableKey => {
-            // match tableKeys with state prop '<tableKey>_AllSelected'
-            if (!this.state[tableKey + '_AllSelected']) {
+        this.tableConfigHolder.forEach(tableConfig => {
+            // match tableConfigs with state prop '<tableConfig.key>_AllSelected'
+            if (!this.state[tableConfig.key + '_AllSelected']) {
                 // state prop is false - so make sure we display
                 // -> table key warning below!
-                emptyTableNames.push(tableKey);
+                emptyTableNames.push(tableConfig.key);
             }
         });
 
@@ -215,31 +274,239 @@ class App extends Component {
         });
     }
     handleMergeDialogAgree = () => {
+        const {
+            onMergeBegin,
+            bkgPort
+        } = this.props;
+        const {
+            client1, client2, client3,
+            formattedData,
+            // TODO: using [tableConfigHolder], extract:
+            // -> [tableKey + '_SelectedArr']
+        } = this.state
+
+        // TODO: get 'mergeData' from 'formattedData' and
+        // -> selectedArrays
+
+        // pass data to action
+        onMergeBegin(
+            bkgPort,
+            formattedData, // TODO: pass mergeData here!
+            client1, // (target num)
+            [client2, client3] // (other nums)
+        );
+
         // close dialog
         this.handleMergeDialogClose();
-        // call action for triggering merge
-        console.log('DO MERGE');
-        
-        this.setState({
-            mergeInProgress: true
-        });
-
-        // TODO: pass data in
-        this.props.onHandleMergeBegin();
+        // lock tables, disable merge button
+        this.setState({ mergeInProgress: true });
     }
 
     handleError = (msg, type='error') => {
         // TODO: display these errors / warnings somewhere?
         if (!['error','warn','info'].includes(type)) {
-            console.error('[handleError] has error! shit!');
+            console.error(`[handleError] has error! What is error` +
+                ` type <${type}>`);
         } else {
             console[type](msg);
         }
     }
-    handleCellSelected = (tableKey, isAllSelected) => {    
+    handleCellSelected = (tableKey, isAllSelected, selectedArr) => {    
         this.setState({
+            [tableKey + '_SelectedArr']: selectedArr,
             [tableKey + '_AllSelected']: isAllSelected
         });
+    }
+
+    /**
+     * Function converts raw passed-in data to a flat array that can be easily
+     * used by the component.
+     * Example: Takes data like this:
+     * {
+     *  'FIRST_NAME': ['', '', ''],
+     *  'LAST_NAME': ['', '', ''],
+     *  ...
+     * }
+     * and turns it into something like this:
+     * [
+     *  ['FIRST_NAME', '', '', ''],
+     *  ['LAST_NAME', '', '', ''], ...
+     * ]
+     *
+     * @param {object} rawData - js object holding raw data
+     * @param {function} errorHandler - error handler function
+     * @param {string} key - data key
+     */
+    convertRawData = (rawData, key, type="basic") => {
+        // throw error if data is empty
+        if (!rawData || Object.keys(rawData).length === 0) {
+            let msg = `rasData with key <${key}> is empty!`;
+            this.handleError(msg);
+            return [];
+        }
+
+        if (type === "basic") {
+            // get array of Obj's props in raw data
+            return Object.entries( rawData )
+            // add raw data arrays to category / field name / key
+            .map(dataCategory => {
+                const key = dataCategory[0];
+                let data = dataCategory[1];
+
+                // destructure vars from final .reduce function
+                const { pass: dataTypesMatch, dataType } =
+                // convert data elements into their native "types"
+                data.map(e => typeof(e))
+                // remove undefined elements (typeof(undefined) is "undefined")
+                .filter(type => type !== 'undefined')
+                // pass if defined data's types are all the same!
+                .reduce((container, dataType) => {
+                    // if type hasn't been set, set dataType
+                    if (!container.dataType) {
+                        return {
+                            pass: container.pass,
+                            dataType: dataType
+                        }
+                    }
+                    // dataType has ben set - only pass if current
+                    // -> dataType matches old dataType
+                    else {
+                        return {
+                            pass: dataType === container.dataType,
+                            dataType: container.dataType
+                        }
+                    }
+                }, { pass: true, dataType: '' });
+                
+                // If not all elements have same data type (or are undefined),
+                // -> something probably went wrong. Throw error.
+                if (!dataTypesMatch) {
+                    let err = key + ' has mismatched data types' +
+                        ' in data array! why?? fix this!';
+                    console.error(err, dataCategory);
+                    // add errors to output
+                    return [key, ...data.map(e => 'ERROR')]
+                }
+                // else, all dataTypes are the same! onward!
+                else {
+                    // depending on the type, return different data
+                    switch(dataType) {
+                        case 'string': // do nothing, just display data!
+                            break;
+                        case 'number': // do nothing, except add "confused" warning
+                            this.handleError('Huh? How is there a "number" dataType?', 'warn');
+                            break;
+                        case 'object':
+                            // throw warning if it's an object, not array :D
+                            if (Array.isArray(data[0])) {
+                                console.warn(
+                                    'UNSURE HOW TO HANDLE THESE OBJECTS!',
+                                    'Should they be Arrays? Hmmmm...'
+                                );
+                            } else {
+                                // arrays will be handled later - at the end
+                                // -> of this handling function. So skip
+                                // -> processing now
+                                return dataCategory;
+                            }
+                            break;
+                        case 'boolean':
+                            // for checkboxes. turn 'true' into 'checked', false
+                            // -> into 'not checked'
+                            data = data.map(e => e ? 'checked' : 'not checked');
+                            break;
+                        case 'undefined': // all undefined - these will get
+                            // -> filtered out later - don't worry now
+                            break;
+                        default:
+                            this.handleError(
+                                'How did we get here?? Data doesnt match' +
+                                ' any expected values somehow...',
+                                key, dataType
+                            );
+                    }
+                    // finally, return the new array format
+                    return [key, ...data]
+                }
+            })
+            // filter -> hide row if all values are "blank"
+            .filter(data => {
+                // make array holding 'blank' values (0 and false are not blank
+                // -> since they are valid numbers / boolean values)
+                const blankTypes = [undefined, null, ''];
+                
+                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
+                return !(
+                    blankTypes.includes(data[1]) &&
+                    blankTypes.includes(data[2]) &&
+                    blankTypes.includes(data[3])
+                );
+            });
+        }
+        // handle arrays of arrays
+        else if (type === 'lists') {
+            return Object.entries(
+                // get array of Obj's props in raw data
+                Object.entries(rawData)
+                // don't worry about keys, process inner arrays
+                .reduce((output, [_, data_container]) => {
+                    // if (data_container.length === 0) return {};
+                    // for each data container array...
+                    data_container.forEach((client_data_array, client_index) => {
+                        // quit if data array doesn't exist (this happens often in
+                        // -> history arrays
+                        if (!client_data_array) return;
+                        // for client's data array...
+                        client_data_array.forEach((client_data, data_index) => {
+                            // convert each object's props to array
+                            Object.entries(client_data)
+                            // for each data prob, get key and value
+                            .forEach(([data_key, data_value]) => {
+                                // calculate new field key name (including
+                                // -> client index
+                                const data_index_key = `${data_index + 1}. ${data_key}`;
+                                
+                                // create empty array if not present yet
+                                if (!output[data_index_key]) {
+                                    output[data_index_key] = [];
+                                }
+
+                                // add data to correct index in output object & arrays
+                                output[data_index_key][client_index] = data_value;
+                                
+                                // also add a 5th col value (data_index) - should
+                                // -> not display, just to help selecting data
+                                output[data_index_key][3] = data_index;
+                            });
+                        });
+                    });
+                    return output
+                }, {})
+            )
+            // change objs to correct format arr format
+            .map(e => [e[0], ...e[1]])
+            // filter -> hide row if all values are "blank"
+            .filter(data => {
+                // make array holding 'blank' values (0 and false are not blank
+                // -> since they are valid numbers / boolean values)
+                const blankTypes = [undefined, null, ''];
+                
+                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
+                return !(
+                    blankTypes.includes(data[1]) &&
+                    blankTypes.includes(data[2]) &&
+                    blankTypes.includes(data[3])
+                );
+            });
+
+        }
+        // handle unknown type
+        else {
+            const msg = `Type <${type}> unknown?? What is this??`;
+            this.handleError(msg);
+            // errorHandler(msg);
+            return [];
+        }
     }
 
     buildGridTable = (config, tableIndex) => {
@@ -250,7 +517,11 @@ class App extends Component {
         } = config;
         
         const { ripsData, classes } = this.props;
-        const { client3, client3Valid, mergeInProgress } = this.state;
+        const {
+            client3, client3Valid,
+            mergeInProgress,
+            formattedData
+        } = this.state;
 
         // if data exists, build grid item!
         if (ripsData[key]) {
@@ -259,7 +530,7 @@ class App extends Component {
                     <CustomTable
                         title={title}
                         tableKey={key}
-                        rawData={ripsData[key]}
+                        data={formattedData[key]}
                         errorHandler={this.handleError}
                         cellSelectHandler={this.handleCellSelected}
                         type={type}
@@ -391,38 +662,7 @@ class App extends Component {
                 </Grid>
 
                 {/* Build all data tables :) */}
-                {[{
-                    title: 'Client Basic Information',
-                    key: R_KEYS.CLIENT_BASIC_INFORMATION,
-                }, {
-                    title: 'Addresses',
-                    key: R_KEYS.ADDRESSES,
-                    type: 'lists',
-                    multiSelect: true,
-                }, {
-                    title: 'Basic Notes',
-                    key: R_KEYS.NOTES,
-                }, {
-                    title: 'Relatives',
-                    key: R_KEYS.RELATIVES,
-                    type: 'lists',
-                    multiSelect: true
-                }, {
-                    title: 'Contacts',
-                    key: R_KEYS.CONTACTS,
-                    type: 'lists',
-                    multiSelect: true
-                }, {
-                    title: 'Files',
-                    key: R_KEYS.FILES,
-                    type: 'lists',
-                    multiSelect: true
-                }, {
-                    title: 'Action History',
-                    key: R_KEYS.HISTORY,
-                    type: 'lists',
-                    multiSelect: true
-                }].map((tableConfig, tableIndex) => {
+                {this.tableConfigHolder.map((tableConfig, tableIndex) => {
                     return this.buildGridTable(tableConfig, tableIndex);
                 })}
  
@@ -548,7 +788,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onHandleMergeBegin: (bkgPort, data) => dispatch(actions.ripsMergeClients(bkgPort, data))
+        onMergeBegin: (bkgPort, data) => dispatch(actions.ripsMergeClients(bkgPort, data))
     };
 };
 

@@ -21,6 +21,7 @@ const PCs = {
     //                     REACT APP -> BKG SCRIPT CODES
     // ==============================================================================
     RA_BKG_START_IMPORT: 'RA_BKG_START_IMPORT',
+    RA_BKG_START_MERGE: 'RA_BKG_START_MERGE',
     RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED: 'RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED',
 
     // ==============================================================================

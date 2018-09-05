@@ -21,6 +21,5 @@ export const BKG_RA_STOP_IMPORT_WITH_ERROR = 'BKG_RA_STOP_IMPORT_WITH_ERROR';
 
 // ----------------- send -> react app (RA) to background (BKG) -----------------
 export const RA_BKG_START_IMPORT = 'RA_BKG_START_IMPORT';
-export const RA_BKG_CONTINUE_IMPORT = 'RA_BKG_CONTINUE_IMPORT';
+export const RA_BKG_START_MERGE = 'RA_BKG_START_MERGE';
 export const RA_BKG_STOP_IMPORT = 'RA_BKG_STOP_IMPORT';
-

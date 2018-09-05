@@ -40,7 +40,12 @@ Now you will see a popup that serves to remind you (the user) to make sure you'r
 
 You may also see a warning, which will show a list of tables that do not have at least one field selected in each row. This isn't necessarily a bad thing, but it gives users another chance to check if the selected data is accurate. If the user wants to check everything again, they can just click "Take me back", and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click "Merge" and the merge process will begin!
 
-Note: All of the first client's data will be selected be default because the program assumes this client is the "most accurate" record, a.k.a. this client record has the majority of the accurate data. You can still un-select any of this data if you know it is incorrect and needs to be changed. 
+### Which Client Gets the New Data?
+This program assumes the first client number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
+
+    Note: this is also why all of this first client's data is selected by default. You can still un-select any of this data if you know it is incorrect and needs to be changed.
+
+**The Merger will not completely delete any client data!!** If any field has data that needs to be replaced (like wrong nationality, or a misspelled name), the target client (Client StARS #1) will get the updated information. However, if there is incorrect data (like actions with the wrong notes), this data will need to be changed manually.
 
 ## How You Know Merge has Finished
 Not sure yet :)
