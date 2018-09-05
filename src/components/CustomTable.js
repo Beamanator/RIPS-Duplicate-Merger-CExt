@@ -42,6 +42,30 @@ class CustomTable extends Component {
         });
     }
 
+    componentDidMount() {
+        const {
+            multiSelect,
+            tableKey,
+            cellSelectHandler
+        } = this.props;
+        const { selectedRows } = this.state;
+
+        let allRowsSelected = true;
+
+        selectedRows.forEach((row) => {
+            if (multiSelect) {
+                if (!row.includes(true)) allRowsSelected = false;
+                else {} // don't care... default is true
+            }
+            else {
+                if (![0,1,2].includes(row)) allRowsSelected = false;
+                else {} // don't care... default is true
+            }
+        });
+
+        cellSelectHandler(tableKey, allRowsSelected);
+    }
+
     /**
      * Function converts raw passed-in data to a flat array that can be easily
      * used by the component.
@@ -255,11 +279,9 @@ class CustomTable extends Component {
 
         // change logic depending on multiSelect
         if (this.props.multiSelect) {
-            // Select all rows of
-            // -> the specified column at the same time
-            // 1) get selected row's client index
+            // get selected row's client index
             const selectedClientIndex = data[row][4];
-            // 1) loop through data, looking for same client index
+            // loop through data, looking for same client index
             data.forEach((dataRow, dataRowIndex) => {
                 const clientIndex = dataRow[4];
 
@@ -334,13 +356,12 @@ class CustomTable extends Component {
     isRowSelected = (row) => {
         const { selectedRows } = this.state;
         const {
-            multiSelect,
+            multiSelect, locked,
             classes: {
                 rowIsSelected,
                 rowNotSelectedAndLocked,
                 rowNotSelected
             },
-            locked
         } = this.props;
 
         // multi-select logic

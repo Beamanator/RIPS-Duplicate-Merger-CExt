@@ -25,6 +25,17 @@ import {
 } from './shared/ripsKeys';
 
 class App extends Component {
+    // note: '<table>_AllSelected' is where these keys are used!
+    tableKeysHolder = [
+        [R_KEYS.CLIENT_BASIC_INFORMATION],
+        [R_KEYS.ADDRESSES],
+        [R_KEYS.NOTES],
+        [R_KEYS.RELATIVES],
+        [R_KEYS.CONTACTS],
+        [R_KEYS.FILES],
+        [R_KEYS.HISTORY]
+    ]
+
     state = {
         client1: '201813794', client1Valid: false,
         client2: '201815032', client2Valid: false,
@@ -33,15 +44,6 @@ class App extends Component {
         mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
-        tablesAllSelected: {
-            [R_KEYS.CLIENT_BASIC_INFORMATION]: false,
-            [R_KEYS.ADDRESSES]: false,
-            [R_KEYS.NOTES]: false,
-            [R_KEYS.RELATIVES]: false,
-            [R_KEYS.CONTACTS]: false,
-            [R_KEYS.FILES]: false,
-            [R_KEYS.HISTORY]: false,
-        },
         dialogNotAllSelectedContent: ''
     }
 
@@ -158,7 +160,6 @@ class App extends Component {
     }
 
     handleMergeDialogOpen = () => {
-        const { tablesAllSelected } = this.state;
         const { classes: { dialogListStyles } } = this.props;
         
         let emptyTableNames = [];
@@ -166,13 +167,15 @@ class App extends Component {
             'not have ALL rows selected, so there will be some data' +
             ' LEFT OUT of the merge:';
 
-        // loop through state prop [tablesAllSelected] and
+        // loop through table keys [this.tableKeysHolder] and
         // -> add a note that mentions which tables are not totally
         // -> selected. User should think about closing the modal
         // -> and selecting some more values to be 100% accurate
-        Object.entries(tablesAllSelected)
-        .forEach(([tableKey, isAllSelected]) => {
-            if (!isAllSelected) {
+        this.tableKeysHolder.forEach(tableKey => {
+            // match tableKeys with state prop '<tableKey>_AllSelected'
+            if (!this.state[tableKey + '_AllSelected']) {
+                // state prop is false - so make sure we display
+                // -> table key warning below!
                 emptyTableNames.push(tableKey);
             }
         });
@@ -233,14 +236,9 @@ class App extends Component {
             console[type](msg);
         }
     }
-    handleCellSelected = (tableTitle, isAllSelected) => {
-        const newTablesSelectedContainer = {
-            ...this.state.tablesAllSelected,
-            [tableTitle]: isAllSelected
-        };
-
+    handleCellSelected = (tableKey, isAllSelected) => {    
         this.setState({
-            tablesAllSelected: newTablesSelectedContainer
+            [tableKey + '_AllSelected']: isAllSelected
         });
     }
 
