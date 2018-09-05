@@ -3,8 +3,10 @@ export const BLANK_ACTION = 'BLANK_ACTION';
 export const RIPS_FETCH_START = 'RIPS_FETCH_START';
 export const RIPS_FETCH_SUCCESS = 'RIPS_FETCH_SUCCESS';
 export const RIPS_FETCH_FAIL = 'RIPS_FETCH_FAIL';
-export const RIPS_MERGE_START = 'RIPS_MERGE_START';
 // const RIPS_FETCH_DATA... (container - no action connected to reducer)
+
+// export const RIPS_MERGE_START = 'RIPS_MERGE_START'; // -> probs dont need
+// const RIPS_MERGE_CLIENTS... (container - no action connected to reducer)
 
 export const BACKGROUND_PORT_SET = 'BACKGROUND_PORT_SET';
 export const BACKGROUND_PORT_REMOVE = 'BACKGROUND_PORT_REMOVE';

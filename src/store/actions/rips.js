@@ -44,3 +44,17 @@ export const ripsFetchData = (port, clientNums) => {
         // -> and handled in actions/port.js - via a port listener
     };
 };
+// KICK OFF PROCESS - start merging rips clients
+export const ripsMergeClients = (port, data) => {
+    return dispatch => {
+        console.log('Time to merge!', data);
+
+        // TODO: send message to background to begin merge
+        // port.postMessage({
+        //     code: portCodes.CODE,
+        //     data: data?,
+        //     mergeTarget: num,
+        //     clientsToArchive: [...nums]
+        // })
+    };
+};

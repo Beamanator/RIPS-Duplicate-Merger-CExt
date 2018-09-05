@@ -8,7 +8,8 @@ export {
 
 export {
     ripsFetchData,
-    ripsFetchSuccess
+    ripsFetchSuccess,
+    ripsMergeClients
 } from './rips';
 
 // export {

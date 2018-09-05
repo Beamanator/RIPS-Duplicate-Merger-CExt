@@ -220,6 +220,9 @@ class App extends Component {
         this.setState({
             mergeInProgress: true
         });
+
+        // TODO: pass data in
+        this.props.onHandleMergeBegin();
     }
 
     handleError = (msg, type='error') => {
@@ -547,8 +550,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        // onTableCalcUnselected: (selected) => dispatch(actions.tableCalcUnselected(selected))
-        // onTableCalcUnselected: () => dispatch(actions.tableCalcUnselected())
+        onHandleMergeBegin: (bkgPort, data) => dispatch(actions.ripsMergeClients(bkgPort, data))
     };
 };
 
