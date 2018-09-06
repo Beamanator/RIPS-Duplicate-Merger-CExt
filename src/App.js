@@ -283,15 +283,20 @@ class App extends Component {
             formattedData,
             // TODO: using [tableConfigHolder], extract:
             // -> [tableKey + '_SelectedArr']
-        } = this.state
+        } = this.state;
 
         // TODO: get 'mergeData' from 'formattedData' and
         // -> selectedArrays
+        const mergeData = Object.entries(formattedData)
+        .reduce((mData, [tableKey, tableArr]) => {
+            debugger;   
+            return mData;
+        }, {});
 
         // pass data to action
         onMergeBegin(
             bkgPort,
-            formattedData, // TODO: pass mergeData here!
+            mergeData, // TODO: pass mergeData here!
             client1, // (target num)
             [client2, client3] // (other nums)
         );
