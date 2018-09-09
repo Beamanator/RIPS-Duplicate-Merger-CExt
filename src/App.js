@@ -284,26 +284,24 @@ class App extends Component {
             // [tableKey + '_SelectedArr'] extracted in loops
         } = this.state;
 
-        // TODO: get 'mergeData' from 'formattedData' and
+        // get 'mergeData' from 'formattedData' and
         // -> <tableKey>+'_SelectedArr's
         const mergeData = Object.entries(formattedData)
         .reduce((mData, [tableKey, tableArr]) => {
             // get table's associated selectedArr
             const selectedArr = this.state[tableKey + '_SelectedArr'];
-            console.log(tableKey, selectedArr);
 
             // if first element in 'selected' array is an Array, multiple
             // -> elements CAN be selected at the same time
             const multiSelect = Array.isArray(selectedArr[0]);
 
-            // throw error if selectedArr and tableArr have different
-            // -> sizes... right?
+            // throw error if selectedArr and tableArr have different sizes
             if (selectedArr.length !== tableArr.length) {
                 console.error(
                     'WHY do selectedArr & tableArr have different lengths',
                     selectedArr, tableArr
                 );
-                // We should probably FAIL here somehow
+                // Fail - not sure how to deal with this data
                 mData.pass = false;
                 return mData;
             }
@@ -336,7 +334,7 @@ class App extends Component {
                             }
 
                             // get rid of fieldName group #
-                            // -> ex: '1. date' -> 'date'
+                            // -> ex: '13. date' -> 'date'
                             const firstSpaceLoc = fieldName.indexOf(' ');
                             fieldName = fieldName.substr(firstSpaceLoc + 1);
 
@@ -366,14 +364,16 @@ class App extends Component {
                     arrToMerge.push({
                         [fieldName]: fieldData[selectedIndex]
                     });
-                    console.log(fieldName, fieldData);
                 });
             }
 
-            // TODO: merge all objects in arrToMerge into mData
+            // merge all objects in arrToMerge into mData
             arrToMerge.forEach(fieldObj => {
-                console.log('arrToMerge',fieldObj);
-                // which key? probs tableKey
+                // add prop (table key) if doesn't exist
+                if (!mData[tableKey]) mData[tableKey] = [];
+
+                // push data to big merge container object!
+                mData[tableKey].push(fieldObj);
             })
 
             return mData;
@@ -382,7 +382,7 @@ class App extends Component {
         // close dialog
         this.handleMergeDialogClose();
 
-        // TODO:
+        // if data merge didn't work perfectly, 
         if (!mergeData.pass) {
             console.error('error somewhere');
             return;
@@ -391,7 +391,7 @@ class App extends Component {
         // pass data to action
         onMergeBegin(
             bkgPort,
-            mergeData, // TODO: pass mergeData here!
+            mergeData, // pass mergeData here!
             client1, // (target num)
             [client2, client3] // (other nums)
         );
@@ -549,7 +549,6 @@ class App extends Component {
                 Object.entries(rawData)
                 // don't worry about keys, process inner arrays
                 .reduce((output, [_, data_container], container_index) => {
-                    // console.log('max', maxDataElems, data_container)
                     // for each data container array...
                     data_container.forEach((client_data_array, client_index) => {
                         // quit if data array doesn't exist (this happens often in

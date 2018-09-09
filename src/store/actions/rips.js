@@ -50,14 +50,14 @@ export const ripsMergeClients = (port, mergeData, target, others) => {
         // TODO: call action indicating merge is starting?
         // dispatch(ripsMergeStart());
 
+        console.log('Time to merge!', mergeData, target, others);
+
         // if in development mode, port may not be available
         if (!port) {
             const errMsg = 'No Port available! Check connection & environment';
             dispatch(ripsFetchFail(errMsg));
             return;
         }
-
-        console.log('Time to merge!', mergeData);
 
         // send message and data to background to begin merge
         port.postMessage({
