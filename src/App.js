@@ -281,17 +281,89 @@ class App extends Component {
         const {
             client1, client2, client3,
             formattedData,
-            // TODO: using [tableConfigHolder], extract:
-            // -> [tableKey + '_SelectedArr']
+            // [tableKey + '_SelectedArr'] extracted in loops
         } = this.state;
 
         // TODO: get 'mergeData' from 'formattedData' and
-        // -> selectedArrays
+        // -> <tableKey>+'_SelectedArr's
         const mergeData = Object.entries(formattedData)
         .reduce((mData, [tableKey, tableArr]) => {
-            debugger;   
+            // get table's associated selectedArr
+            const selectedArr = this.state[tableKey + '_SelectedArr'];
+            console.log(tableKey, selectedArr);
+
+            // if first element in 'selected' array is an Array, multiple
+            // -> elements CAN be selected at the same time
+            const multiSelect = Array.isArray(selectedArr[0]);
+
+            // throw error if selectedArr and tableArr have different
+            // -> sizes... right?
+            if (selectedArr.length !== tableArr.length) {
+                console.error(
+                    'WHY do selectedArr & tableArr have different lengths',
+                    selectedArr, tableArr
+                );
+                // We should probably FAIL here somehow
+                mData.pass = false;
+                return mData;
+            }
+
+            // if we're here, sizes are the same. Now loop through each row
+            // -> and add the data back to mData (merged data)
+            const arrToMerge = [];
+            tableArr.forEach(([fieldName, ...fieldData], fieldIndex) => {
+                // multi-select logic
+                if (multiSelect) {
+                    // get array of selected fields indices from selectedArr
+                    const selectedFieldIndices = selectedArr[fieldIndex];
+
+                    // if none selected, skip adding this field
+                    if (selectedFieldIndices.length === 0) return;
+
+                    // loop through selectedFieldIndices
+                    selectedFieldIndices.forEach((isSelected, selectedIndex) => {
+                        if (isSelected) {
+                            const fieldValue = fieldData[selectedIndex];
+                            const groupIndex = fieldData[4];
+                            // if (arrToMerge[groupIndex])
+                        }
+                        // else, not selected - do nothing
+                        else {}
+                    })
+                }
+                // single-select logic
+                else {
+                    // get selectedIndex from selectedArr
+                    const selectedIndex = selectedArr[fieldIndex];
+                    
+                    // if none selected, skip adding this field
+                    if (selectedIndex === null) return;
+
+                    // add selected field to array to merge
+                    arrToMerge.push({
+                        [fieldName]: fieldData[selectedIndex]
+                    });
+                }
+                console.log(fieldName, fieldData);
+            })
+            
+            // TODO: merge all objects in arrToMerge into mData
+            arrToMerge.forEach(fieldObj => {
+                console.log('arrToMerge',fieldObj);
+                // which key?
+            })
+
             return mData;
-        }, {});
+        }, {pass: true});
+
+        // close dialog
+        this.handleMergeDialogClose();
+
+        // TODO:
+        if (!mergeData.pass) {
+            console.error('error somewhere');
+            return;
+        }
 
         // pass data to action
         onMergeBegin(
@@ -301,8 +373,6 @@ class App extends Component {
             [client2, client3] // (other nums)
         );
 
-        // close dialog
-        this.handleMergeDialogClose();
         // lock tables, disable merge button
         this.setState({ mergeInProgress: true });
     }
@@ -454,7 +524,7 @@ class App extends Component {
                 // get array of Obj's props in raw data
                 Object.entries(rawData)
                 // don't worry about keys, process inner arrays
-                .reduce((output, [_, data_container]) => {
+                .reduce((output, [_, data_container], container_index) => {
                     // if (data_container.length === 0) return {};
                     // for each data container array...
                     data_container.forEach((client_data_array, client_index) => {
@@ -469,7 +539,7 @@ class App extends Component {
                             .forEach(([data_key, data_value]) => {
                                 // calculate new field key name (including
                                 // -> client index
-                                const data_index_key = `${data_index + 1}. ${data_key}`;
+                                const data_index_key = `${(container_index * 3) + data_index + 1}. ${data_key}`;
                                 
                                 // create empty array if not present yet
                                 if (!output[data_index_key]) {
@@ -481,7 +551,7 @@ class App extends Component {
                                 
                                 // also add a 5th col value (data_index) - should
                                 // -> not display, just to help selecting data
-                                output[data_index_key][3] = data_index;
+                                output[data_index_key][3] = (container_index * 3) + data_index;
                             });
                         });
                     });

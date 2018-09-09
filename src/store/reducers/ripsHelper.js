@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'development') {
             ],
             action2: [
                 [
-                    {date: '1-2', name: 'action2', 3: 'three'},
+                    {date: '1-2', name: 'action2'},
                     {date: '1-3', name: 'action2'},
                     {date: '1-4', name: 'action2'}
                 ],
@@ -72,7 +72,8 @@ if (process.env.NODE_ENV === 'development') {
             ],
             action3: [
                 [
-                    {date: '3333', name: 'action3'}
+                    {date: '3333', name: 'action3'},
+                    {date: 'ut oh',name: 'action3'}
                 ],
                 undefined,
                 undefined
