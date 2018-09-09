@@ -60,22 +60,27 @@ if (process.env.NODE_ENV === 'development') {
             ],
             action2: [
                 [
-                    {date: '1-2', name: 'action2'},
-                    {date: '1-3', name: 'action2'},
-                    {date: '1-4', name: 'action2'}
+                    {date: '1-2-2', name: 'action2'},
+                    {date: '1-2-3', name: 'action2'},
+                    {date: '1-2-4', name: 'action2'},
+                    {date: '1-2-5', name: 'action2'}
                 ],
                 undefined,
                 [
-                    {date: '2-1', name: 'action2'},
-                    {date: '2-2', name: 'action2'}
+                    {date: '3-2-1', name: 'action2'},
+                    {date: '3-2-2', name: 'action2'}
                 ]
             ],
             action3: [
                 [
-                    {date: '3333', name: 'action3'},
-                    {date: 'ut oh',name: 'action3'}
+                    {date: '1-3-1', name: 'action3'},
+                    {date: 'ut oh', name: 'action3'}
                 ],
-                undefined,
+                [
+                    {date: '3-3-1', name: 'action3'},
+                    {date: '3-3-2', name: 'action3'},
+                    {date: '3-3-3', name: 'action3'}
+                ],
                 undefined
             ]
         },

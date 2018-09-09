@@ -311,46 +311,69 @@ class App extends Component {
             // if we're here, sizes are the same. Now loop through each row
             // -> and add the data back to mData (merged data)
             const arrToMerge = [];
-            tableArr.forEach(([fieldName, ...fieldData], fieldIndex) => {
-                // multi-select logic
-                if (multiSelect) {
+            // multi-select logic
+            if (multiSelect) {
+                const objToMerge = {};
+                tableArr.forEach(([fieldName, ...fieldData], fieldIndex) => {
                     // get array of selected fields indices from selectedArr
                     const selectedFieldIndices = selectedArr[fieldIndex];
-
+    
                     // if none selected, skip adding this field
                     if (selectedFieldIndices.length === 0) return;
-
+    
+                    // const selectedData = {};
                     // loop through selectedFieldIndices
                     selectedFieldIndices.forEach((isSelected, selectedIndex) => {
                         if (isSelected) {
                             const fieldValue = fieldData[selectedIndex];
-                            const groupIndex = fieldData[4];
-                            // if (arrToMerge[groupIndex])
+                            const groupIndex = fieldData[3];
+                            const clientIndex = selectedIndex;
+
+                            // create key to match up client data from different rows
+                            const dataMatchKey = `${clientIndex}-${groupIndex}`;
+                            if (!objToMerge[dataMatchKey]) {
+                                objToMerge[dataMatchKey] = {};
+                            }
+
+                            // get rid of fieldName group #
+                            // -> ex: '1. date' -> 'date'
+                            const firstSpaceLoc = fieldName.indexOf(' ');
+                            fieldName = fieldName.substr(firstSpaceLoc + 1);
+
+                            // assign data to matching data key
+                            objToMerge[dataMatchKey][fieldName] = fieldValue;
                         }
                         // else, not selected - do nothing
                         else {}
-                    })
-                }
-                // single-select logic
-                else {
+                    });
+                });
+                // add all data objects to the merge array!
+                Object.entries(objToMerge).forEach(([_, dataObj]) => {
+                    arrToMerge.push(dataObj);
+                });
+            }
+            
+            // single-select logic
+            else {
+                tableArr.forEach(([fieldName, ...fieldData], fieldIndex) => {
                     // get selectedIndex from selectedArr
                     const selectedIndex = selectedArr[fieldIndex];
                     
                     // if none selected, skip adding this field
                     if (selectedIndex === null) return;
-
+        
                     // add selected field to array to merge
                     arrToMerge.push({
                         [fieldName]: fieldData[selectedIndex]
                     });
-                }
-                console.log(fieldName, fieldData);
-            })
-            
+                    console.log(fieldName, fieldData);
+                });
+            }
+
             // TODO: merge all objects in arrToMerge into mData
             arrToMerge.forEach(fieldObj => {
                 console.log('arrToMerge',fieldObj);
-                // which key?
+                // which key? probs tableKey
             })
 
             return mData;
@@ -520,12 +543,13 @@ class App extends Component {
         }
         // handle arrays of arrays
         else if (type === 'lists') {
+            let runningTotal = 0;
             return Object.entries(
                 // get array of Obj's props in raw data
                 Object.entries(rawData)
                 // don't worry about keys, process inner arrays
                 .reduce((output, [_, data_container], container_index) => {
-                    // if (data_container.length === 0) return {};
+                    // console.log('max', maxDataElems, data_container)
                     // for each data container array...
                     data_container.forEach((client_data_array, client_index) => {
                         // quit if data array doesn't exist (this happens often in
@@ -538,8 +562,8 @@ class App extends Component {
                             // for each data prob, get key and value
                             .forEach(([data_key, data_value]) => {
                                 // calculate new field key name (including
-                                // -> client index
-                                const data_index_key = `${(container_index * 3) + data_index + 1}. ${data_key}`;
+                                // -> client index)
+                                const data_index_key = `${runningTotal + data_index + 1}. ${data_key}`;
                                 
                                 // create empty array if not present yet
                                 if (!output[data_index_key]) {
@@ -551,10 +575,20 @@ class App extends Component {
                                 
                                 // also add a 5th col value (data_index) - should
                                 // -> not display, just to help selecting data
-                                output[data_index_key][3] = (container_index * 3) + data_index;
+                                output[data_index_key][3] = runningTotal + data_index + 1;
                             });
                         });
                     });
+                    // get max # of elements associated with each client
+                    const numDataElems = Math.max(
+                        data_container[0] ? data_container[0].length : 0,
+                        data_container[1] ? data_container[1].length : 0,
+                        data_container[2] ? data_container[2].length : 0
+                    );
+
+                    // increment running total (next data_index_key) by the
+                    // -> max number of elements in the latest data container
+                    runningTotal += numDataElems
                     return output
                 }, {})
             )
