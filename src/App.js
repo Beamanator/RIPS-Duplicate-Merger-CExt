@@ -896,7 +896,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onMergeBegin: (bkgPort, data) => dispatch(actions.ripsMergeClients(bkgPort, data))
+        onMergeBegin: (bkgPort, mData, c1, cA) => dispatch(actions.ripsMergeClients(bkgPort, mData, c1, cA))
     };
 };
 
