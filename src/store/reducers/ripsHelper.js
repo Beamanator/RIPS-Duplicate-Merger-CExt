@@ -2,7 +2,7 @@ import { RIPS_KEYS as R_KEYS } from '../../shared/ripsKeys';
 import { tableConfigs } from '../../shared/ripsTableConfigHolder';
 import { formatRawData } from '../../shared/ripsFormatRawData';
 
-let initialData = null;
+let initialData = {};
 
 // only change to sample data IFF we're in development mode
 if (process.env.NODE_ENV === 'development') {

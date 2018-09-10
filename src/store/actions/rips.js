@@ -21,7 +21,7 @@ const ripsFetchFail = (error) => {
 export const ripsFetchSuccess = (ripsData) => {
     // format RIPS data and pass to store
     let formattedData = {};
-    tableConfigs.forEach(({ tableKey, type }) => {
+    tableConfigs.forEach(({ key: tableKey, type }) => {
         formattedData[tableKey] =
             formatRawData(ripsData[tableKey], tableKey, type)
     })
