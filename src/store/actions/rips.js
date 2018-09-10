@@ -1,6 +1,9 @@
 import * as actionTypes from './actionTypes';
 import * as portCodes from '../portCodes';
 
+import { tableConfigs } from '../../shared/ripsTableConfigHolder';
+import { formatRawData } from '../../shared/ripsFormatRawData';
+
 // tell UI the process has started
 const ripsFetchStart = () => {
     return {
@@ -16,9 +19,15 @@ const ripsFetchFail = (error) => {
 };
 // success! done! - called by port.js actions
 export const ripsFetchSuccess = (ripsData) => {
+    // format RIPS data and pass to store
+    let formattedData = {};
+    tableConfigs.forEach(({ tableKey, type }) => {
+        formattedData[tableKey] =
+            formatRawData(ripsData[tableKey], tableKey, type)
+    })
     return {
         type: actionTypes.RIPS_FETCH_SUCCESS,
-        data: ripsData
+        data: formattedData
     };
 };
 // KICK OFF PROCESS - collect rips data

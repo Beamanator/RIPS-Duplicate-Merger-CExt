@@ -19,45 +19,15 @@ import {
 // redux store actions
 import * as actions from './store/actions';
 
+// rips table config array
+import { tableConfigs } from './shared/ripsTableConfigHolder';
+
 // rips page and field keys
 import {
     RIPS_KEYS as R_KEYS
 } from './shared/ripsKeys';
 
 class App extends Component {
-    tableConfigHolder = [{
-        title: 'Client Basic Information',
-        key: R_KEYS.CLIENT_BASIC_INFORMATION,
-    }, {
-        title: 'Addresses',
-        key: R_KEYS.ADDRESSES,
-        type: 'lists',
-        multiSelect: true,
-    }, {
-        title: 'Basic Notes',
-        key: R_KEYS.NOTES,
-    }, {
-        title: 'Relatives',
-        key: R_KEYS.RELATIVES,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Contacts',
-        key: R_KEYS.CONTACTS,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Files',
-        key: R_KEYS.FILES,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Action History',
-        key: R_KEYS.HISTORY,
-        type: 'lists',
-        multiSelect: true
-    }]
-
     state = {
         client1: '201813794', client1Valid: false,
         client2: '201815032', client2Valid: false,
@@ -67,7 +37,7 @@ class App extends Component {
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
         dialogNotAllSelectedContent: '',
-        formattedData: null,
+        // formattedData: {},
         /**
          * <tableKey>_AllSelected,
          * -> Boolean values describing when a table has all rows
@@ -85,10 +55,9 @@ class App extends Component {
             client1, client2, client3
         } = this.state;
         const {
-            bkgPort, ripsData,
+            bkgPort,
             onBackgroundPortInit
         } = this.props;
-
 
         // Warn user if we're in development environment
         if (process.env.NODE_ENV === 'development') {
@@ -110,22 +79,8 @@ class App extends Component {
         const client2Valid = this.checkClientNumValid(client2);
         const client3Valid = this.checkClientNumValid(client3, true);
         
-        // convert raw data into desired format
-        let formattedData = {};
-        // loop through keys, adding in converted data
-        this.tableConfigHolder.forEach(({ key, title, type }) => {
-            formattedData[key] = this.convertRawData(
-                ripsData[key], title, type
-            )
-        })
-        
         // update any values that need updating :)
-        this.setState({
-            client1Valid,
-            client2Valid,
-            client3Valid,
-            formattedData: formattedData
-        })
+        this.setState({ client1Valid, client2Valid, client3Valid })
     }
 
     checkClientNumValid = (numStr, emptyAllowed=false) => {
@@ -226,11 +181,11 @@ class App extends Component {
             'not have ALL rows selected, so there will be some data' +
             ' LEFT OUT of the merge:';
 
-        // loop through table keys [this.tableConfigHolder] and
+        // loop through table keys [tableConfigs] and
         // -> add a note that mentions which tables are not totally
         // -> selected. User should think about closing the modal
         // -> and selecting some more values to be 100% accurate
-        this.tableConfigHolder.forEach(tableConfig => {
+        tableConfigs.forEach(tableConfig => {
             // match tableConfigs with state prop '<tableConfig.key>_AllSelected'
             if (!this.state[tableConfig.key + '_AllSelected']) {
                 // state prop is false - so make sure we display
@@ -276,17 +231,16 @@ class App extends Component {
     handleMergeDialogAgree = () => {
         const {
             onMergeBegin,
-            bkgPort
+            bkgPort, ripsData
         } = this.props;
         const {
-            client1, client2, client3,
-            formattedData,
+            client1, client2, client3
             // [tableKey + '_SelectedArr'] extracted in loops
         } = this.state;
 
-        // get 'mergeData' from 'formattedData' and
+        // get 'mergeData' from 'ripsData' and
         // -> <tableKey>+'_SelectedArr's
-        const mergeData = Object.entries(formattedData)
+        const mergeData = Object.entries(ripsData)
         .reduce((mData, [tableKey, tableArr]) => {
             // get table's associated selectedArr
             const selectedArr = this.state[tableKey + '_SelectedArr'];
@@ -416,207 +370,6 @@ class App extends Component {
         });
     }
 
-    /**
-     * Function converts raw passed-in data to a flat array that can be easily
-     * used by the component.
-     * Example: Takes data like this:
-     * {
-     *  'FIRST_NAME': ['', '', ''],
-     *  'LAST_NAME': ['', '', ''],
-     *  ...
-     * }
-     * and turns it into something like this:
-     * [
-     *  ['FIRST_NAME', '', '', ''],
-     *  ['LAST_NAME', '', '', ''], ...
-     * ]
-     *
-     * @param {object} rawData - js object holding raw data
-     * @param {function} errorHandler - error handler function
-     * @param {string} key - data key
-     */
-    convertRawData = (rawData, key, type="basic") => {
-        // throw error if data is empty
-        if (!rawData || Object.keys(rawData).length === 0) {
-            let msg = `rasData with key <${key}> is empty!`;
-            this.handleError(msg);
-            return [];
-        }
-
-        if (type === "basic") {
-            // get array of Obj's props in raw data
-            return Object.entries( rawData )
-            // add raw data arrays to category / field name / key
-            .map(dataCategory => {
-                const key = dataCategory[0];
-                let data = dataCategory[1];
-
-                // destructure vars from final .reduce function
-                const { pass: dataTypesMatch, dataType } =
-                // convert data elements into their native "types"
-                data.map(e => typeof(e))
-                // remove undefined elements (typeof(undefined) is "undefined")
-                .filter(type => type !== 'undefined')
-                // pass if defined data's types are all the same!
-                .reduce((container, dataType) => {
-                    // if type hasn't been set, set dataType
-                    if (!container.dataType) {
-                        return {
-                            pass: container.pass,
-                            dataType: dataType
-                        }
-                    }
-                    // dataType has ben set - only pass if current
-                    // -> dataType matches old dataType
-                    else {
-                        return {
-                            pass: dataType === container.dataType,
-                            dataType: container.dataType
-                        }
-                    }
-                }, { pass: true, dataType: '' });
-                
-                // If not all elements have same data type (or are undefined),
-                // -> something probably went wrong. Throw error.
-                if (!dataTypesMatch) {
-                    let err = key + ' has mismatched data types' +
-                        ' in data array! why?? fix this!';
-                    console.error(err, dataCategory);
-                    // add errors to output
-                    return [key, ...data.map(e => 'ERROR')]
-                }
-                // else, all dataTypes are the same! onward!
-                else {
-                    // depending on the type, return different data
-                    switch(dataType) {
-                        case 'string': // do nothing, just display data!
-                            break;
-                        case 'number': // do nothing, except add "confused" warning
-                            this.handleError('Huh? How is there a "number" dataType?', 'warn');
-                            break;
-                        case 'object':
-                            // throw warning if it's an object, not array :D
-                            if (Array.isArray(data[0])) {
-                                console.warn(
-                                    'UNSURE HOW TO HANDLE THESE OBJECTS!',
-                                    'Should they be Arrays? Hmmmm...'
-                                );
-                            } else {
-                                // arrays will be handled later - at the end
-                                // -> of this handling function. So skip
-                                // -> processing now
-                                return dataCategory;
-                            }
-                            break;
-                        case 'boolean':
-                            // for checkboxes. turn 'true' into 'checked', false
-                            // -> into 'not checked'
-                            data = data.map(e => e ? 'checked' : 'not checked');
-                            break;
-                        case 'undefined': // all undefined - these will get
-                            // -> filtered out later - don't worry now
-                            break;
-                        default:
-                            this.handleError(
-                                'How did we get here?? Data doesnt match' +
-                                ' any expected values somehow...',
-                                key, dataType
-                            );
-                    }
-                    // finally, return the new array format
-                    return [key, ...data]
-                }
-            })
-            // filter -> hide row if all values are "blank"
-            .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank
-                // -> since they are valid numbers / boolean values)
-                const blankTypes = [undefined, null, ''];
-                
-                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
-                return !(
-                    blankTypes.includes(data[1]) &&
-                    blankTypes.includes(data[2]) &&
-                    blankTypes.includes(data[3])
-                );
-            });
-        }
-        // handle arrays of arrays
-        else if (type === 'lists') {
-            let runningTotal = 0;
-            return Object.entries(
-                // get array of Obj's props in raw data
-                Object.entries(rawData)
-                // don't worry about keys, process inner arrays
-                .reduce((output, [_, data_container], container_index) => {
-                    // for each data container array...
-                    data_container.forEach((client_data_array, client_index) => {
-                        // quit if data array doesn't exist (this happens often in
-                        // -> history arrays
-                        if (!client_data_array) return;
-                        // for client's data array...
-                        client_data_array.forEach((client_data, data_index) => {
-                            // convert each object's props to array
-                            Object.entries(client_data)
-                            // for each data prob, get key and value
-                            .forEach(([data_key, data_value]) => {
-                                // calculate new field key name (including
-                                // -> client index)
-                                const data_index_key = `${runningTotal + data_index + 1}. ${data_key}`;
-                                
-                                // create empty array if not present yet
-                                if (!output[data_index_key]) {
-                                    output[data_index_key] = [];
-                                }
-
-                                // add data to correct index in output object & arrays
-                                output[data_index_key][client_index] = data_value;
-                                
-                                // also add a 5th col value (data_index) - should
-                                // -> not display, just to help selecting data
-                                output[data_index_key][3] = runningTotal + data_index + 1;
-                            });
-                        });
-                    });
-                    // get max # of elements associated with each client
-                    const numDataElems = Math.max(
-                        data_container[0] ? data_container[0].length : 0,
-                        data_container[1] ? data_container[1].length : 0,
-                        data_container[2] ? data_container[2].length : 0
-                    );
-
-                    // increment running total (next data_index_key) by the
-                    // -> max number of elements in the latest data container
-                    runningTotal += numDataElems
-                    return output
-                }, {})
-            )
-            // change objs to correct format arr format
-            .map(e => [e[0], ...e[1]])
-            // filter -> hide row if all values are "blank"
-            .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank
-                // -> since they are valid numbers / boolean values)
-                const blankTypes = [undefined, null, ''];
-                
-                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
-                return !(
-                    blankTypes.includes(data[1]) &&
-                    blankTypes.includes(data[2]) &&
-                    blankTypes.includes(data[3])
-                );
-            });
-
-        }
-        // handle unknown type
-        else {
-            const msg = `Type <${type}> unknown?? What is this??`;
-            this.handleError(msg);
-            // errorHandler(msg);
-            return [];
-        }
-    }
-
     buildGridTable = (config, tableIndex) => {
         const {
             key, title,
@@ -624,11 +377,10 @@ class App extends Component {
             multiSelect=false
         } = config;
         
-        const { ripsData, classes } = this.props;
+        const { classes, ripsData } = this.props;
         const {
             client3, client3Valid,
-            mergeInProgress,
-            formattedData
+            mergeInProgress
         } = this.state;
 
         // if data exists, build grid item!
@@ -638,7 +390,7 @@ class App extends Component {
                     <CustomTable
                         title={title}
                         tableKey={key}
-                        data={formattedData[key]}
+                        data={ripsData[key]}
                         errorHandler={this.handleError}
                         cellSelectHandler={this.handleCellSelected}
                         type={type}
@@ -749,7 +501,7 @@ class App extends Component {
                 </Grid>
 
                 {/* Instructions */}
-                <Grid item xs={12} className={classes.textCenter}>
+                {ripsData && Object.keys(ripsData).length > 0 ? <Grid item xs={12} className={classes.textCenter}>
                     <h1>Select the "correct" client data below!</h1>
                     <h4 className={classes.description}>
                         Each table below shows data that is inconsistent
@@ -767,10 +519,10 @@ class App extends Component {
                         correct Date of Birth that will be saved in the
                         merged record.
                     </h4>
-                </Grid>
+                </Grid> : null}
 
                 {/* Build all data tables :) */}
-                {this.tableConfigHolder.map((tableConfig, tableIndex) => {
+                {tableConfigs.map((tableConfig, tableIndex) => {
                     return this.buildGridTable(tableConfig, tableIndex);
                 })}
  
