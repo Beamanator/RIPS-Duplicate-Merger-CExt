@@ -18,9 +18,6 @@ class CustomTable extends Component {
     componentWillMount() {
         const { multiSelect, data } = this.props;
 
-        // format raw data as we like
-        // const data = this.convertRawData();
-
         // initialize empty array of correct length and girth for
         // -> selected indices to be placed in.
         const initialSelectionArr = data.map(row =>

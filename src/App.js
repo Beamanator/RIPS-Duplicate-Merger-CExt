@@ -185,12 +185,12 @@ class App extends Component {
         // -> add a note that mentions which tables are not totally
         // -> selected. User should think about closing the modal
         // -> and selecting some more values to be 100% accurate
-        tableConfigs.forEach(tableConfig => {
-            // match tableConfigs with state prop '<tableConfig.key>_AllSelected'
-            if (!this.state[tableConfig.key + '_AllSelected']) {
+        tableConfigs.forEach(({ key }) => {
+            // match tableConfigs with state prop '<key>_AllSelected'
+            if (!this.state[key + '_AllSelected']) {
                 // state prop is false - so make sure we display
                 // -> table key warning below!
-                emptyTableNames.push(tableConfig.key);
+                emptyTableNames.push(key);
             }
         });
 
@@ -363,7 +363,7 @@ class App extends Component {
             console[type](msg);
         }
     }
-    handleCellSelected = (tableKey, isAllSelected, selectedArr) => {    
+    handleCellSelected = (tableKey, isAllSelected, selectedArr) => {
         this.setState({
             [tableKey + '_SelectedArr']: selectedArr,
             [tableKey + '_AllSelected']: isAllSelected
