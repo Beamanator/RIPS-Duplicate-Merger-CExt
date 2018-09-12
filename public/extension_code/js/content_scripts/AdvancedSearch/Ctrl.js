@@ -51,11 +51,14 @@ const startImport = (clientNum) => {
         // TODO: popup exists! cancel import 'n stuff since the
         // -> search number was eff'd up!
         Utils_Error(MESSAGE_SOURCE, 'Popup shown in advanced search',
-            'something must have gone wrong...');
+            'something must have gone wrong...', errMsg);
     });
 }
 
-const sendMerge = (clientNum) => {
+const startMerge = (clientNum) => {
+    // TODO: finish this function ;)
+    // -> pretty much do same thing as the import - try to reuse as
+    // -> much code as possible
     console.log('time to start merge!', clientNum);
     debugger;
 }

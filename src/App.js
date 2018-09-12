@@ -36,7 +36,8 @@ class App extends Component {
         mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
-        dialogNotAllSelectedContent: '',
+        mergeDialogError: false,
+        dialogContent: '',
         // formattedData: {},
         /**
          * <tableKey>_AllSelected,
@@ -175,30 +176,76 @@ class App extends Component {
 
     handleMergeDialogOpen = () => {
         const { classes: { dialogListStyles } } = this.props;
-        
+
+        let mainDialogMessage = `If you're 100% sure you selected all ` +
+            'of the correct client data that should be merged into one ' +
+            'RIPS record, select "Merge". IF YOU HAVE ANY QUESTIONS AT ' +
+            'ALL, please talk to your coordinator or to the RIPS guy.';
+        let mergeDialogError = false;
         let emptyTableNames = [];
-        let emptyTablesMessage = 'Warning: The following tables do ' +
+        const emptyTablesMessage = 'Warning: The following tables do ' +
             'not have ALL rows selected, so there will be some data' +
             ' LEFT OUT of the merge:';
-
-        // loop through table keys [tableConfigs] and
-        // -> add a note that mentions which tables are not totally
-        // -> selected. User should think about closing the modal
-        // -> and selecting some more values to be 100% accurate
-        tableConfigs.forEach(({ key }) => {
-            // match tableConfigs with state prop '<key>_AllSelected'
-            if (!this.state[key + '_AllSelected']) {
-                // state prop is false - so make sure we display
-                // -> table key warning below!
-                emptyTableNames.push(key);
-            }
+        
+        // Check if any files are selected on clients # 2 or 3.
+        let filesNeedManualMove = false;
+        // get files table selected array
+        const filesSelected = this.state[R_KEYS.FILES + '_SelectedArr'];
+        // loop through array, checking for selected cells
+        filesSelected.forEach(fileSelectedRow => {
+            if (fileSelectedRow.length === 0) return;
+            // loop through each row of data that could be selected
+            fileSelectedRow.forEach((fileSelectedFlag, cIndex) => {
+                // don't count first client -> this is the target, so
+                // -> files won't need to be manually added here...
+                // -> They're here already!
+                if (cIndex === 0) return;
+                // if client is not #1, and the file is selected, set
+                // -> var to indicate files need to be manually moved!
+                if (fileSelectedFlag) filesNeedManualMove = true;
+            });
         });
+
+        // if files need to be moved manually, update main message to
+        // -> explain situation, and skip checking for empty tables
+        // -> so we can present 1 error at a time.
+        if (filesNeedManualMove) {
+            mainDialogMessage = 'ERROR: You selected at least 1 file ' +
+                'that needs to be moved to the target client (Client ' +
+                '#1). This merger cannot download & upload files, you ' +
+                'will need to do this manually. Please merge the files ' +
+                ' manually, then come back and try again when you have ' +
+                'added the necessary files to the target client ' +
+                '(Client #1).';
+            mergeDialogError = true;
+        }
+        // files don't need manual move, so now check if any tables
+        // -> are empty!
+        else {
+            // loop through table keys [tableConfigs] and
+            // -> add a note that mentions which tables are not totally
+            // -> selected. User should think about closing the modal
+            // -> and selecting some more values to be 100% accurate
+            tableConfigs.forEach(({ key }) => {
+                // match tableConfigs with state prop '<key>_AllSelected'
+                if (!this.state[key + '_AllSelected']) {
+                    // state prop is false - so make sure we display
+                    // -> table key warning below!
+                    emptyTableNames.push(key);
+                }
+            });
+        }
+
 
         // create some jsx - if there are some empty tables, display
         // -> them in a list w/ description. else, null!
-        const newDialogNotAllSelectedContent = (
-            emptyTableNames.length > 0 ? (
-                <Fragment>
+        const newDialogContent = (
+            <Fragment>
+                <DialogContentText id="merge-dialog-description">
+                    {mainDialogMessage}
+                </DialogContentText>
+                {/* If some tables are empty, add extra content */}
+                {emptyTableNames.length > 0 ? <Fragment>
                     <br />
                     <DialogContentText>
                         {emptyTablesMessage}
@@ -213,19 +260,19 @@ class App extends Component {
                             </ListItem>
                         ))}
                     </List>
-                </Fragment>
-            ) : null
+                </Fragment> : null}
+            </Fragment>
         );
         
         this.setState({
             mergeDialogOpen: true,
-            dialogNotAllSelectedContent: newDialogNotAllSelectedContent
+            mergeDialogError,
+            dialogContent: newDialogContent
         });
     }
     handleMergeDialogClose = () => {
         this.setState({
-            mergeDialogOpen: false,
-            dialogNotAllSelectedMessage: ''
+            mergeDialogOpen: false
         });
     }
     handleMergeDialogAgree = () => {
@@ -416,7 +463,9 @@ class App extends Component {
             client1, client2, client3,
             importInProgress,
             mergeInProgress,
-            mergeDialogOpen
+            mergeDialogOpen,
+            mergeDialogError,
+            dialogContent
         } = this.state;
 
         return <Fragment>
@@ -566,14 +615,7 @@ class App extends Component {
                     {"Are you sure you're ready to merge?"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="merge-dialog-description">
-                        If you're 100% sure you selected all of the correct
-                        client data that should be merged into one RIPS
-                        record, select "Merge". IF YOU HAVE ANY QUESTIONS
-                        AT ALL, please talk to your coordinator or to
-                        the RIPS guy.
-                    </DialogContentText>
-                    {this.state.dialogNotAllSelectedContent}
+                    {dialogContent}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -582,12 +624,12 @@ class App extends Component {
                     >
                         Take me back
                     </Button>   
-                    <Button
+                    {!mergeDialogError ? <Button
                         onClick={this.handleMergeDialogAgree}
                         color="primary" autoFocus
                     >
                         Merge
-                    </Button>
+                    </Button> : null}
                 </DialogActions>
             </Dialog>
         </Fragment>
