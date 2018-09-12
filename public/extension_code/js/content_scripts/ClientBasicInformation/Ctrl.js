@@ -99,22 +99,27 @@ const startImport = (clientNum) => {
 // ================================================================
 
 port.onMessage.addListener(function(msg) {
+	const { code, clientNum, autoImport, autoMerge } = msg;
     Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
 
-    switch(msg.code) {
+    switch(code) {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             // if autoImport flag is true, start automatically!
-            if (msg.autoImport) {
-				startImport( msg.clientNum );
-            }
+            if (autoImport) {
+				startImport( clientNum );
+			}
+			if (autoMerge) {
+				console.log('TIME TO MERGE CBI');
+			}
 			break;
 			
 		case PCs.BKG_CS_START_IMPORT:
+		case PCs.BKG_CS_START_MERGE:
 			Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION);
     }
 });

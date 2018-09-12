@@ -57,13 +57,14 @@ const storeClientData = (source, data) => {
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
 // TODO: wrap post sending functions with port-not-found error messages
-const sendPortInit = (port, code, autoImportFlag=false, autoMergeFlag=false) => {
+const sendPortInit = (port, code) => {
     // port should always exist, so don't handle other case
     port.postMessage({
         code: code,
-        autoImport: autoImportFlag, // import should auto start (if true)
-        autoMerge: autoMergeFlag, // merge should auto start (if true)
-        clientNum: autoImportFlag ? CLIENT_NUMS[CLIENT_INDEX] : undefined
+        autoImport: IMPORT_IN_PROGRESS, // import should auto start (if true)
+        autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
+        clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
+            ? CLIENT_NUMS[CLIENT_INDEX] : undefined
     });
 }
 
@@ -77,11 +78,11 @@ const sendStartImport = (port) => {
     });
 }
 
-const sendStartMerge = (port, data, cNum) => {
+const sendStartMerge = (port, data) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
-        code: PCs.BKG_CS_START_IMPORT,
-        clientNum: cNum,
+        code: PCs.BKG_CS_START_MERGE,
+        clientNum: CLIENT_NUMS[CLIENT_INDEX],
         data: data
     });
 }
@@ -207,16 +208,16 @@ const initReactAppPort = (port) => {
 
             case PCs.RA_BKG_START_MERGE:
                 const {
-                    data: mergeData,
-                    targetClientNum,
-                    archiveClientNums
+                    data: mergeData, clientNums
                 } = msg;
-                // TODO: set global 'archiveClientNums' var?
                 // 1) set merge in progress to true
                 MERGE_IN_PROGRESS = true;
                 IMPORT_IN_PROGRESS = false;
-                // 2) navigate to advanced search to begin the merge
-                sendStartMerge(CSPort, mergeData, targetClientNum);
+                // 2) set client globals (nums arr & index)
+                CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
+                CLIENT_INDEX = 0;
+                // 3) navigate to advanced search to begin the merge
+                sendStartMerge(CSPort, mergeData);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:

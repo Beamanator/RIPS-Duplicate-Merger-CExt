@@ -393,8 +393,7 @@ class App extends Component {
         onMergeBegin(
             bkgPort,
             mergeData, // pass mergeData here!
-            client1, // (target num)
-            [client2, client3] // (other nums)
+            [client1, client2, client3] // [target num, ...other nums]
         );
 
         // lock tables, disable merge button
@@ -690,7 +689,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onMergeBegin: (bkgPort, mData, c1, cA) => dispatch(actions.ripsMergeClients(bkgPort, mData, c1, cA))
+        onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums))
     };
 };
 
