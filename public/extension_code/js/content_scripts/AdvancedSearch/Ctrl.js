@@ -55,6 +55,11 @@ const startImport = (clientNum) => {
     });
 }
 
+const sendMerge = (clientNum) => {
+    console.log('time to start merge!', clientNum);
+    debugger;
+}
+
 // ===============================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ===============================================================
@@ -67,23 +72,32 @@ const startImport = (clientNum) => {
 
 port.onMessage.addListener(function(msg) {
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    const { code, clientNum, autoImport, autoMerge } = msg;
 
-    switch(msg.code) {
+    switch(code) {
         case PCs.BKG_CS_START_IMPORT:
-            startImport( msg.clientNum );
+            startImport( clientNum );
+            break;
+
+        case PCs.BKG_CS_START_MERGE:
+            startMerge( clientNum );
             break;
         
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
-            // if autoStart flag is true, start automatically importing!
-            if (msg.autoStart) {
-                startImport( msg.clientNum );
+            
+            // fail if to automatic import & merging are true (can't do both at same time)
+            if (autoImport === true && autoMerge === true) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
             }
+            // if any flag is true, start automatically doing stuff!
+            if (autoImport) { startImport( clientNum ); }
+            else if (autoMerge) { startMerge( clientNum ); }
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
     }
 });
 

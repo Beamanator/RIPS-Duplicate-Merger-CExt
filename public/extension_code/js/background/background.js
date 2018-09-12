@@ -8,6 +8,8 @@
 let CSPort = null; // content script port
 let RAPort = null; // react app port
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
+let MERGE_IN_PROGRESS = false; // client merge 'in progress' flag
+let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
@@ -55,12 +57,13 @@ const storeClientData = (source, data) => {
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
 // TODO: wrap post sending functions with port-not-found error messages
-const sendPortInit = (port, code, autoStartFlag=false) => {
+const sendPortInit = (port, code, autoImportFlag=false, autoMergeFlag=false) => {
     // port should always exist, so don't handle other case
     port.postMessage({
         code: code,
-        autoStart: autoStartFlag, // if in progress, import should auto start
-        clientNum: autoStartFlag ? CLIENT_NUMS[CLIENT_INDEX] : undefined
+        autoImport: autoImportFlag, // import should auto start (if true)
+        autoMerge: autoMergeFlag, // merge should auto start (if true)
+        clientNum: autoImportFlag ? CLIENT_NUMS[CLIENT_INDEX] : undefined
     });
 }
 
@@ -71,6 +74,15 @@ const sendStartImport = (port) => {
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
+    });
+}
+
+const sendStartMerge = (port, data, cNum) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: PCs.BKG_CS_START_IMPORT,
+        clientNum: cNum,
+        data: data
     });
 }
 
@@ -102,7 +114,10 @@ const initContentScriptPort = (port) => {
     }
 
     // send init message to either port
-    sendPortInit(port, PCs.BKG_CS_INIT_PORT, IMPORT_IN_PROGRESS);
+    sendPortInit(
+        port, PCs.BKG_CS_INIT_PORT,
+        IMPORT_IN_PROGRESS, MERGE_IN_PROGRESS
+    );
 
     // set global content script port holder
     CSPort = port;
@@ -196,11 +211,12 @@ const initReactAppPort = (port) => {
                     targetClientNum,
                     archiveClientNums
                 } = msg;
-
-                console.log(
-                    'in background',
-                    mergeData, targetClientNum, archiveClientNums
-                );
+                // TODO: set global 'archiveClientNums' var?
+                // 1) set merge in progress to true
+                MERGE_IN_PROGRESS = true;
+                IMPORT_IN_PROGRESS = false;
+                // 2) navigate to advanced search to begin the merge
+                sendStartMerge(CSPort, mergeData, targetClientNum);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:

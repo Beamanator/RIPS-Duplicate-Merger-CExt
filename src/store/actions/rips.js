@@ -54,12 +54,12 @@ export const ripsFetchData = (port, clientNums) => {
     };
 };
 // KICK OFF PROCESS - start merging rips clients
-export const ripsMergeClients = (port, mergeData, target, others) => {
+export const ripsMergeClients = (port, mData, targetNum, otherNums) => {
     return dispatch => {
         // TODO: call action indicating merge is starting?
         // dispatch(ripsMergeStart());
 
-        console.log('Time to merge!', mergeData, target, others);
+        console.log('Time to merge!', mData, targetNum, otherNums);
 
         // if in development mode, port may not be available
         if (!port) {
@@ -71,9 +71,9 @@ export const ripsMergeClients = (port, mergeData, target, others) => {
         // send message and data to background to begin merge
         port.postMessage({
             code: portCodes.RA_BKG_START_MERGE,
-            data: mergeData,
-            targetClientNum: target,
-            archiveClientNums: others
+            data: mData,
+            targetClientNum: targetNum,
+            archiveClientNums: otherNums
         });
 
         // NOTE: data import actions are called

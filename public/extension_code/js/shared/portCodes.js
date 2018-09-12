@@ -43,7 +43,8 @@ const PCs = {
     // ==============================================================================
     //                   BKG SCRIPT -> CONTENT SCRIPT CODES
     // ==============================================================================
-    BKG_CS_DO_SOMETHING: 'BKG_CS_DO_SOMETHING',
+    // BKG_CS_DO_SOMETHING: 'BKG_CS_DO_SOMETHING',
     BKG_CS_INIT_PORT: 'BKG_CS_INIT_PORT',
-    BKG_CS_IMPORT: 'BKG_CS_START_IMPORT'
+    BKG_CS_START_IMPORT: 'BKG_CS_START_IMPORT',
+    BKG_CS_START_MERGE: 'BKG_CS_START_MERGE'
 }
