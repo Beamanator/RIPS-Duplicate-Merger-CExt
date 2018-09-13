@@ -147,5 +147,7 @@ const RIPS_FIELD_KEYS = {
     ACTION_TABLE_BODY_CELLS_FROM_ROWS: 'ACTION_TABLE_BODY_CELLS_FROM_ROWS',
 
     // ======================= GENERAL: =======================
-    // TODO: add the generic "fields" here
+    // TODO: add the generic "fields" / elements here
+    // ------ buttons ------
+    SAVE_BUTTON_CBI: 'SAVE_BUTTON_CBI',
 }

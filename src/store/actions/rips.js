@@ -1,6 +1,9 @@
 import * as actionTypes from './actionTypes';
 import * as portCodes from '../portCodes';
 
+import { tableConfigs } from '../../shared/ripsTableConfigHolder';
+import { formatRawData } from '../../shared/ripsFormatRawData';
+
 // tell UI the process has started
 const ripsFetchStart = () => {
     return {
@@ -16,9 +19,15 @@ const ripsFetchFail = (error) => {
 };
 // success! done! - called by port.js actions
 export const ripsFetchSuccess = (ripsData) => {
+    // format RIPS data and pass to store
+    let formattedData = {};
+    tableConfigs.forEach(({ key: tableKey, type }) => {
+        formattedData[tableKey] =
+            formatRawData(ripsData[tableKey], tableKey, type)
+    })
     return {
         type: actionTypes.RIPS_FETCH_SUCCESS,
-        data: ripsData
+        data: formattedData
     };
 };
 // KICK OFF PROCESS - collect rips data
@@ -45,12 +54,12 @@ export const ripsFetchData = (port, clientNums) => {
     };
 };
 // KICK OFF PROCESS - start merging rips clients
-export const ripsMergeClients = (port, mergeData, target, others) => {
+export const ripsMergeClients = (port, mData, clientNums) => {
     return dispatch => {
         // TODO: call action indicating merge is starting?
         // dispatch(ripsMergeStart());
 
-        console.log('Time to merge!', mergeData, target, others);
+        console.log('Time to merge!', mData, clientNums);
 
         // if in development mode, port may not be available
         if (!port) {
@@ -62,9 +71,8 @@ export const ripsMergeClients = (port, mergeData, target, others) => {
         // send message and data to background to begin merge
         port.postMessage({
             code: portCodes.RA_BKG_START_MERGE,
-            data: mergeData,
-            targetClientNum: target,
-            archiveClientNums: others
+            data: mData,
+            clientNums
         });
 
         // NOTE: data import actions are called

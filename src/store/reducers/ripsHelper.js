@@ -1,9 +1,13 @@
-// TODO: comment out this file for production
-let initialData = {}
+import { RIPS_KEYS as R_KEYS } from '../../shared/ripsKeys';
+import { tableConfigs } from '../../shared/ripsTableConfigHolder';
+import { formatRawData } from '../../shared/ripsFormatRawData';
 
+let initialData = {};
+
+// only change to sample data IFF we're in development mode
 if (process.env.NODE_ENV === 'development') {
     initialData = {
-        CtrlAddresses: {
+        [R_KEYS.ADDRESSES]: {
             ADDRESSES: [
                 [
                     {'first line': '', phone: ''},
@@ -15,7 +19,7 @@ if (process.env.NODE_ENV === 'development') {
                 ]
             ]
         },
-        CtrlClientBasicInformation: {
+        [R_KEYS.CLIENT_BASIC_INFORMATION]: {
             'First Name': ["Alex", "Joe", "Bill"],
             'Date of Birth': ["The Man", "Schmoe", "Sacket"],
             'Check1?': [false, true, true],
@@ -26,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
             'End': ["", "", "Here!"],
             'Crazy text': ['oh\nbaby!', 'next oneis long', 'OIWENFAOIWNEF AINWEFO NIAWEOI FNAOIWENF AOIWNEF OAIN'],
         },
-        CtrlContacts: {
+        [R_KEYS.CONTACTS]: {
             CONTACTS: [
                 [],
                 [
@@ -38,7 +42,7 @@ if (process.env.NODE_ENV === 'development') {
                 ]
             ]
         },
-        CtrlFiles: {
+        [R_KEYS.FILES]: {
             FILES: [
                 [],
                 [
@@ -50,7 +54,7 @@ if (process.env.NODE_ENV === 'development') {
                 ]
             ]
         },
-        CtrlHistory: {
+        [R_KEYS.HISTORY]: {
             action1: [
                 undefined,
                 [
@@ -84,14 +88,14 @@ if (process.env.NODE_ENV === 'development') {
                 undefined
             ]
         },
-        CtrlNotes: {
+        [R_KEYS.NOTES]: {
             Notes: [
                 'oofda this is a long ish note. just seeing what happens when we go big',
                 'note with \ttabs and\nnewlines ;)',
                 ''
             ]
         },
-        CtrlRelatives: {
+        [R_KEYS.RELATIVES]: {
             RELATIVES: [
                 [
                     {name: 'bill', relation: 'bro'},
@@ -102,6 +106,14 @@ if (process.env.NODE_ENV === 'development') {
             ]
         }
     }
+
+    // now format the data
+    let formattedData = {};
+    tableConfigs.forEach(({ key: tableKey, type }) => {
+        formattedData[tableKey] = 
+            formatRawData(initialData[tableKey], tableKey, type);
+    })
+    initialData = formattedData;
 }
 // else {} // -> do nothing
 export default initialData;

@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlAddresses';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADDRESSES;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -96,14 +96,31 @@ const startImport = () => {
 // ================================================================
 
 port.onMessage.addListener(msg => {
+    const {
+		code, mergeData,
+		autoImport, autoMerge,
+		postSaveRedirectFlag
+    } = msg;
+    
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
-    switch ( msg.code ) {
+    switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoStart flag is true, start automatically!
-            if (msg.autoStart) {
-                startImport();
+            
+            // fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
+            }
+            
+            // if autoImport flag is true, start automatically!
+            if (autoImport) { startImport(); }
+            if (autoMerge) {
+                // TODO: FIXME: here!
+                console.error('WE HERE BABY');
+                debugger;
             }
             break;
 
@@ -112,6 +129,6 @@ port.onMessage.addListener(msg => {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_ADDRESSES);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADDRESSES);
     }
 });

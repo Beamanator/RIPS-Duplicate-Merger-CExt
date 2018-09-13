@@ -36,8 +36,8 @@
                 "extension_code/js/shared/Utils.js",
 
                 // "extension_code/js/shared/FieldTranslator.js",
-                "extension_code/js/shared/ripsFieldKeys.js"
-                // "extension_code/js/shared/ripsPageKeys.js"
+                "extension_code/js/shared/ripsFieldKeys.js",
+                "extension_code/js/shared/ripsPageKeys.js"
                 // TODO: evaluate if old scripts are needed
                 // "extension_code/js/content_scripts/min/jquery-3.1.1.min.js",
 			]

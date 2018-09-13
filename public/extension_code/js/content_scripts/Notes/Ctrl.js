@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlNotes';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.NOTES;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -44,8 +44,8 @@ port.onMessage.addListener(msg => {
     switch ( msg.code ) {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoStart flag is true, start automatically!
-            if (msg.autoStart) {
+            // if autoImport flag is true, start automatically!
+            if (msg.autoImport) {
                 startImport();
             }
             break;

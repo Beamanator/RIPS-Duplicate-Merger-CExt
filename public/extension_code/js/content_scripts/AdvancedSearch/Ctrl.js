@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlAdvancedSearch';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADVANCED_SEARCH;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -15,8 +15,8 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = (clientNum) => {
-    // TODO: FIRST, handle potential popup '0'-'100' results found!
+const runClientNumSearch = (clientNum) => {
+    // FIRST, handle potential popups like '0'-'100' results found!
     Utils_WaitForCondition( Utils_OnPopupNotThrown, {
         alertSelector: '.sweet-alert',
         alertVisibleClass: 'visible'
@@ -24,9 +24,9 @@ const startImport = (clientNum) => {
     .then(() => {
         // popup doesn't exist, so this should be the first time
         // -> through - search for client!
-        Utils_Log(MESSAGE_SOURCE, `start import! num:`, clientNum);
+        Utils_Log(MESSAGE_SOURCE, `Search for client! num:`, clientNum);
         
-        // 1) get field translator from somewhere
+        // 1) make sure field translator exists
         if (!FIELD_IDS_ADVANCED_SEARCH) {
             Utils_Error(MESSAGE_SOURCE, 'Advanced Search Field IDs not found');
             // TODO: send error message back to bkg, then to React
@@ -34,13 +34,13 @@ const startImport = (clientNum) => {
         }
         
         // 2) put stars # into stars # field
-        const searchFieldID = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
+        const searchFieldSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
         // TODO: handle possibly missing element
-        let searchFieldElem = document.querySelector('#' + searchFieldID);
+        let searchFieldElem = document.querySelector(searchFieldSelector);
         searchFieldElem.value = clientNum;
 
         // 3) click 'search' button
-        const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON].selector;
+        const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON];
         // TODO: handle possibly missing element
         const searchButtonElem = document.querySelector(searchButtonSelector);
         searchButtonElem.click();
@@ -50,8 +50,8 @@ const startImport = (clientNum) => {
     .catch((errMsg) => {
         // TODO: popup exists! cancel import 'n stuff since the
         // -> search number was eff'd up!
-        Utils_Error(MESSAGE_SOURCE, 'Popup shown in advanced search',
-            'something must have gone wrong...');
+        Utils_Error(MESSAGE_SOURCE, 'Popup shown in advanced search! ',
+            'something must have gone wrong...', errMsg);
     });
 }
 
@@ -66,24 +66,33 @@ const startImport = (clientNum) => {
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
+    const { code, clientNum, autoImport, autoMerge } = msg;
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
-    switch(msg.code) {
+    switch(code) {
         case PCs.BKG_CS_START_IMPORT:
-            startImport( msg.clientNum );
+        case PCs.BKG_CS_START_MERGE:
+            runClientNumSearch( clientNum );
             break;
         
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            Utils_Log(MESSAGE_SOURCE, `autostart:`, msg.autoStart);
-            // if autoStart flag is true, start automatically importing!
-            if (msg.autoStart) {
-                startImport( msg.clientNum );
+            
+            // fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
             }
+            // if any flag is true, start automatically searching for client!
+            if (autoImport || autoMerge) {
+                runClientNumSearch( clientNum );
+            }
+            else {} // do nothing if no automatic process set
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
     }
 });
 

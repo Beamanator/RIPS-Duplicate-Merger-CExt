@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlAdvancedSearchResults';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADVANCED_SEARCH_RESULTS;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -21,7 +21,7 @@ const analyzeSearchResult = ( clientNum ) => {
     // -> to load (like Auto Import)
 
     // 1) get all search result rows
-    const resultsSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[SEARCH_RESULTS].selector;
+    const resultsSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[SEARCH_RESULTS];
     const resultRows = document.querySelectorAll(resultsSelector);
     
     // if length !== 1, something went wrong!
@@ -39,26 +39,25 @@ const analyzeSearchResult = ( clientNum ) => {
     resultRows[0].click();
 
     // 3) get active client element
-    const activeClientFieldID = FIELD_IDS_ADVANCED_SEARCH_RESULTS[ACTIVE_CLIENT];
+    const activeClientFieldSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[ACTIVE_CLIENT];
     
     // 4) wait for "Active Client" to match StARS #!
     // -> try to find clientNum inside activeClientElem.value
     Utils_WaitForCondition(
         Utils_OnActiveClientMatches, {
-            activeClientSelector: '#' + activeClientFieldID,
+            activeClientSelector: activeClientFieldSelector,
             clientNum: clientNum
         }, 500, 6
     )
     .then(() => {
         // 5) navigate to client's CBI page
-        const cbiTabSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[TAB_CLIENT_BASIC_INFORMATION].selector;
+        const cbiTabSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[TAB_CLIENT_BASIC_INFORMATION];
         const cbiTabElem = document.querySelector(cbiTabSelector);
         cbiTabElem.click();
     })
     .catch(errMsg => {
         // TODO: stop import w/ error message!
         Utils_Error(MESSAGE_SOURCE, 'Search Results ERROR:', errMsg);
-        debugger;
     });
 }
 
@@ -73,25 +72,32 @@ const analyzeSearchResult = ( clientNum ) => {
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
+    const { code, clientNum, autoImport, autoMerge } = msg;
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
-    switch(msg.code) {
-        case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoStart flag is true, start automatically importing!
-            if (msg.autoStart) {
-                // analyze data on search results page
-                analyzeSearchResult( msg.clientNum );
-            }
-            // if not auto starting, wait for manual start
-            // -> PCs.BKG_CS_START_IMPORT
-            break;
-
+    switch(code) {
         case PCs.BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_MERGE:
             Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
 
+        case PCs.BKG_CS_INIT_PORT:
+            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            
+            // fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
+            }
+            // if any flag is true, start automatically analyzing results!
+            if (autoImport || autoMerge) {
+                analyzeSearchResult( clientNum );
+            }
+            else {} // do nothing if no automatic process set
+            break;
+
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
     }
 });

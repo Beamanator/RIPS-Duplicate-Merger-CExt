@@ -8,9 +8,13 @@
 let CSPort = null; // content script port
 let RAPort = null; // react app port
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
+let MERGE_IN_PROGRESS = false; // client merge 'in progress' flag
+let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
+let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
+let MERGED_DATA_CONTAINER = {};
 let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
@@ -55,12 +59,16 @@ const storeClientData = (source, data) => {
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
 // TODO: wrap post sending functions with port-not-found error messages
-const sendPortInit = (port, code, autoStartFlag=false) => {
+const sendPortInit = (port, code) => {
     // port should always exist, so don't handle other case
     port.postMessage({
         code: code,
-        autoStart: autoStartFlag, // if in progress, import should auto start
-        clientNum: autoStartFlag ? CLIENT_NUMS[CLIENT_INDEX] : undefined
+        autoImport: IMPORT_IN_PROGRESS, // import should auto start (if true)
+        autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
+        clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
+            ? CLIENT_NUMS[CLIENT_INDEX] : null,
+        mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
+        postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG
     });
 }
 
@@ -70,6 +78,14 @@ const sendStartImport = (port) => {
     // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
+        clientNum: CLIENT_NUMS[CLIENT_INDEX]
+    });
+}
+
+const sendStartMerge = (port) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: PCs.BKG_CS_START_MERGE,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
     });
 }
@@ -102,7 +118,9 @@ const initContentScriptPort = (port) => {
     }
 
     // send init message to either port
-    sendPortInit(port, PCs.BKG_CS_INIT_PORT, IMPORT_IN_PROGRESS);
+    sendPortInit(
+        port, PCs.BKG_CS_INIT_PORT
+    );
 
     // set global content script port holder
     CSPort = port;
@@ -119,6 +137,7 @@ const initContentScriptPort = (port) => {
             case PCs.CS_BKG_PAGE_REDIRECT:
                 const msgTabId = MessageSender.sender.tab.id;
                 const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
+                POST_SAVE_REDIRECT_FLAG = false;
                 chrome.tabs.update(msgTabId, { url: url });
                 break;
 
@@ -140,6 +159,10 @@ const initContentScriptPort = (port) => {
                     sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
                     // console.warn('TMP - ALL ALL DONE??', CLIENT_DATA_CONTAINER);
                 }
+                break;
+
+            case PCs.CS_BKG_POST_SAVE_REDIRECT:
+                POST_SAVE_REDIRECT_FLAG = true;
                 break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
@@ -192,15 +215,18 @@ const initReactAppPort = (port) => {
 
             case PCs.RA_BKG_START_MERGE:
                 const {
-                    data: mergeData,
-                    targetClientNum,
-                    archiveClientNums
+                    data: mergeData, clientNums
                 } = msg;
-
-                console.log(
-                    'in background',
-                    mergeData, targetClientNum, archiveClientNums
-                );
+                // 1) set merge in progress to true
+                MERGE_IN_PROGRESS = true;
+                IMPORT_IN_PROGRESS = false;
+                // 2) store merge data to global
+                MERGED_DATA_CONTAINER = mergeData;
+                // 3) set client globals (nums arr & index)
+                CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
+                CLIENT_INDEX = 0;
+                // 4) navigate to advanced search to begin the merge
+                sendStartMerge(CSPort);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:

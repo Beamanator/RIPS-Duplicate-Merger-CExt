@@ -6,8 +6,6 @@ const {
 
 // loosely based off RIPS Auto Import CExt
 const FIELD_IDS_ADVANCED_SEARCH = {
-    [SEARCH_CLIENT_NUMBER]: 'NruNo',
-    [SEARCH_BUTTON]: {
-        selector: 'div#DivAdvanced input[value="Search"]'
-    }
+    [SEARCH_CLIENT_NUMBER]: '#NruNo',
+    [SEARCH_BUTTON]: 'div#DivAdvanced input[value="Search"]'
 }

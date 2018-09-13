@@ -19,45 +19,15 @@ import {
 // redux store actions
 import * as actions from './store/actions';
 
+// rips table config array
+import { tableConfigs } from './shared/ripsTableConfigHolder';
+
 // rips page and field keys
 import {
     RIPS_KEYS as R_KEYS
 } from './shared/ripsKeys';
 
 class App extends Component {
-    tableConfigHolder = [{
-        title: 'Client Basic Information',
-        key: R_KEYS.CLIENT_BASIC_INFORMATION,
-    }, {
-        title: 'Addresses',
-        key: R_KEYS.ADDRESSES,
-        type: 'lists',
-        multiSelect: true,
-    }, {
-        title: 'Basic Notes',
-        key: R_KEYS.NOTES,
-    }, {
-        title: 'Relatives',
-        key: R_KEYS.RELATIVES,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Contacts',
-        key: R_KEYS.CONTACTS,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Files',
-        key: R_KEYS.FILES,
-        type: 'lists',
-        multiSelect: true
-    }, {
-        title: 'Action History',
-        key: R_KEYS.HISTORY,
-        type: 'lists',
-        multiSelect: true
-    }]
-
     state = {
         client1: '201813794', client1Valid: false,
         client2: '201815032', client2Valid: false,
@@ -66,8 +36,9 @@ class App extends Component {
         mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
         mergeDialogOpen: false,
-        dialogNotAllSelectedContent: '',
-        formattedData: null,
+        mergeDialogError: false,
+        dialogContent: '',
+        // formattedData: {},
         /**
          * <tableKey>_AllSelected,
          * -> Boolean values describing when a table has all rows
@@ -85,10 +56,9 @@ class App extends Component {
             client1, client2, client3
         } = this.state;
         const {
-            bkgPort, ripsData,
+            bkgPort,
             onBackgroundPortInit
         } = this.props;
-
 
         // Warn user if we're in development environment
         if (process.env.NODE_ENV === 'development') {
@@ -110,22 +80,8 @@ class App extends Component {
         const client2Valid = this.checkClientNumValid(client2);
         const client3Valid = this.checkClientNumValid(client3, true);
         
-        // convert raw data into desired format
-        let formattedData = {};
-        // loop through keys, adding in converted data
-        this.tableConfigHolder.forEach(({ key, title, type }) => {
-            formattedData[key] = this.convertRawData(
-                ripsData[key], title, type
-            )
-        })
-        
         // update any values that need updating :)
-        this.setState({
-            client1Valid,
-            client2Valid,
-            client3Valid,
-            formattedData: formattedData
-        })
+        this.setState({ client1Valid, client2Valid, client3Valid })
     }
 
     checkClientNumValid = (numStr, emptyAllowed=false) => {
@@ -220,30 +176,76 @@ class App extends Component {
 
     handleMergeDialogOpen = () => {
         const { classes: { dialogListStyles } } = this.props;
-        
+
+        let mainDialogMessage = `If you're 100% sure you selected all ` +
+            'of the correct client data that should be merged into one ' +
+            'RIPS record, select "Merge". IF YOU HAVE ANY QUESTIONS AT ' +
+            'ALL, please talk to your coordinator or to the RIPS guy.';
+        let mergeDialogError = false;
         let emptyTableNames = [];
-        let emptyTablesMessage = 'Warning: The following tables do ' +
+        const emptyTablesMessage = 'Warning: The following tables do ' +
             'not have ALL rows selected, so there will be some data' +
             ' LEFT OUT of the merge:';
-
-        // loop through table keys [this.tableConfigHolder] and
-        // -> add a note that mentions which tables are not totally
-        // -> selected. User should think about closing the modal
-        // -> and selecting some more values to be 100% accurate
-        this.tableConfigHolder.forEach(tableConfig => {
-            // match tableConfigs with state prop '<tableConfig.key>_AllSelected'
-            if (!this.state[tableConfig.key + '_AllSelected']) {
-                // state prop is false - so make sure we display
-                // -> table key warning below!
-                emptyTableNames.push(tableConfig.key);
-            }
+        
+        // Check if any files are selected on clients # 2 or 3.
+        let filesNeedManualMove = false;
+        // get files table selected array
+        const filesSelected = this.state[R_KEYS.FILES + '_SelectedArr'];
+        // loop through array, checking for selected cells
+        filesSelected.forEach(fileSelectedRow => {
+            if (fileSelectedRow.length === 0) return;
+            // loop through each row of data that could be selected
+            fileSelectedRow.forEach((fileSelectedFlag, cIndex) => {
+                // don't count first client -> this is the target, so
+                // -> files won't need to be manually added here...
+                // -> They're here already!
+                if (cIndex === 0) return;
+                // if client is not #1, and the file is selected, set
+                // -> var to indicate files need to be manually moved!
+                if (fileSelectedFlag) filesNeedManualMove = true;
+            });
         });
+
+        // if files need to be moved manually, update main message to
+        // -> explain situation, and skip checking for empty tables
+        // -> so we can present 1 error at a time.
+        if (filesNeedManualMove) {
+            mainDialogMessage = 'ERROR: You selected at least 1 file ' +
+                'that needs to be moved to the target client (Client ' +
+                '#1). This merger cannot download & upload files, you ' +
+                'will need to do this manually. Please merge the files ' +
+                ' manually, then come back and try again when you have ' +
+                'added the necessary files to the target client ' +
+                '(Client #1).';
+            mergeDialogError = true;
+        }
+        // files don't need manual move, so now check if any tables
+        // -> are empty!
+        else {
+            // loop through table keys [tableConfigs] and
+            // -> add a note that mentions which tables are not totally
+            // -> selected. User should think about closing the modal
+            // -> and selecting some more values to be 100% accurate
+            tableConfigs.forEach(({ key }) => {
+                // match tableConfigs with state prop '<key>_AllSelected'
+                if (!this.state[key + '_AllSelected']) {
+                    // state prop is false - so make sure we display
+                    // -> table key warning below!
+                    emptyTableNames.push(key);
+                }
+            });
+        }
+
 
         // create some jsx - if there are some empty tables, display
         // -> them in a list w/ description. else, null!
-        const newDialogNotAllSelectedContent = (
-            emptyTableNames.length > 0 ? (
-                <Fragment>
+        const newDialogContent = (
+            <Fragment>
+                <DialogContentText id="merge-dialog-description">
+                    {mainDialogMessage}
+                </DialogContentText>
+                {/* If some tables are empty, add extra content */}
+                {emptyTableNames.length > 0 ? <Fragment>
                     <br />
                     <DialogContentText>
                         {emptyTablesMessage}
@@ -258,35 +260,34 @@ class App extends Component {
                             </ListItem>
                         ))}
                     </List>
-                </Fragment>
-            ) : null
+                </Fragment> : null}
+            </Fragment>
         );
         
         this.setState({
             mergeDialogOpen: true,
-            dialogNotAllSelectedContent: newDialogNotAllSelectedContent
+            mergeDialogError,
+            dialogContent: newDialogContent
         });
     }
     handleMergeDialogClose = () => {
         this.setState({
-            mergeDialogOpen: false,
-            dialogNotAllSelectedMessage: ''
+            mergeDialogOpen: false
         });
     }
     handleMergeDialogAgree = () => {
         const {
             onMergeBegin,
-            bkgPort
+            bkgPort, ripsData
         } = this.props;
         const {
-            client1, client2, client3,
-            formattedData,
+            client1, client2, client3
             // [tableKey + '_SelectedArr'] extracted in loops
         } = this.state;
 
-        // get 'mergeData' from 'formattedData' and
+        // get 'mergeData' from 'ripsData' and
         // -> <tableKey>+'_SelectedArr's
-        const mergeData = Object.entries(formattedData)
+        const mergeData = Object.entries(ripsData)
         .reduce((mData, [tableKey, tableArr]) => {
             // get table's associated selectedArr
             const selectedArr = this.state[tableKey + '_SelectedArr'];
@@ -392,8 +393,7 @@ class App extends Component {
         onMergeBegin(
             bkgPort,
             mergeData, // pass mergeData here!
-            client1, // (target num)
-            [client2, client3] // (other nums)
+            [client1, client2, client3] // [target num, ...other nums]
         );
 
         // lock tables, disable merge button
@@ -409,212 +409,11 @@ class App extends Component {
             console[type](msg);
         }
     }
-    handleCellSelected = (tableKey, isAllSelected, selectedArr) => {    
+    handleCellSelected = (tableKey, isAllSelected, selectedArr) => {
         this.setState({
             [tableKey + '_SelectedArr']: selectedArr,
             [tableKey + '_AllSelected']: isAllSelected
         });
-    }
-
-    /**
-     * Function converts raw passed-in data to a flat array that can be easily
-     * used by the component.
-     * Example: Takes data like this:
-     * {
-     *  'FIRST_NAME': ['', '', ''],
-     *  'LAST_NAME': ['', '', ''],
-     *  ...
-     * }
-     * and turns it into something like this:
-     * [
-     *  ['FIRST_NAME', '', '', ''],
-     *  ['LAST_NAME', '', '', ''], ...
-     * ]
-     *
-     * @param {object} rawData - js object holding raw data
-     * @param {function} errorHandler - error handler function
-     * @param {string} key - data key
-     */
-    convertRawData = (rawData, key, type="basic") => {
-        // throw error if data is empty
-        if (!rawData || Object.keys(rawData).length === 0) {
-            let msg = `rasData with key <${key}> is empty!`;
-            this.handleError(msg);
-            return [];
-        }
-
-        if (type === "basic") {
-            // get array of Obj's props in raw data
-            return Object.entries( rawData )
-            // add raw data arrays to category / field name / key
-            .map(dataCategory => {
-                const key = dataCategory[0];
-                let data = dataCategory[1];
-
-                // destructure vars from final .reduce function
-                const { pass: dataTypesMatch, dataType } =
-                // convert data elements into their native "types"
-                data.map(e => typeof(e))
-                // remove undefined elements (typeof(undefined) is "undefined")
-                .filter(type => type !== 'undefined')
-                // pass if defined data's types are all the same!
-                .reduce((container, dataType) => {
-                    // if type hasn't been set, set dataType
-                    if (!container.dataType) {
-                        return {
-                            pass: container.pass,
-                            dataType: dataType
-                        }
-                    }
-                    // dataType has ben set - only pass if current
-                    // -> dataType matches old dataType
-                    else {
-                        return {
-                            pass: dataType === container.dataType,
-                            dataType: container.dataType
-                        }
-                    }
-                }, { pass: true, dataType: '' });
-                
-                // If not all elements have same data type (or are undefined),
-                // -> something probably went wrong. Throw error.
-                if (!dataTypesMatch) {
-                    let err = key + ' has mismatched data types' +
-                        ' in data array! why?? fix this!';
-                    console.error(err, dataCategory);
-                    // add errors to output
-                    return [key, ...data.map(e => 'ERROR')]
-                }
-                // else, all dataTypes are the same! onward!
-                else {
-                    // depending on the type, return different data
-                    switch(dataType) {
-                        case 'string': // do nothing, just display data!
-                            break;
-                        case 'number': // do nothing, except add "confused" warning
-                            this.handleError('Huh? How is there a "number" dataType?', 'warn');
-                            break;
-                        case 'object':
-                            // throw warning if it's an object, not array :D
-                            if (Array.isArray(data[0])) {
-                                console.warn(
-                                    'UNSURE HOW TO HANDLE THESE OBJECTS!',
-                                    'Should they be Arrays? Hmmmm...'
-                                );
-                            } else {
-                                // arrays will be handled later - at the end
-                                // -> of this handling function. So skip
-                                // -> processing now
-                                return dataCategory;
-                            }
-                            break;
-                        case 'boolean':
-                            // for checkboxes. turn 'true' into 'checked', false
-                            // -> into 'not checked'
-                            data = data.map(e => e ? 'checked' : 'not checked');
-                            break;
-                        case 'undefined': // all undefined - these will get
-                            // -> filtered out later - don't worry now
-                            break;
-                        default:
-                            this.handleError(
-                                'How did we get here?? Data doesnt match' +
-                                ' any expected values somehow...',
-                                key, dataType
-                            );
-                    }
-                    // finally, return the new array format
-                    return [key, ...data]
-                }
-            })
-            // filter -> hide row if all values are "blank"
-            .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank
-                // -> since they are valid numbers / boolean values)
-                const blankTypes = [undefined, null, ''];
-                
-                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
-                return !(
-                    blankTypes.includes(data[1]) &&
-                    blankTypes.includes(data[2]) &&
-                    blankTypes.includes(data[3])
-                );
-            });
-        }
-        // handle arrays of arrays
-        else if (type === 'lists') {
-            let runningTotal = 0;
-            return Object.entries(
-                // get array of Obj's props in raw data
-                Object.entries(rawData)
-                // don't worry about keys, process inner arrays
-                .reduce((output, [_, data_container], container_index) => {
-                    // for each data container array...
-                    data_container.forEach((client_data_array, client_index) => {
-                        // quit if data array doesn't exist (this happens often in
-                        // -> history arrays
-                        if (!client_data_array) return;
-                        // for client's data array...
-                        client_data_array.forEach((client_data, data_index) => {
-                            // convert each object's props to array
-                            Object.entries(client_data)
-                            // for each data prob, get key and value
-                            .forEach(([data_key, data_value]) => {
-                                // calculate new field key name (including
-                                // -> client index)
-                                const data_index_key = `${runningTotal + data_index + 1}. ${data_key}`;
-                                
-                                // create empty array if not present yet
-                                if (!output[data_index_key]) {
-                                    output[data_index_key] = [];
-                                }
-
-                                // add data to correct index in output object & arrays
-                                output[data_index_key][client_index] = data_value;
-                                
-                                // also add a 5th col value (data_index) - should
-                                // -> not display, just to help selecting data
-                                output[data_index_key][3] = runningTotal + data_index + 1;
-                            });
-                        });
-                    });
-                    // get max # of elements associated with each client
-                    const numDataElems = Math.max(
-                        data_container[0] ? data_container[0].length : 0,
-                        data_container[1] ? data_container[1].length : 0,
-                        data_container[2] ? data_container[2].length : 0
-                    );
-
-                    // increment running total (next data_index_key) by the
-                    // -> max number of elements in the latest data container
-                    runningTotal += numDataElems
-                    return output
-                }, {})
-            )
-            // change objs to correct format arr format
-            .map(e => [e[0], ...e[1]])
-            // filter -> hide row if all values are "blank"
-            .filter(data => {
-                // make array holding 'blank' values (0 and false are not blank
-                // -> since they are valid numbers / boolean values)
-                const blankTypes = [undefined, null, ''];
-                
-                // first elem is key (ex: 'FIRST_NAME'). Next 3 keys 
-                return !(
-                    blankTypes.includes(data[1]) &&
-                    blankTypes.includes(data[2]) &&
-                    blankTypes.includes(data[3])
-                );
-            });
-
-        }
-        // handle unknown type
-        else {
-            const msg = `Type <${type}> unknown?? What is this??`;
-            this.handleError(msg);
-            // errorHandler(msg);
-            return [];
-        }
     }
 
     buildGridTable = (config, tableIndex) => {
@@ -624,11 +423,10 @@ class App extends Component {
             multiSelect=false
         } = config;
         
-        const { ripsData, classes } = this.props;
+        const { classes, ripsData } = this.props;
         const {
             client3, client3Valid,
-            mergeInProgress,
-            formattedData
+            mergeInProgress
         } = this.state;
 
         // if data exists, build grid item!
@@ -638,7 +436,7 @@ class App extends Component {
                     <CustomTable
                         title={title}
                         tableKey={key}
-                        data={formattedData[key]}
+                        data={ripsData[key]}
                         errorHandler={this.handleError}
                         cellSelectHandler={this.handleCellSelected}
                         type={type}
@@ -664,7 +462,9 @@ class App extends Component {
             client1, client2, client3,
             importInProgress,
             mergeInProgress,
-            mergeDialogOpen
+            mergeDialogOpen,
+            mergeDialogError,
+            dialogContent
         } = this.state;
 
         return <Fragment>
@@ -749,7 +549,7 @@ class App extends Component {
                 </Grid>
 
                 {/* Instructions */}
-                <Grid item xs={12} className={classes.textCenter}>
+                {ripsData && Object.keys(ripsData).length > 0 ? <Grid item xs={12} className={classes.textCenter}>
                     <h1>Select the "correct" client data below!</h1>
                     <h4 className={classes.description}>
                         Each table below shows data that is inconsistent
@@ -767,10 +567,10 @@ class App extends Component {
                         correct Date of Birth that will be saved in the
                         merged record.
                     </h4>
-                </Grid>
+                </Grid> : null}
 
                 {/* Build all data tables :) */}
-                {this.tableConfigHolder.map((tableConfig, tableIndex) => {
+                {tableConfigs.map((tableConfig, tableIndex) => {
                     return this.buildGridTable(tableConfig, tableIndex);
                 })}
  
@@ -814,14 +614,7 @@ class App extends Component {
                     {"Are you sure you're ready to merge?"}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="merge-dialog-description">
-                        If you're 100% sure you selected all of the correct
-                        client data that should be merged into one RIPS
-                        record, select "Merge". IF YOU HAVE ANY QUESTIONS
-                        AT ALL, please talk to your coordinator or to
-                        the RIPS guy.
-                    </DialogContentText>
-                    {this.state.dialogNotAllSelectedContent}
+                    {dialogContent}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -830,12 +623,12 @@ class App extends Component {
                     >
                         Take me back
                     </Button>   
-                    <Button
+                    {!mergeDialogError ? <Button
                         onClick={this.handleMergeDialogAgree}
                         color="primary" autoFocus
                     >
                         Merge
-                    </Button>
+                    </Button> : null}
                 </DialogActions>
             </Dialog>
         </Fragment>
@@ -896,7 +689,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onMergeBegin: (bkgPort, mData, c1, cA) => dispatch(actions.ripsMergeClients(bkgPort, mData, c1, cA))
+        onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums))
     };
 };
 

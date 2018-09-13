@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlClientBasicInformation';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.CLIENT_BASIC_INFORMATION;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -15,20 +15,32 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_BASIC_INFORMA
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = (clientNum) => {
-	// follow the following steps
-	// 1) get CBI's clientNum, make sure we're looking at the right
-	// -> client
-	const starsNumFieldID = FIELD_IDS_CLIENT_BASIC_INFORMATION[STARS_NUMBER];
-	const starsNumElem = document.querySelector(starsNumFieldID);
+const checkViewingCorrectClient = (clientNum) => {
+	// first get selector, then get data in selector (starsNum)
+	const starsNumFieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[STARS_NUMBER];
+	const starsNumElem = document.querySelector(starsNumFieldSelector);
 	const starsNum = starsNumElem.value;
+	
+	// if client stars nums match, return true!
+	if (starsNum === clientNum) {
+		return true;
+	}
+	// -> else, throw error and return false
+	else {
+		const err = 'ERR: Somehow got to CBI page' +
+			' of wrong client!! Given StARS number doesn\'t match!';
+		Utils_Error(MESSAGE_SOURCE, err);
+		return false;
+	}
+}
+
+const startImport = (clientNum) => {
+	// 1) check if we're looking at the correct client
+	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
 	// 2.1) if client stars nums don't match, error and stop import
-	if (starsNum !== clientNum) {
-		let err = 'ERR: Somehow got to CBI page' +
-			' of wrong client!! StARS numbers don\'t match: ' +
-			`<${starsNum}> (from CBI) vs <${clientNum}> (from CExt)`;
-		Utils_Error(MESSAGE_SOURCE, err);
+	if (!atCorrectClient) {
+		// no error message here needed
 		// TODO: send error back to bkg, stop import
 		return;
 	}
@@ -89,32 +101,157 @@ const startImport = (clientNum) => {
 	// -> warning since redirect skips that check
 }
 
+const startMerge = (clientNum, mData) => {
+	// 1) check if we're looking at the correct client
+	const atCorrectClient = checkViewingCorrectClient(clientNum);
+
+	// 2.1) if client stars nums don't match, error and stop import
+	if (!atCorrectClient) {
+		// no error message here needed
+		// TODO: send error back to bkg, stop import
+		return;
+	}
+
+	// 2.2) no issues! get page's data using MESSAGE_SOURCE
+	const pageMergeData = mData[MESSAGE_SOURCE];
+
+	// 3) loop through data, adding each field to the page
+	pageMergeData.forEach(fieldObj => {
+		// each obj in CBI page should only contain 1 field, so take
+		// -> first element in the Object.entries array
+		const [fieldKey, fieldValue] = Object.entries(fieldObj)[0];
+		// get selector from field_ids container
+		const fieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[fieldKey];
+		// get element
+		const elem = document.querySelector(fieldSelector);
+
+		// handle html types differently
+		switch(elem.type) {
+			case 'text':
+			case 'textarea':
+				elem.value = fieldValue;
+				break;
+
+			case 'checkbox':
+				if (fieldValue === 'checked') {
+					elem.checked = true;
+				} else if (fieldValue === 'not checked') {
+					elem.checked = false;
+				} else {
+					const err = 'ERR: Checkbox value is invalid! ' +
+						'not sure what to do! Value: ' + fieldValue +
+						', selector: ' + fieldSelector;
+					Utils_Error(err);
+					allPass = false;
+				}
+				break;
+
+			case 'select-one':
+				let matchFound = false;
+				// convert options obj to array
+				Object.entries(elem.options)
+				// loop through elem's options
+				.forEach(([optVal, optElem]) => {
+					// once an option's text matches the value we're looking for,
+					// -> set it as selected! 
+					if (optElem.innerText.trim() === fieldValue) {
+						elem.options[optVal].selected = 'selected';
+						matchFound = true;
+					}
+				});
+				// if no match found during loop, don't continue past the page!
+				if (!matchFound) {
+					const err = 'ERR: No matching option elem found ' +
+						'for selector: ' + fieldSelector;
+					Utils_Error(MESSAGE_SOURCE, err);
+					allPass = false;
+				}
+				break;
+			
+			default:
+				const err = 'ERR: Found an unhandled html elem ' +
+					'type while merging client data! Stopping ' +
+					' merge here - ' + fieldSelector;
+				Utils_Error(MESSAGE_SOURCE, err);
+				allPass = false;
+		}
+	});
+
+	// click save, after making sure the input button exists!
+	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
+	const saveButton = document.querySelector(saveSelector);
+
+	// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
+	// -> means the Validation Extension isn't installed... ugh)
+	if (!saveButton) {
+		const err = 'ERR: Cannot find save button, meaning you ' +
+			'PROBABLY don\'t have the Validation extension instal' +
+			'led!! Shame on you!! Quitting now!';
+		Utils_Error(MESSAGE_SOURCE, err);
+		return;
+	}
+	// else, element exists so now just click it :)
+	else {
+		// TODO: tell background it's time to move to the next page
+		// -> (Note: clicking save keeps us on the same page)
+		// Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+		sendPostSaveFlag();
+		saveButton.click();
+	}
+	// TODO: will have to redirect after save is done
+	// Utils_SendRedirectCode(port, 'Addresses/Addresses');	
+};
+
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+const sendPostSaveFlag = () => {
+	port.postMessage({
+		code: PCs.CS_BKG_POST_SAVE_REDIRECT
+	});
+};
 
 // ================================================================
 //                          PORT LISTENERS
 // ================================================================
 
 port.onMessage.addListener(function(msg) {
+	const {
+		code, clientNum, mergeData,
+		autoImport, autoMerge,
+		postSaveRedirectFlag
+	} = msg;
+
     Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
 
-    switch(msg.code) {
-        case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoStart flag is true, start automatically!
-            if (msg.autoStart) {
-				startImport( msg.clientNum );
-            }
+    switch(code) {
+		case PCs.BKG_CS_INIT_PORT:
+			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+			
+			if (postSaveRedirectFlag) {
+				Utils_SendRedirectCode(port, 'Addresses/Addresses');
+				return;
+			}
+
+			// fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
+			}
+			
+			// if any auto flag is true, start automatically!
+            if (autoImport) { startImport( clientNum ); }
+			if (autoMerge) { startMerge( clientNum, mergeData ); }
 			break;
 			
 		case PCs.BKG_CS_START_IMPORT:
+		case PCs.BKG_CS_START_MERGE:
 			Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION);
     }
 });

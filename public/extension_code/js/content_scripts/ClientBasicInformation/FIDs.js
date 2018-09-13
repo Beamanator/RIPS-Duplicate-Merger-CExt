@@ -1,7 +1,9 @@
 // destructure field keys
 const {
-    STARS_NUMBER,
+    // save buttons
+    SAVE_BUTTON_CBI,
     // client basic information
+    STARS_NUMBER,
     FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
     EMAIL_ADDRESS, UNHCR_NUMBER, DATE_OF_BIRTH, GENDER, NATIONALITY,
     COUNTRY_OF_ORIGIN, ETHNIC_ORIGIN, MAIN_LANGUAGE, SECOND_LANGUAGE, MARITAL_STATUS,
@@ -13,15 +15,14 @@ const {
     DATE_OF_ARRIVAL_IN_EGYPT, DATE_OF_UNHCR_REGISTRATION, RSD_DATE,
     LAST_RSD_UPDATE, // TODO: dynamic vulns
     VULNERABILITY_NOTES, FAMILY_SIZE, UNHCR_CASE_SIZE,
-    DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
-    // NOTES,
-    // TODO: dynamic from table - add to separate FIDs?
-    // TODO: the rest... (aliases, relatives, contacts, etc...)
-
+    DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
 const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
+    // ======================= OTHER ELEMENTS: ========================
+    [SAVE_BUTTON_CBI]: 'input.newField',
+
     // ================== CURRENT CONTACT DETAILS: ==================
     [STARS_NUMBER]: '#NRU_NO',   // (note: hidden input field)
     // ------ TEXTBOXES: ------
@@ -104,14 +105,4 @@ const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     [UNHCR_CASE_SIZE]: 		'#CDDependentStatsLabel2', // RLAP ONLY
     [DIRECT_BENEFICIARIES]:	'#CDDependentStatsLabel3', // PS ONLY
     [INDIRECT_BENEFICIARIES]:	'#CDDependentStatsLabel4', // PS ONLY
-
-    // TODO: move to separate addresses script (FDIs_ADDRESSES)
-    // [PAGE_KEYS.ADDRESSES]: {
-    //     // TODO: dynamic from table...
-    // },
-
-    // TODO: move to separate notes script (FDIs_NOTES)
-    // [PAGE_KEYS.NOTES]: {
-    //     [NOTES]: 'FREE_NOTES',
-    // },
 }
