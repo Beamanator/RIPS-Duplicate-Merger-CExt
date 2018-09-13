@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlAdvancedSearchResults';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADVANCED_SEARCH_RESULTS;
 
 // ===============================================================
 //                          PORT CONNECT

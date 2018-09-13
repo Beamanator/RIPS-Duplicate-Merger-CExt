@@ -5,7 +5,7 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = 'CtrlClientBasicInformation';
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.CLIENT_BASIC_INFORMATION;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -15,19 +15,26 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_BASIC_INFORMA
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = (clientNum) => {
+const checkViewingCorrectClient = (clientNum) => {
 	// follow the following steps
 	// 1) get CBI's clientNum, make sure we're looking at the right
 	// -> client
 	const starsNumFieldID = FIELD_IDS_CLIENT_BASIC_INFORMATION[STARS_NUMBER];
 	const starsNumElem = document.querySelector(starsNumFieldID);
 	const starsNum = starsNumElem.value;
+	
+	// 2.1) if client stars nums don't match, error and stop import
+	return starsNum === clientNum;
+}
+
+const startImport = (clientNum) => {
+	// 1) check if we're looking at the correct client
+	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
 	// 2.1) if client stars nums don't match, error and stop import
-	if (starsNum !== clientNum) {
-		let err = 'ERR: Somehow got to CBI page' +
-			' of wrong client!! StARS numbers don\'t match: ' +
-			`<${starsNum}> (from CBI) vs <${clientNum}> (from CExt)`;
+	if (!atCorrectClient) {
+		const err = 'ERR: Somehow got to CBI page' +
+			' of wrong client!! Given StARS number doesn\'t match!';
 		Utils_Error(MESSAGE_SOURCE, err);
 		// TODO: send error back to bkg, stop import
 		return;
@@ -87,6 +94,22 @@ const startImport = (clientNum) => {
 	Utils_SendRedirectCode(port, 'Addresses/Addresses');
 	// Note: no need to handle "no vuln / dependent data" popup
 	// -> warning since redirect skips that check
+}
+
+const startMerge = (clientNum, data) => {
+	// 1) check if we're looking at the correct client
+	const atCorrectClient = checkViewingCorrectClient(clientNum);
+
+	// 2.1) if client stars nums don't match, error and stop import
+	if (!atCorrectClient) {
+		const err = 'ERR: Somehow got to CBI page' +
+			' of wrong client!! Given StARS number doesn\'t match!';
+		Utils_Error(MESSAGE_SOURCE, err);
+		// TODO: send error back to bkg, stop import
+		return;
+	}
+
+	// 2.2) get page's data from 
 }
 
 // ================================================================
