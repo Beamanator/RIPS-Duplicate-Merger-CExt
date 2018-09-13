@@ -104,14 +104,4 @@ const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     [UNHCR_CASE_SIZE]: 		'#CDDependentStatsLabel2', // RLAP ONLY
     [DIRECT_BENEFICIARIES]:	'#CDDependentStatsLabel3', // PS ONLY
     [INDIRECT_BENEFICIARIES]:	'#CDDependentStatsLabel4', // PS ONLY
-
-    // TODO: move to separate addresses script (FDIs_ADDRESSES)
-    // [PAGE_KEYS.ADDRESSES]: {
-    //     // TODO: dynamic from table...
-    // },
-
-    // TODO: move to separate notes script (FDIs_NOTES)
-    // [PAGE_KEYS.NOTES]: {
-    //     [NOTES]: 'FREE_NOTES',
-    // },
 }
