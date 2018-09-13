@@ -154,7 +154,7 @@ const startMerge = (clientNum, mData) => {
 				.forEach(([optVal, optElem]) => {
 					// once an option's text matches the value we're looking for,
 					// -> set it as selected! 
-					if (optElem.innerText === fieldValue) {
+					if (optElem.innerText.trim() === fieldValue) {
 						elem.options[optVal].selected = 'selected';
 						matchFound = true;
 					}
@@ -177,15 +177,40 @@ const startMerge = (clientNum, mData) => {
 		}
 	});
 
-	console.log('at this point, all data should be updated!');
-	// TODO: make sure vuln data is imported at this point ;)
-	debugger;
-}
+	// click save, after making sure the input button exists!
+	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
+	const saveButton = document.querySelector(saveSelector);
+
+	// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
+	// -> means the Validation Extension isn't installed... ugh)
+	if (!saveButton) {
+		const err = 'ERR: Cannot find save button, meaning you ' +
+			'PROBABLY don\'t have the Validation extension instal' +
+			'led!! Shame on you!! Quitting now!';
+		Utils_Error(MESSAGE_SOURCE, err);
+		return;
+	}
+	// else, element exists so now just click it :)
+	else {
+		// TODO: tell background it's time to move to the next page
+		// -> (Note: clicking save keeps us on the same page)
+		// Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+		sendPostSaveFlag();
+		saveButton.click();
+	}
+	// TODO: will have to redirect after save is done
+	// Utils_SendRedirectCode(port, 'Addresses/Addresses');	
+};
 
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+const sendPostSaveFlag = () => {
+	port.postMessage({
+		code: PCs.CS_BKG_POST_SAVE_REDIRECT
+	});
+};
 
 // ================================================================
 //                          PORT LISTENERS
@@ -194,22 +219,31 @@ const startMerge = (clientNum, mData) => {
 port.onMessage.addListener(function(msg) {
 	const {
 		code, clientNum, mergeData,
-		autoImport, autoMerge
+		autoImport, autoMerge,
+		postSaveRedirectFlag
 	} = msg;
 
     Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
 
     switch(code) {
-        case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoImport flag is true, start automatically!
-            if (autoImport) {
-				startImport( clientNum );
+		case PCs.BKG_CS_INIT_PORT:
+			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+			
+			if (postSaveRedirectFlag) {
+				Utils_SendRedirectCode(port, 'Addresses/Addresses');
+				return;
 			}
-			if (autoMerge) {
-				console.log('TIME TO MERGE CBI');
-				startMerge( clientNum, mergeData );
+
+			// fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
 			}
+			
+			// if any auto flag is true, start automatically!
+            if (autoImport) { startImport( clientNum ); }
+			if (autoMerge) { startMerge( clientNum, mergeData ); }
 			break;
 			
 		case PCs.BKG_CS_START_IMPORT:

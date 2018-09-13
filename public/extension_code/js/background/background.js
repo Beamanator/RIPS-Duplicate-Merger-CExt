@@ -10,6 +10,7 @@ let RAPort = null; // react app port
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
 let MERGE_IN_PROGRESS = false; // client merge 'in progress' flag
 let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
+let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
@@ -66,7 +67,8 @@ const sendPortInit = (port, code) => {
         autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
         clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
             ? CLIENT_NUMS[CLIENT_INDEX] : null,
-        mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null
+        mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
+        postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG
     });
 }
 
@@ -117,8 +119,7 @@ const initContentScriptPort = (port) => {
 
     // send init message to either port
     sendPortInit(
-        port, PCs.BKG_CS_INIT_PORT,
-        IMPORT_IN_PROGRESS, MERGE_IN_PROGRESS
+        port, PCs.BKG_CS_INIT_PORT
     );
 
     // set global content script port holder
@@ -136,6 +137,7 @@ const initContentScriptPort = (port) => {
             case PCs.CS_BKG_PAGE_REDIRECT:
                 const msgTabId = MessageSender.sender.tab.id;
                 const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
+                POST_SAVE_REDIRECT_FLAG = false;
                 chrome.tabs.update(msgTabId, { url: url });
                 break;
 
@@ -157,6 +159,10 @@ const initContentScriptPort = (port) => {
                     sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
                     // console.warn('TMP - ALL ALL DONE??', CLIENT_DATA_CONTAINER);
                 }
+                break;
+
+            case PCs.CS_BKG_POST_SAVE_REDIRECT:
+                POST_SAVE_REDIRECT_FLAG = true;
                 break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:

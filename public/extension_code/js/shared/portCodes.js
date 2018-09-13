@@ -39,6 +39,7 @@ const PCs = {
     CS_BKG_CLIENT_IMPORT_DONE: 'CS_BKG_CLIENT_IMPORT_DONE',
     CS_BKG_ERROR_CODE_NOT_RECOGNIZED: 'CS_BKG_ERROR_CODE_NOT_RECOGNIZED',
     CS_BKG_DATA_RECEIVED: 'CS_BKG_DATA_RECEIVED',
+    CS_BKG_POST_SAVE_REDIRECT: 'CS_BKG_POST_SAVE_REDIRECT',
 
     // ==============================================================================
     //                   BKG SCRIPT -> CONTENT SCRIPT CODES
