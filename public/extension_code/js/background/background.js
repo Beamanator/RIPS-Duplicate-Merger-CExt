@@ -214,10 +214,12 @@ const initReactAppPort = (port) => {
                 // 1) set merge in progress to true
                 MERGE_IN_PROGRESS = true;
                 IMPORT_IN_PROGRESS = false;
-                // 2) set client globals (nums arr & index)
+                // 2) store merge data to global
+                MERGED_DATA_CONTAINER = mergeData;
+                // 3) set client globals (nums arr & index)
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
-                // 3) navigate to advanced search to begin the merge
+                // 4) navigate to advanced search to begin the merge
                 sendStartMerge(CSPort);
                 break;
 

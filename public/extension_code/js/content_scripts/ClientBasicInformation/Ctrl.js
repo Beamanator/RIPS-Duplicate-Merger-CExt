@@ -101,7 +101,7 @@ const startImport = (clientNum) => {
 	// -> warning since redirect skips that check
 }
 
-const startMerge = (clientNum, data) => {
+const startMerge = (clientNum, mData) => {
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
@@ -113,7 +113,72 @@ const startMerge = (clientNum, data) => {
 	}
 
 	// 2.2) no issues! get page's data using MESSAGE_SOURCE
-	console.log('merge data:', data);
+	const pageMergeData = mData[MESSAGE_SOURCE];
+
+	// 3) loop through data, adding each field to the page
+	pageMergeData.forEach(fieldObj => {
+		// each obj in CBI page should only contain 1 field, so take
+		// -> first element in the Object.entries array
+		const [fieldKey, fieldValue] = Object.entries(fieldObj)[0];
+		// get selector from field_ids container
+		const fieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[fieldKey];
+		// get element
+		const elem = document.querySelector(fieldSelector);
+
+		// handle html types differently
+		switch(elem.type) {
+			case 'text':
+			case 'textarea':
+				elem.value = fieldValue;
+				break;
+
+			case 'checkbox':
+				if (fieldValue === 'checked') {
+					elem.checked = true;
+				} else if (fieldValue === 'not checked') {
+					elem.checked = false;
+				} else {
+					const err = 'ERR: Checkbox value is invalid! ' +
+						'not sure what to do! Value: ' + fieldValue +
+						', selector: ' + fieldSelector;
+					Utils_Error(err);
+					allPass = false;
+				}
+				break;
+
+			case 'select-one':
+				let matchFound = false;
+				// convert options obj to array
+				Object.entries(elem.options)
+				// loop through elem's options
+				.forEach(([optVal, optElem]) => {
+					// once an option's text matches the value we're looking for,
+					// -> set it as selected! 
+					if (optElem.innerText === fieldValue) {
+						elem.options[optVal].selected = 'selected';
+						matchFound = true;
+					}
+				});
+				// if no match found during loop, don't continue past the page!
+				if (!matchFound) {
+					const err = 'ERR: No matching option elem found ' +
+						'for selector: ' + fieldSelector;
+					Utils_Error(MESSAGE_SOURCE, err);
+					allPass = false;
+				}
+				break;
+			
+			default:
+				const err = 'ERR: Found an unhandled html elem ' +
+					'type while merging client data! Stopping ' +
+					' merge here - ' + fieldSelector;
+				Utils_Error(MESSAGE_SOURCE, err);
+				allPass = false;
+		}
+	});
+
+	console.log('at this point, all data should be updated!');
+	// TODO: make sure vuln data is imported at this point ;)
 	debugger;
 }
 
