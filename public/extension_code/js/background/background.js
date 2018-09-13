@@ -13,6 +13,7 @@ let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
+let MERGED_DATA_CONTAINER = {};
 let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
@@ -64,7 +65,8 @@ const sendPortInit = (port, code) => {
         autoImport: IMPORT_IN_PROGRESS, // import should auto start (if true)
         autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
         clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
-            ? CLIENT_NUMS[CLIENT_INDEX] : undefined
+            ? CLIENT_NUMS[CLIENT_INDEX] : null,
+        mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null
     });
 }
 
@@ -78,12 +80,11 @@ const sendStartImport = (port) => {
     });
 }
 
-const sendStartMerge = (port, data) => {
+const sendStartMerge = (port) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
         code: PCs.BKG_CS_START_MERGE,
-        clientNum: CLIENT_NUMS[CLIENT_INDEX],
-        data: data
+        clientNum: CLIENT_NUMS[CLIENT_INDEX]
     });
 }
 
@@ -217,7 +218,7 @@ const initReactAppPort = (port) => {
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // 3) navigate to advanced search to begin the merge
-                sendStartMerge(CSPort, mergeData);
+                sendStartMerge(CSPort);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
