@@ -117,6 +117,16 @@ const Utils_OnActiveClientMatches = ( config ) => {
 	return matchLocation !== -1;
 }
 
+const Utils_OnElemExists = ( config ) => {
+	const { selector } = config;
+	const htmlElem = document.querySelector(selector);
+
+	// if element does not exist, return false!
+	if (!htmlElem) return false;
+	// else, just return true (woohoo!)
+	else return true;
+}
+
 const Utils_OnPopupNotThrown = ( config ) => {
 	const { alertSelector, alertVisibleClass } = config;
 	const alertElem = document.querySelector(alertSelector);

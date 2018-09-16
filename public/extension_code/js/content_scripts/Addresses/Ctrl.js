@@ -108,6 +108,13 @@ port.onMessage.addListener(msg => {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
+            // if flag is set to true, we already saved, so now we just
+			// -> have to redirect the user to the next step!
+			if (postSaveRedirectFlag) {
+				Utils_SendRedirectCode(port, 'Addresses/Addresses');
+				return;
+			}
+
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
@@ -125,6 +132,7 @@ port.onMessage.addListener(msg => {
             break;
 
         case PCs.BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_MERGE:
 			Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
 

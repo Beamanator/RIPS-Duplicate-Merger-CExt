@@ -48,7 +48,7 @@ const startImport = (clientNum) => {
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array
 	let allPass = true;
-	const fieldsToSkip = [STARS_NUMBER];
+	const fieldsToSkip = [STARS_NUMBER, SAVE_BUTTON_CBI];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
 		.reduce((container, [key, selector]) => {
@@ -59,7 +59,13 @@ const startImport = (clientNum) => {
 			if (fieldsToSkip.includes(key)) return container;
 
 			const elem = document.querySelector(selector);
-			// TODO: throw error & stop import if elem is null
+			// TODO: stop import if elem is null
+			if (!elem) {
+				let err = 'ERR: Elem not found with selector: ' + selector;
+				Utils_Error(MESSAGE_SOURCE, err);
+				allPass = false;
+				return '';
+			}
 			let val = '';
 
 			// TODO: make sure vuln data is imported (somewhere)
@@ -124,6 +130,13 @@ const startMerge = (clientNum, mData) => {
 		const fieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[fieldKey];
 		// get element
 		const elem = document.querySelector(fieldSelector);
+		// TODO: stop import if elem is null
+		if (!elem) {
+			let err = 'ERR: Elem not found with selector: ' + selector;
+			Utils_Error(MESSAGE_SOURCE, err);
+			allPass = false;
+			return '';
+		}
 
 		// handle html types differently
 		switch(elem.type) {
@@ -177,27 +190,35 @@ const startMerge = (clientNum, mData) => {
 		}
 	});
 
+
+	// TODO: add a bit of waiting time for Validation Extension to work
+	// -> its magic and create the new save button :)
 	// click save, after making sure the input button exists!
 	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
-	const saveButton = document.querySelector(saveSelector);
-
-	// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
+	Utils_WaitForCondition(
+        Utils_OnElemExists, {
+            selector: saveSelector
+        }, 500, 4
+    )
+    .then(() => {
+		// save button exists, so get it and click it!
+		// TODO: tell background it's time to move to the next page
+		// -> (Note: clicking save keeps us on the same page)
+		// Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+		const saveButton = document.querySelector(saveSelector);
+		sendPostSaveFlag();
+		saveButton.click();
+    })
+    .catch(errMsg => {
+		// TODO: stop import w/ error message!
+		// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
 	// -> means the Validation Extension isn't installed... ugh)
-	if (!saveButton) {
 		const err = 'ERR: Cannot find save button, meaning you ' +
 			'PROBABLY don\'t have the Validation extension instal' +
 			'led!! Shame on you!! Quitting now!';
 		Utils_Error(MESSAGE_SOURCE, err);
-		return;
-	}
-	// else, element exists so now just click it :)
-	else {
-		// TODO: tell background it's time to move to the next page
-		// -> (Note: clicking save keeps us on the same page)
-		// Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
-		sendPostSaveFlag();
-		saveButton.click();
-	}
+        Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+    });
 	// TODO: will have to redirect after save is done
 	// Utils_SendRedirectCode(port, 'Addresses/Addresses');	
 };
