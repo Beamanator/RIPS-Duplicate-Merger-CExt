@@ -250,6 +250,8 @@ port.onMessage.addListener(function(msg) {
 		case PCs.BKG_CS_INIT_PORT:
 			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
 			
+			// if flag is set to true, we already saved, so now we just
+			// -> have to redirect the user to the next step!
 			if (postSaveRedirectFlag) {
 				Utils_SendRedirectCode(port, 'Addresses/Addresses');
 				return;
