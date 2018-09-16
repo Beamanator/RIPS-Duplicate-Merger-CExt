@@ -38,7 +38,7 @@ Click the "Merge" button at the bottom of the page!
 
 Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!!
 
-You may also see a warning, which will show a list of tables that do not have at least one field selected in each row. This isn't necessarily a bad thing, but it gives users another chance to check if the selected data is accurate. If the user wants to check everything again, they can just click "Take me back", and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click "Merge" and the merge process will begin!
+You may also see a **Warning** which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!
 
 ### Which Client Gets the New Data?
 This program assumes the first client number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
