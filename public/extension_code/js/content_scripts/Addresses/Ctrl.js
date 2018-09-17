@@ -15,7 +15,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADDRESSES });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = () => {
+const getPageDataArr = () => {
     const columnNames = [];
     const columnNameMap = {
         'First Line of Address': FIRST_ADDRESS_LINE,
@@ -38,7 +38,7 @@ const startImport = () => {
 
         if (mappedName === undefined) {
             // TODO: throw error, stop the import - mapping failed
-            const err = `Cell "${cellName}" failed to map!`;
+            const err = `Cell "${cellName}" failed to map! Investigate!`;
             Utils_Error(MESSAGE_SOURCE, err);
         } else {
             columnNames.push(mappedName);
@@ -77,13 +77,65 @@ const startImport = () => {
     });
 
     // data gathered, now send it back to background.js to store
+    return addresses;
+}
+
+const startImport = () => {
+    // first, get page data
     const addressData = {
-        [ADDRESSES]: addresses
+        [ADDRESSES]: getPageDataArr()
     };
+
+    // send data to background.js
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, addressData);
 
     // redirect to next page (Notes)
     Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
+}
+
+const startMerge = ( mData ) => {
+    // first, get data existing on the page
+    const currentAddresses = getPageDataArr();
+    // pull out address data from mData
+    const mAddressData = mData[MESSAGE_SOURCE];
+
+    // next, filter out existing addresses from mData
+    const newAddresses = mAddressData.filter(mAdr => {
+        // by default, merge address doesn't exist (yet)
+        let addressExists = false;
+
+        // loop through current addresses on client
+        currentAddresses.forEach(cAdr => {
+            // quit early if possible
+            if (addressExists) return;
+            
+            // by default, assume mAdr and cAdr match
+            let adrMatch = true;
+            
+            // loop through keys of currentAddress to find
+            // -> matching values
+            Object.entries(cAdr).forEach(([adrKey, cAdrVal]) => {
+                // quit early if possible
+                if (!adrMatch) return;
+                
+                // if vals DON'T match, set 'adrMatch' to false!
+                if (mAdr[adrKey] !== cAdrVal) {
+                    adrMatch = false;
+                }
+            });
+            
+            // if mAdr matches cAdr, set 'addressExists' flag to true!
+            if (adrMatch) addressExists = true;
+        });
+        
+        // if addressExists, return false (filter)
+        // -> if doesn't exist, return true (don't filter)
+        return !addressExists
+    });
+
+    // TODO: FIXME: here!
+    console.error('WE HERE BABY');
+    debugger;
 }
 
 // ================================================================
@@ -111,7 +163,7 @@ port.onMessage.addListener(msg => {
             // if flag is set to true, we already saved, so now we just
 			// -> have to redirect the user to the next step!
 			if (postSaveRedirectFlag) {
-				Utils_SendRedirectCode(port, 'Addresses/Addresses');
+				Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
 				return;
 			}
 
@@ -122,13 +174,9 @@ port.onMessage.addListener(msg => {
                 return;
             }
             
-            // if autoImport flag is true, start automatically!
+            // if any auto flag is true, start automatically!
             if (autoImport) { startImport(); }
-            if (autoMerge) {
-                // TODO: FIXME: here!
-                console.error('WE HERE BABY');
-                debugger;
-            }
+            if (autoMerge) { startMerge( mergeData ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:
