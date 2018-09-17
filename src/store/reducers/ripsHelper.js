@@ -10,12 +10,14 @@ if (process.env.NODE_ENV === 'development') {
         [R_KEYS.ADDRESSES]: {
             ADDRESSES: [
                 [
-                    {'first line': '', phone: ''},
-                    {'first line': 'NOT empty', phone: '1234'}
+                    {'first line': '', 'phone number': ''},
+                    {'first line': 'NOT empty', 'phone number': '1234'}
                 ],
-                [],
                 [
-                    {'first line': '', phone: ''}
+                    {'first line': 'NOT empty', 'phone number': '1234'}
+                ],
+                [
+                    {'first line': '', 'phone number': ''},
                 ]
             ]
         },

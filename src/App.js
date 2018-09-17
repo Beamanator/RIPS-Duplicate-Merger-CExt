@@ -337,10 +337,10 @@ class App extends Component {
                             // get rid of fieldName group #
                             // -> ex: '13. date' -> 'date'
                             const firstSpaceLoc = fieldName.indexOf(' ');
-                            fieldName = fieldName.substr(firstSpaceLoc + 1);
+                            const basicFieldName = fieldName.substr(firstSpaceLoc + 1);
 
                             // assign data to matching data key
-                            objToMerge[dataMatchKey][fieldName] = fieldValue;
+                            objToMerge[dataMatchKey][basicFieldName] = fieldValue;
                         }
                         // else, not selected - do nothing
                         else {}
