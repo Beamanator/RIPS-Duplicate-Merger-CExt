@@ -392,8 +392,6 @@ class App extends Component {
             return;
         }
 
-        debugger;
-
         // pass data to action
         onMergeBegin(
             bkgPort,
