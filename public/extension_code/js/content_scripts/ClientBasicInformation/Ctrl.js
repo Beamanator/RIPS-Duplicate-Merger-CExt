@@ -207,9 +207,12 @@ const startMerge = (clientNum, mData) => {
 		// -> (Note: clicking save keeps us on the same page)
 		const saveButton = document.querySelector(saveSelector);
 		saveButton.click();
+
+		// will have to redirect after save is done
+		// -> handled in `.onMessage` listener (bottom of file)
     })
     .catch(errMsg => {
-		// TODO: stop import w/ error message!
+		// TODO: stop merge w/ error message!
 		// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
 		// -> means the Validation Extension isn't installed... ugh)
 		const err = 'ERR: Cannot find save button, meaning you ' +
@@ -218,8 +221,6 @@ const startMerge = (clientNum, mData) => {
 		Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
     });
-	// will have to redirect after save is done
-	// Utils_SendRedirectCode(port, 'Addresses/Addresses');	
 };
 
 // ================================================================
