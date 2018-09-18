@@ -71,6 +71,15 @@ const RIPS_FIELD_KEYS = {
 
     // ====================== ADDRESSES: ======================
     ADDRESSES: 'ADDRESSES',
+    ADDRESS_NEW_BUTTON: 'ADDRESS_NEW_BUTTON',
+
+    // ------ new address form fields ------
+    ADDRESS_NEW_LINE1: 'ADDRESS_NEW_LINE1',
+    ADDRESS_NEW_PHONE: 'ADDRESS_NEW_PHONE',
+    ADDRESS_NEW_DATE_FROM: 'ADDRESS_NEW_DATE_FROM',
+    ADDRESS_NEW_DATE_TO: 'ADDRESS_NEW_DATE_TO',
+    ADDRESS_NEW_SAVE_BUTTON: 'ADDRESS_NEW_SAVE_BUTTON',
+
     // ------ table column names ------
     FIRST_ADDRESS_LINE: 'First Address Line',
     ADDRESS_TELEPHONE: 'Address Telephone',
