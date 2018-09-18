@@ -93,7 +93,7 @@ const startImport = () => {
     Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
 }
 
-const startMerge = ( mData ) => {
+const startMerge = ( mData, dataIndex ) => {
     // first, get data existing on the page
     const currentAddresses = getPageDataArr();
     // pull out address data from mData
@@ -133,8 +133,74 @@ const startMerge = ( mData ) => {
         return !addressExists
     });
 
+    // 1) Get next address to add to client
+    let nextAddressData = null;
+
+    // if index is out of range, no more to add! redirect to next page!
+    if (dataIndex > newAddresses.length - 1) {
+        Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
+    }
+    // else, not out of range, so set next address data to save :)
+    else {
+        nextAddressData = newAddresses[dataIndex];
+    }
+
+    // 2) Click "Add Address" to open up form elements
+    const newAddressBtnSelector = FIELD_IDS_ADDRESSES[ADDRESS_NEW_BUTTON];
+    const newAddressBtnElem = document.querySelector(newAddressBtnSelector);
+    newAddressBtnElem.click();
+
+    // 3) Populate 'new address' form elements
+    const [
+        addressLine1Selector, addressPhoneSelector,
+        addressDateFromSelector, addressDateToSelector
+    ] = [
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_LINE1],
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_PHONE],
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_FROM], 
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
+    ];
+
+    const [
+        addressLine1Elem, addressPhoneElem,
+        addressDateFromElem, addressDateToElem
+    ] = [
+        document.querySelector(addressLine1Selector),
+        document.querySelector(addressPhoneSelector),
+        document.querySelector(addressDateFromSelector),
+        document.querySelector(addressDateToSelector),
+    ];
+
+    // error if we didn't find all elements ;)
+    if ( !addressLine1Elem || !addressPhoneElem || !addressDateFromElem || !addressDateToElem ) {
+        const err = `Some address elem(s) not found!`;
+        Utils_Error(
+            MESSAGE_SOURCE, err,
+            ADDRESS_NEW_LINE1, addressLine1Elem,
+            ADDRESS_NEW_PHONE, addressPhoneElem,
+            ADDRESS_NEW_DATE_FROM, addressDateFromElem,
+            ADDRESS_NEW_DATE_TO, addressDateToElem
+        );
+        return;
+    }
+
+    addressLine1Elem.value = nextAddressData[FIRST_ADDRESS_LINE];
+    addressPhoneElem.value = nextAddressData[ADDRESS_TELEPHONE];
+    addressDateFromElem.value = nextAddressData[ADDRESS_DATE_FROM];
+    addressDateToElem.value = nextAddressData[ADDRESS_DATE_TO];
+
+    // 4) update background.js' merge data index before clicking 'save'
+    sendIncrementMergeDataIndex();
+
+    // 5) Click "Save" (update next address index to add - in bkg.js)
+    const addressSaveBtnSelector = FIELD_IDS_ADDRESSES[ADDRESS_NEW_SAVE_BUTTON];
+    const addressSaveBtnElem = document.querySelector(addressSaveBtnSelector);
+    // TODO: click it!
+    // addressSaveBtnElem.click();
+
+
     // TODO: FIXME: here!
-    console.error('WE HERE BABY');
+    console.error('WE HERE BABY', dataIndex);
     debugger;
 }
 
@@ -142,6 +208,11 @@ const startMerge = ( mData ) => {
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+const sendIncrementMergeDataIndex = () => {
+	port.postMessage({
+		code: PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX
+	});
+};
 
 // ================================================================
 //                          PORT LISTENERS
@@ -149,7 +220,7 @@ const startMerge = ( mData ) => {
 
 port.onMessage.addListener(msg => {
     const {
-		code, mergeData,
+		code, mergeData, mergeDataIndex,
 		autoImport, autoMerge,
 		postSaveRedirectFlag
     } = msg;
@@ -176,7 +247,7 @@ port.onMessage.addListener(msg => {
             
             // if any auto flag is true, start automatically!
             if (autoImport) { startImport(); }
-            if (autoMerge) { startMerge( mergeData ); }
+            if (autoMerge) { startMerge( mergeData, mergeDataIndex ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:
