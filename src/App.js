@@ -320,10 +320,11 @@ class App extends Component {
                     // if none selected, skip adding this field
                     if (selectedFieldIndices.length === 0) return;
     
-                    // const selectedData = {};
                     // loop through selectedFieldIndices
                     selectedFieldIndices.forEach((isSelected, selectedIndex) => {
-                        if (isSelected) {
+                        // if field is selected (isSelected) and index > 0 (a.k.a.
+                        // -> client 2 or 3), add field to merge object :)
+                        if (isSelected && selectedIndex > 0) {
                             const fieldValue = fieldData[selectedIndex];
                             const groupIndex = fieldData[3];
                             const clientIndex = selectedIndex;
@@ -358,8 +359,10 @@ class App extends Component {
                     // get selectedIndex from selectedArr
                     const selectedIndex = selectedArr[fieldIndex];
                     
-                    // if none selected, skip adding this field
-                    if (selectedIndex === null) return;
+                    // if none OR first elem selected, skip adding this field
+                    // -> (first col = client 1, so already set on target client
+                    // -> [client #1] and doesn't need to be added again)
+                    if (selectedIndex === null || selectedIndex === 0) return;
         
                     // add selected field to array to merge
                     arrToMerge.push({
@@ -368,11 +371,11 @@ class App extends Component {
                 });
             }
 
+            // add prop (table key) if doesn't exist
+            if (!mData[tableKey]) mData[tableKey] = [];
+
             // merge all objects in arrToMerge into mData
             arrToMerge.forEach(fieldObj => {
-                // add prop (table key) if doesn't exist
-                if (!mData[tableKey]) mData[tableKey] = [];
-
                 // push data to big merge container object!
                 mData[tableKey].push(fieldObj);
             })
@@ -388,6 +391,8 @@ class App extends Component {
             console.error('error somewhere');
             return;
         }
+
+        debugger;
 
         // pass data to action
         onMergeBegin(
