@@ -190,36 +190,35 @@ const startMerge = (clientNum, mData) => {
 		}
 	});
 
-
-	// TODO: add a bit of waiting time for Validation Extension to work
-	// -> its magic and create the new save button :)
 	// click save, after making sure the input button exists!
 	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
+	// add a bit of waiting time (2 seconds) for Validation Extension to work
+	// -> its magic and create the new save button :)
 	Utils_WaitForCondition(
         Utils_OnElemExists, {
             selector: saveSelector
         }, 500, 4
     )
     .then(() => {
-		// save button exists, so get it and click it!
-		// TODO: tell background it's time to move to the next page
-		// -> (Note: clicking save keeps us on the same page)
-		// Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
-		const saveButton = document.querySelector(saveSelector);
+		// tell background it's time to move to the next page
 		sendPostSaveFlag();
+		
+		// save button exists, so get it and click it!
+		// -> (Note: clicking save keeps us on the same page)
+		const saveButton = document.querySelector(saveSelector);
 		saveButton.click();
     })
     .catch(errMsg => {
 		// TODO: stop import w/ error message!
 		// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
-	// -> means the Validation Extension isn't installed... ugh)
+		// -> means the Validation Extension isn't installed... ugh)
 		const err = 'ERR: Cannot find save button, meaning you ' +
 			'PROBABLY don\'t have the Validation extension instal' +
 			'led!! Shame on you!! Quitting now!';
 		Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
     });
-	// TODO: will have to redirect after save is done
+	// will have to redirect after save is done
 	// Utils_SendRedirectCode(port, 'Addresses/Addresses');	
 };
 
