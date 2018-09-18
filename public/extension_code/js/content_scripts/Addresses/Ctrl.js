@@ -161,6 +161,9 @@ const startMerge = ( mData, dataIndex ) => {
         FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
     ];
 
+    // TODO: wait till at least one of these fields is displaying, then move forward
+    debugger;
+
     const [
         addressLine1Elem, addressPhoneElem,
         addressDateFromElem, addressDateToElem
@@ -176,10 +179,10 @@ const startMerge = ( mData, dataIndex ) => {
         const err = `Some address elem(s) not found!`;
         Utils_Error(
             MESSAGE_SOURCE, err,
-            ADDRESS_NEW_LINE1, addressLine1Elem,
-            ADDRESS_NEW_PHONE, addressPhoneElem,
-            ADDRESS_NEW_DATE_FROM, addressDateFromElem,
-            ADDRESS_NEW_DATE_TO, addressDateToElem
+            ADDRESS_NEW_LINE1, addressLine1Elem, addressLine1Selector,
+            ADDRESS_NEW_PHONE, addressPhoneElem, addressPhoneSelector,
+            ADDRESS_NEW_DATE_FROM, addressDateFromElem, addressDateFromSelector,
+            ADDRESS_NEW_DATE_TO, addressDateToElem, addressDateToSelector
         );
         return;
     }
