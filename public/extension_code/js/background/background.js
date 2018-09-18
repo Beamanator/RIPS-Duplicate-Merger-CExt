@@ -13,6 +13,7 @@ let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
+let MERGED_DATA_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
 let MERGED_DATA_CONTAINER = {};
 let ERRORS = [];
@@ -68,7 +69,8 @@ const sendPortInit = (port, code) => {
         clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
             ? CLIENT_NUMS[CLIENT_INDEX] : null,
         mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
-        postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG
+        postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG,
+        mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null
     });
 }
 
@@ -138,6 +140,7 @@ const initContentScriptPort = (port) => {
                 const msgTabId = MessageSender.sender.tab.id;
                 const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
                 POST_SAVE_REDIRECT_FLAG = false;
+                MERGED_DATA_INDEX = 0;
                 chrome.tabs.update(msgTabId, { url: url });
                 break;
 
@@ -150,6 +153,7 @@ const initContentScriptPort = (port) => {
                 if (CLIENT_NUMS && CLIENT_INDEX+1 < CLIENT_NUMS.length) {
                     // increment client index
                     CLIENT_INDEX++;
+                    // FIXME: why still in progress?
                     IMPORT_IN_PROGRESS = true; // no change
                     sendStartImport(CSPort);
                 }
@@ -165,15 +169,15 @@ const initContentScriptPort = (port) => {
                 POST_SAVE_REDIRECT_FLAG = true;
                 break;
 
+            case PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX:
+                MERGED_DATA_INDEX++;
+                Utils_Log('BKG:', 'Incrementing merge data index!', MERGED_DATA_INDEX);
+                break;
+
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);
                 // IMPORT_IN_PROGRESS = false;
                 break;
-
-            // case CS_BKG_ERROR_HOW_TO_CONTINUE:
-                // console.error(`Too many '>' elems found on rips page!`);
-                // IMPORT_IN_PROGRESS = false;
-                // break;
             
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
