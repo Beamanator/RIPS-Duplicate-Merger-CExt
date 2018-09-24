@@ -581,14 +581,21 @@ class App extends Component {
                 {ripsData && Object.keys(ripsData).length > 0 ?
                 <Grid item xs={12} className={classes.textCenter}>
                     <Grid container justify="center">
-                        <h4 className={classes.dialogDescriptionPadding}>
-                            When you're ready to merge two (or 3) client records
-                            in RIPS, make sure you've selected all of the data
-                            you want to be saved in the final record! You'll see
-                            all green boxes in the "Field Names" column when
-                            there's no forgotten data! Finally, just
-                            press "Merge" below!
-                        </h4>
+                        <div className={classes.dialogDescriptionPadding}>
+                            <h4 className={classes.description}>
+                                When you're ready to merge two (or 3) client records
+                                in RIPS, make sure you've selected all of the data
+                                you want to be saved in the final record! You'll see
+                                all green boxes in the "Field Names" column when
+                                there's no forgotten data.
+                            </h4>
+                            <h4 className={classes.description}>
+                                ----------------------------------
+                            </h4>
+                            <h4 className={classes.description}>
+                                Finally, just press "Merge" below!
+                            </h4>
+                        </div>
 
                         <Grid item xs={4}>
                             <Button
@@ -668,7 +675,6 @@ const styles = theme => ({
         margin: '0 25%'
     },
     dialogDescriptionPadding: {
-        margin: '0 25%',
         padding: '20px'
     },
     dialogListStyles: {
