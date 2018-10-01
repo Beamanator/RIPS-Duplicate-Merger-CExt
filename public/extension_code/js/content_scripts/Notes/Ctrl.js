@@ -37,7 +37,6 @@ const startMerge = (mData) => {
     // if data is empty, probably selected client #1 notes
     // -> (or none) so just redirect to next page (relatives)
     if (pageMergeData.length == 0) {
-        debugger;
         Utils_SendRedirectCode(port, 'Relatives/Relatives');
         return;
     }
@@ -69,8 +68,8 @@ const startMerge = (mData) => {
     // tell background it's time to move to the next page
     sendPostSaveFlag();
 
-    // TODO: click it! save it!
-    // notesSaveElem.click();
+    // click it! save it!
+    notesSaveElem.click();
 }
 
 // ================================================================

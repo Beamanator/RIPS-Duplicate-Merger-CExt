@@ -123,8 +123,8 @@ const startMerge = (clientNum, mData) => {
 
 	console.log(pageMergeData);
 	if (pageMergeData.length == 0) {
-		debugger;
-		// Utils_SendRedirectCode(port, 'Addresses/Addresses');
+		Utils_SendRedirectCode(port, 'Addresses/Addresses');
+		return;
 	}
 
 	// 3) loop through data, adding each field to the page
