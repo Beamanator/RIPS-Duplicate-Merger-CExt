@@ -76,7 +76,7 @@ const getPageDataArr = () => {
         addresses.push(addressRowData);
     });
 
-    // data gathered, now send it back to background.js to store
+    // data gathered! return!
     return addresses;
 }
 
@@ -99,9 +99,9 @@ const startMerge = ( mData, dataIndex ) => {
     // pull out address data from mData
     const mAddressData = mData[MESSAGE_SOURCE];
 
-    // next, filter out existing addresses from mData
+    // next, filter out existing addresses from merge data
     const newAddresses = mAddressData.filter(mAdr => {
-        // by default, merge address doesn't exist (yet)
+        // by default, address is "new" / doesn't exist yet
         let addressExists = false;
 
         // loop through current addresses on client
@@ -130,7 +130,7 @@ const startMerge = ( mData, dataIndex ) => {
         
         // if addressExists, return false (filter)
         // -> if doesn't exist, return true (don't filter)
-        return !addressExists
+        return !addressExists;
     });
 
     // 1) Get next address to add to client
@@ -151,18 +151,7 @@ const startMerge = ( mData, dataIndex ) => {
     const newAddressBtnElem = document.querySelector(newAddressBtnSelector);
     newAddressBtnElem.click();
 
-    // 3) Populate 'new address' form elements
-    const [
-        addressLine1Selector, addressPhoneSelector,
-        addressDateFromSelector, addressDateToSelector
-    ] = [
-        FIELD_IDS_ADDRESSES[ADDRESS_NEW_LINE1],
-        FIELD_IDS_ADDRESSES[ADDRESS_NEW_PHONE],
-        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_FROM], 
-        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
-    ];
-
-    // Wait till at least one of the 'new address' fields is
+    // Wait till all of the 'new address' fields are
     // -> displaying, then move forward
     Utils_WaitForCondition(
         Utils_OnAllElemsExist, {
@@ -172,9 +161,20 @@ const startMerge = ( mData, dataIndex ) => {
                 addressDateFromSelector,
                 addressDateToSelector
             ]
-        }, 500, 2
+        }, 500, 3
     )
     .then(() => {
+        // 3) Populate 'new address' form elements
+        const [
+            addressLine1Selector, addressPhoneSelector,
+            addressDateFromSelector, addressDateToSelector
+        ] = [
+            FIELD_IDS_ADDRESSES[ADDRESS_NEW_LINE1],
+            FIELD_IDS_ADDRESSES[ADDRESS_NEW_PHONE],
+            FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_FROM], 
+            FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
+        ];
+
         const [
             addressLine1Elem, addressPhoneElem,
             addressDateFromElem, addressDateToElem
@@ -204,17 +204,9 @@ const startMerge = ( mData, dataIndex ) => {
     })
     .catch(errMsg => {
         // error if we didn't find all elements
-        if ( !addressLine1Elem || !addressPhoneElem || !addressDateFromElem || !addressDateToElem ) {
-            const err = `Some address elem(s) not found!`;
-            Utils_Error(
-                MESSAGE_SOURCE, err,
-                ADDRESS_NEW_LINE1, addressLine1Elem, addressLine1Selector,
-                ADDRESS_NEW_PHONE, addressPhoneElem, addressPhoneSelector,
-                ADDRESS_NEW_DATE_FROM, addressDateFromElem, addressDateFromSelector,
-                ADDRESS_NEW_DATE_TO, addressDateToElem, addressDateToSelector
-            );
-            Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
-        }
+        const err = `Some address elem(s) not found! Check 'em!`;
+        Utils_Error(MESSAGE_SOURCE, err);
+        Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
     });
 }
 

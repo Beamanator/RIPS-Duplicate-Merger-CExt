@@ -72,7 +72,7 @@ const RIPS_FIELD_KEYS = {
     // ====================== ADDRESSES: ======================
     ADDRESSES: 'ADDRESSES',
     ADDRESS_NEW_BUTTON: 'ADDRESS_NEW_BUTTON',
-
+    
     // ------ new address form fields ------
     ADDRESS_NEW_LINE1: 'ADDRESS_NEW_LINE1',
     ADDRESS_NEW_PHONE: 'ADDRESS_NEW_PHONE',
@@ -97,6 +97,16 @@ const RIPS_FIELD_KEYS = {
     
     // ====================== RELATIVES: ======================
     RELATIVES: 'RELATIVES',
+    RELATIVE_NEW_BUTTON: 'RELATIVE_NEW_BUTTON',
+
+    // ------ new relative form fields ------
+    REL_NEW_FIRST_NAME: 'REL_NEW_FIRST_NAME',
+    REL_NEW_LAST_NAME: 'REL_NEW_LAST_NAME',
+    REL_NEW_RELATIONSHIP: 'REL_NEW_RELATIONSHIP',
+    REL_NEW_DOB: 'REL_NEW_DOB',
+    REL_NEW_STARS_NUMBER: 'REL_NEW_STARS_NUMBER',
+    REL_NEW_SAVE_BUTTON: 'REL_NEW_SAVE_BUTTON',
+
     // ------ table column names ------
     REL_FIRST_NAME: 'First Name (Relative)',
     REL_SURNAME: 'Surname (Relative)',
