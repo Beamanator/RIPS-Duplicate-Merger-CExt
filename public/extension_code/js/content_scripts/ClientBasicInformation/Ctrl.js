@@ -121,6 +121,12 @@ const startMerge = (clientNum, mData) => {
 	// 2.2) no issues! get page's data using MESSAGE_SOURCE
 	const pageMergeData = mData[MESSAGE_SOURCE];
 
+	console.log(pageMergeData);
+	if (pageMergeData.length == 0) {
+		debugger;
+		// Utils_SendRedirectCode(port, 'Addresses/Addresses');
+	}
+
 	// 3) loop through data, adding each field to the page
 	pageMergeData.forEach(fieldObj => {
 		// each obj in CBI page should only contain 1 field, so take
@@ -237,7 +243,7 @@ const sendPostSaveFlag = () => {
 //                          PORT LISTENERS
 // ================================================================
 
-port.onMessage.addListener(function(msg) {
+port.onMessage.addListener(msg => {
 	const {
 		code, clientNum, mergeData,
 		autoImport, autoMerge,

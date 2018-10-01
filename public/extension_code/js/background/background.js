@@ -171,7 +171,7 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX:
                 MERGED_DATA_INDEX++;
-                Utils_Log('BKG:', 'Incrementing merge data index!', MERGED_DATA_INDEX);
+                Utils_Log('BKG', 'Incrementing merge data index!', MERGED_DATA_INDEX);
                 break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:

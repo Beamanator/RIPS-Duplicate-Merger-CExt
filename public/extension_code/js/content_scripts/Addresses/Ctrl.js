@@ -139,6 +139,7 @@ const startMerge = ( mData, dataIndex ) => {
     // if index is out of range, no more to add! redirect to next page!
     if (dataIndex > newAddresses.length - 1) {
         Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
+        return; // quit function early
     }
     // else, not out of range, so set next address data to save :)
     else {
@@ -161,50 +162,60 @@ const startMerge = ( mData, dataIndex ) => {
         FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
     ];
 
-    // TODO: wait till at least one of these fields is displaying, then move forward
-    debugger;
+    // Wait till at least one of the 'new address' fields is
+    // -> displaying, then move forward
+    Utils_WaitForCondition(
+        Utils_OnAllElemsExist, {
+            selectors: [
+                addressLine1Selector,
+                addressPhoneSelector,
+                addressDateFromSelector,
+                addressDateToSelector
+            ]
+        }, 500, 2
+    )
+    .then(() => {
+        const [
+            addressLine1Elem, addressPhoneElem,
+            addressDateFromElem, addressDateToElem
+        ] = [
+            document.querySelector(addressLine1Selector),
+            document.querySelector(addressPhoneSelector),
+            document.querySelector(addressDateFromSelector),
+            document.querySelector(addressDateToSelector),
+        ];
 
-    const [
-        addressLine1Elem, addressPhoneElem,
-        addressDateFromElem, addressDateToElem
-    ] = [
-        document.querySelector(addressLine1Selector),
-        document.querySelector(addressPhoneSelector),
-        document.querySelector(addressDateFromSelector),
-        document.querySelector(addressDateToSelector),
-    ];
-
-    // error if we didn't find all elements ;)
-    if ( !addressLine1Elem || !addressPhoneElem || !addressDateFromElem || !addressDateToElem ) {
-        const err = `Some address elem(s) not found!`;
-        Utils_Error(
-            MESSAGE_SOURCE, err,
-            ADDRESS_NEW_LINE1, addressLine1Elem, addressLine1Selector,
-            ADDRESS_NEW_PHONE, addressPhoneElem, addressPhoneSelector,
-            ADDRESS_NEW_DATE_FROM, addressDateFromElem, addressDateFromSelector,
-            ADDRESS_NEW_DATE_TO, addressDateToElem, addressDateToSelector
-        );
-        return;
-    }
-
-    addressLine1Elem.value = nextAddressData[FIRST_ADDRESS_LINE];
-    addressPhoneElem.value = nextAddressData[ADDRESS_TELEPHONE];
-    addressDateFromElem.value = nextAddressData[ADDRESS_DATE_FROM];
-    addressDateToElem.value = nextAddressData[ADDRESS_DATE_TO];
-
-    // 4) update background.js' merge data index before clicking 'save'
-    sendIncrementMergeDataIndex();
-
-    // 5) Click "Save" (update next address index to add - in bkg.js)
-    const addressSaveBtnSelector = FIELD_IDS_ADDRESSES[ADDRESS_NEW_SAVE_BUTTON];
-    const addressSaveBtnElem = document.querySelector(addressSaveBtnSelector);
-    // TODO: click it!
-    // addressSaveBtnElem.click();
-
-
-    // TODO: FIXME: here!
-    console.error('WE HERE BABY', dataIndex);
-    debugger;
+        // all elems should exist since we got here :)
+        addressLine1Elem.value = nextAddressData[FIRST_ADDRESS_LINE] || '';
+        addressPhoneElem.value = nextAddressData[ADDRESS_TELEPHONE] || '';
+        addressDateFromElem.value = nextAddressData[ADDRESS_DATE_FROM] || '';
+        addressDateToElem.value = nextAddressData[ADDRESS_DATE_TO] || '';
+    
+        // 4) update background.js' merge data index before clicking 'save'
+        sendIncrementMergeDataIndex();
+    
+        // 5) Click "Save" (update next address index to add - in bkg.js)
+        const addressSaveBtnSelector = FIELD_IDS_ADDRESSES[ADDRESS_NEW_SAVE_BUTTON];
+        const addressSaveBtnElem = document.querySelector(addressSaveBtnSelector);
+        // click save!
+        addressSaveBtnElem.click();
+        // -> now page will refresh, and incremented dataIndex will
+        // -> make the next address import
+    })
+    .catch(errMsg => {
+        // error if we didn't find all elements
+        if ( !addressLine1Elem || !addressPhoneElem || !addressDateFromElem || !addressDateToElem ) {
+            const err = `Some address elem(s) not found!`;
+            Utils_Error(
+                MESSAGE_SOURCE, err,
+                ADDRESS_NEW_LINE1, addressLine1Elem, addressLine1Selector,
+                ADDRESS_NEW_PHONE, addressPhoneElem, addressPhoneSelector,
+                ADDRESS_NEW_DATE_FROM, addressDateFromElem, addressDateFromSelector,
+                ADDRESS_NEW_DATE_TO, addressDateToElem, addressDateToSelector
+            );
+            Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+        }
+    });
 }
 
 // ================================================================
@@ -225,7 +236,7 @@ port.onMessage.addListener(msg => {
     const {
 		code, mergeData, mergeDataIndex,
 		autoImport, autoMerge,
-		postSaveRedirectFlag
+		// postSaveRedirectFlag
     } = msg;
     
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
@@ -236,10 +247,10 @@ port.onMessage.addListener(msg => {
             
             // if flag is set to true, we already saved, so now we just
 			// -> have to redirect the user to the next step!
-			if (postSaveRedirectFlag) {
-				Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
-				return;
-			}
+			// if (postSaveRedirectFlag) {
+			// 	Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
+			// 	return;
+			// }
 
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)

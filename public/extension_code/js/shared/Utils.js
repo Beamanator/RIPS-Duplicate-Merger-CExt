@@ -127,6 +127,24 @@ const Utils_OnElemExists = ( config ) => {
 	else return true;
 }
 
+const Utils_OnAllElemsExist = ( config ) => {
+	const { selectors } = config;
+	let allExist = true;
+	
+	for (let i = 0; i < selectors.length; i++) {
+		// try to get reference to element
+		const htmlElem = document.querySelector(selectors[i]);
+
+		// check if element does NOT exist, 
+		if (!htmlElem) {
+			allExist = false;
+			break; // exit early
+		}
+	}
+	// returns true if all elements exist, false otherwise
+	return allExist;
+}
+
 const Utils_OnPopupNotThrown = ( config ) => {
 	const { alertSelector, alertVisibleClass } = config;
 	const alertElem = document.querySelector(alertSelector);

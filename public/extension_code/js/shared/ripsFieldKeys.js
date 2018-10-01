@@ -93,6 +93,7 @@ const RIPS_FIELD_KEYS = {
     
     // ======================== NOTES: ========================
     NOTES: 'Notes',
+    NOTES_SAVE_BUTTON: 'NOTES_SAVE_BUTTON',
     
     // ====================== RELATIVES: ======================
     RELATIVES: 'RELATIVES',
