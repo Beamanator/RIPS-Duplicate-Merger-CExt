@@ -94,15 +94,12 @@ const startImport = () => {
 }
 
 const startMerge = ( mData, dataIndex ) => {
-    // TODO: here now chah??
-    debugger;
-
     // first, get data existing on page
     const currentRelatives = getPageDataArr();
     // pull out relatives data
     const mRelativesData = mData[MESSAGE_SOURCE];
 
-    // next, filter out existing addresses from merge data
+    // next, filter out existing relatives from merge data
     const newRelatives = mRelativesData.filter(mRel => {
         // by default, relative is "new" / doesn't exist yet
         let relativeExists = false;
@@ -140,9 +137,8 @@ const startMerge = ( mData, dataIndex ) => {
     let nextRelativeData = null;
 
     // if index is out of range, no more to add! redirect to next page!
-    if (dataIndex > newRelatives.length - 1) {
-        // TODO: add this in!
-        // Utils_SendRedirectCode(port, '');
+    if (dataIndex >= newRelatives.length) {
+        Utils_SendRedirectCode(port, 'Contacts/Contacts');
         return; // quit early
     }
     // else, not out of range, so set next relative data to save :)
@@ -155,63 +151,77 @@ const startMerge = ( mData, dataIndex ) => {
     const newRelativeBtnElem = document.querySelector(newRelativeBtnSelector);
     newRelativeBtnElem.click();
 
+    // 3) populate 'new relative' form elements
+    const [
+        relFirstNameSelector, relLastNameSelector,
+        relDOBSelector, relRelationshipSelector,
+        relStarsNumberSelector, relUnhcrNumberSelector
+    ] = [
+        FIELD_IDS_RELATIVES[REL_NEW_FIRST_NAME],
+        FIELD_IDS_RELATIVES[REL_NEW_LAST_NAME],
+        FIELD_IDS_RELATIVES[REL_NEW_DOB],
+        FIELD_IDS_RELATIVES[REL_NEW_RELATIONSHIP],
+        FIELD_IDS_RELATIVES[REL_NEW_STARS_NUMBER],
+        FIELD_IDS_RELATIVES[REL_NEW_UNHCR_NUMBER]
+    ];
+
     // Wait till all of the 'new relative' fields are
     // -> displaying, then move forward
     Utils_WaitForCondition(
         Utils_OnAllElemsExist, {
             selectors: [
-                relFirstName,
-                relLastName,
-                relDOB,
-                relRelationship,
-                relStarsNumber
+                relFirstNameSelector,
+                relLastNameSelector,
+                relDOBSelector,
+                relRelationshipSelector,
+                relStarsNumberSelector,
+                relUnhcrNumberSelector
             ]
         }, 500, 3
     )
     .then(() => {
-        // 3) populate 'new address' form elements
-        const [
-            relFirstNameSelector, relLastNameSelector,
-            relDOBSelector, relRelationshipSelector,
-            relStarsNumberSelector
-        ] = [
-            FIELD_IDS_RELATIVES[REL_NEW_FIRST_NAME],
-            FIELD_IDS_RELATIVES[REL_NEW_LAST_NAME],
-            FIELD_IDS_RELATIVES[REL_NEW_DOB],
-            FIELD_IDS_RELATIVES[REL_NEW_RELATIONSHIP],
-            FIELD_IDS_RELATIVES[REL_NEW_STARS_NUMBER]
-        ];
-
         const [
             relFirstNameElem, relLastNameElem,
             relDOBElem, relRelationshipElem,
-            relStarsNumberElem
+            relStarsNumberElem, relUnhcrNumberElem
         ] = [
             document.querySelector(relFirstNameSelector),
             document.querySelector(relLastNameSelector),
             document.querySelector(relDOBSelector),
             document.querySelector(relRelationshipSelector),
-            document.querySelector(relStarsNumberSelector)
+            document.querySelector(relStarsNumberSelector),
+            document.querySelector(relUnhcrNumberSelector)
         ];
 
         // all elems should exist since we got here :)
         relFirstNameElem.value = nextRelativeData[REL_FIRST_NAME] || '';
         relLastNameElem.value = nextRelativeData[REL_SURNAME] || '';
         relDOBElem.value = nextRelativeData[REL_DOB] || '';
-        relRelationshipElem.value = nextRelativeData[REL_RELATIONSHIP] || '';
         relStarsNumberElem.value = nextRelativeData[REL_STARS_NUMBER] || '';
+        // 'unhcr number' is required for some reason, so
+        // -> populate with 'unknown'
+        relUnhcrNumberElem.value = 'unknown';
+        // 'relationship' is in a dropdown box, so needs to be
+        // -> set in a different manner
+        Object.entries(relRelationshipElem.options)
+        .forEach(([value, optElem]) => {
+            // once an option's text matches the value we're
+            // -> looking for, that's our match!
+            if (optElem.innerText.trim() === nextRelativeData[REL_RELATIONSHIP]) {
+                relRelationshipElem.options[value].selected = 'selected';
+            }
+        });
 
         // 4) update background.js' merge data index before clicking 'save'
         sendIncrementMergeDataIndex();
 
-        // 5) Click 'save' (update next address index to add - in bkg.js)
+        // 5) Click 'save' (update next rel index to add - in bkg.js)
         const relSaveBtnSelector = FIELD_IDS_RELATIVES[REL_NEW_SAVE_BUTTON];
         const relSaveBtnElem = document.querySelector(relSaveBtnSelector);
         // click save!
-        debugger;
-        // relSaveBtnElem.click();
+        relSaveBtnElem.click();
         // -> now page will refresh, and incremented dataIndex will
-        // -> make the next address import
+        // -> make the next relative import
     })
     .catch(errMsg => {
         // error if we didn't find all elements

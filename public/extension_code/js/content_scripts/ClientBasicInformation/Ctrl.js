@@ -121,7 +121,6 @@ const startMerge = (clientNum, mData) => {
 	// 2.2) no issues! get page's data using MESSAGE_SOURCE
 	const pageMergeData = mData[MESSAGE_SOURCE];
 
-	console.log(pageMergeData);
 	if (pageMergeData.length == 0) {
 		Utils_SendRedirectCode(port, 'Addresses/Addresses');
 		return;

@@ -137,7 +137,7 @@ const startMerge = ( mData, dataIndex ) => {
     let nextAddressData = null;
 
     // if index is out of range, no more to add! redirect to next page!
-    if (dataIndex > newAddresses.length - 1) {
+    if (dataIndex >= newAddresses.length) {
         Utils_SendRedirectCode(port, 'ClientDetails/ClientNotes');
         return; // quit function early
     }
@@ -150,6 +150,17 @@ const startMerge = ( mData, dataIndex ) => {
     const newAddressBtnSelector = FIELD_IDS_ADDRESSES[ADDRESS_NEW_BUTTON];
     const newAddressBtnElem = document.querySelector(newAddressBtnSelector);
     newAddressBtnElem.click();
+
+    // 3) Populate 'new address' form elements
+    const [
+        addressLine1Selector, addressPhoneSelector,
+        addressDateFromSelector, addressDateToSelector
+    ] = [
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_LINE1],
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_PHONE],
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_FROM], 
+        FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
+    ];
 
     // Wait till all of the 'new address' fields are
     // -> displaying, then move forward
@@ -164,17 +175,6 @@ const startMerge = ( mData, dataIndex ) => {
         }, 500, 3
     )
     .then(() => {
-        // 3) Populate 'new address' form elements
-        const [
-            addressLine1Selector, addressPhoneSelector,
-            addressDateFromSelector, addressDateToSelector
-        ] = [
-            FIELD_IDS_ADDRESSES[ADDRESS_NEW_LINE1],
-            FIELD_IDS_ADDRESSES[ADDRESS_NEW_PHONE],
-            FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_FROM], 
-            FIELD_IDS_ADDRESSES[ADDRESS_NEW_DATE_TO],
-        ];
-
         const [
             addressLine1Elem, addressPhoneElem,
             addressDateFromElem, addressDateToElem
