@@ -15,7 +15,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CONTACTS });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = () => {
+const getPageDataArr = () => {
     const columnNames = [];
     const columnNameMap = {
         'First Name': CONTACT_FIRST_NAME,
@@ -93,12 +93,6 @@ const startImport = () => {
 }
 
 const startMerge = ( mData, dataIndex ) => {
-    
-
-    console.log('WE HERE!');
-    debugger;
-
-
     // first, get data existing on page
     const currentContacts = getPageDataArr();
     // pull out contacts data
@@ -143,7 +137,11 @@ const startMerge = ( mData, dataIndex ) => {
 
     // if index is out of range, no more to add! redirect to next page!
     if (dataIndex >= newContacts.length) {
-        Utils_SendRedirectCode(port, 'FilesUpload/FilesUpload');
+        // skip file upload b/c that has to be done manually
+        // Utils_SendRedirectCode(port, 'FilesUpload/FilesUpload');
+
+        // instead, go to history page
+        Utils_SendRedirectCode(port, 'MatterAction/ActionHistoryList');
         return; // quit early
     }
     // else, not out of range, so set next contact data to save :)
@@ -205,11 +203,10 @@ const startMerge = ( mData, dataIndex ) => {
         sendIncrementMergeDataIndex();
 
         // 5) Click 'save' (update next contact index to add - in bkg.js)
-        const contactSaveBtnSelector = FIELD_IDS_CONTACT[CONTACT_NEW_SAVE_BUTTON];
+        const contactSaveBtnSelector = FIELD_IDS_CONTACTS[CONTACT_NEW_SAVE_BUTTON];
         const contactSaveBtnElem = document.querySelector(contactSaveBtnSelector);
         // click save!
-        debugger;
-        // contactSaveBtnElem.click();
+        contactSaveBtnElem.click();
         // -> now page will refresh, and incremented dataIndex will
         // -> make the next contact import
     })
