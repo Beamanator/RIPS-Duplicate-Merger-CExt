@@ -34,28 +34,27 @@
 			"js": [
                 "extension_code/js/shared/portCodes.js",
                 "extension_code/js/shared/Utils.js",
-
-                // "extension_code/js/shared/FieldTranslator.js",
                 "extension_code/js/shared/ripsFieldKeys.js",
                 "extension_code/js/shared/ripsPageKeys.js"
-                // TODO: evaluate if old scripts are needed
-                // "extension_code/js/content_scripts/min/jquery-3.1.1.min.js",
 			]
         },
 
         {   // "Other" RIPS pages
             "matches": [ "http://rips.247lib.com/Stars/*" ],
             "exclude_matches": [
-                "http://rips.247lib.com/Stars/User/Login",
-                "http://rips.247lib.com/Stars/ClientDetails/ClientDetails",
-                "http://rips.247lib.com/Stars/Addresses/Addresses",
-                "http://rips.247lib.com/Stars/ClientDetails/ClientNotes",
-                "http://rips.247lib.com/Stars/Relatives/Relatives",
-                "http://rips.247lib.com/Stars/Contacts/Contacts",
-                "http://rips.247lib.com/Stars/FilesUpload/FilesUpload",
-                "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList",
-                "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch",
-				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult"
+                "http://rips.247lib.com/Stars/Addresses/Addresses", // addresses
+                "http://rips.247lib.com/Stars/ClientDetails/ClientDetails", // cbi
+                "http://rips.247lib.com/Stars/ClientDetails/ClientNotes", // notes
+                "http://rips.247lib.com/Stars/ClientDetails/ClientServicesList", // services
+                "http://rips.247lib.com/Stars/Contacts/Contacts", // contacts
+                "http://rips.247lib.com/Stars/FilesUpload/FilesUpload", // files
+                "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList", // history
+                "http://rips.247lib.com/Stars/MatterAction/CreateNewAction", // add action
+                "http://rips.247lib.com/Stars/MatterAction/CreateNewServices", // new service
+                "http://rips.247lib.com/Stars/Relatives/Relatives", // relatives
+                "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch", // advanced search
+				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult", // advanced search results
+                "http://rips.247lib.com/Stars/User/Login" // login
             ],
             "js": [ "extension_code/js/content_scripts/Redirect/Ctrl.js" ]
         },
@@ -105,8 +104,28 @@
             ]
         },
         // {}, Private Files page (not going to import - maybe add a warning)
-		// {}, Services pages
-		// {}, Add Action page
+        {   // Services page
+            "matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientServicesList" ],
+            "js": [
+                "extension_code/js/content_scripts/Services/Ctrl.js",
+                "extension_code/js/content_scripts/Services/FIDs.js"
+            ]
+        },
+        {   // Add service page
+            "matches": [ "http://rips.247lib.com/Stars/MatterAction/CreateNewServices" ],
+            "js": [
+                "extension_code/js/content_scripts/NewService/Ctrl.js",
+                "extension_code/js/content_scripts/NewService/FIDs.js"
+            ]
+        },
+        {   // Add action page
+            "matches": [ "http://rips.247lib.com/Stars/MatterAction/CreateNewAction" ],
+            "js": [
+                "extension_code/js/content_scripts/AddAction/Ctrl.js",
+                "extension_code/js/content_scripts/AddAction/FIDs.js"
+            ]
+        }, 
+        // {}, View Actions page (just handled by redirect maybe?)
 		{	// History page
 			"matches": [ "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList" ],
 			"js": [

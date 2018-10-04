@@ -15,7 +15,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_HISTORY });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = () => {
+const getPageDataContainer = () => {
 	const columnNames = [];
     const columnNameMap = {
         'Date/Time of Action': ACTION_DATE,
@@ -98,13 +98,80 @@ const startImport = () => {
         if (!historyData[actionName]) historyData[actionName] = [];
         // push row data onto history array
         historyData[actionName].push(historyRowData);
-	});
+    });
+
+    // return gathered actions!
+    return historyData;
+}
+
+const startImport = () => {
+    // first, get page data
+    const historyData = getPageDataContainer();
 	
 	// data gathered, now send it back to background.js to store
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, historyData);
 
 	// Tell bkg to start import on next client!
 	sendClientImportDone();
+}
+
+const startMerge = ( mData ) => {
+    // first, get page data
+    const currentHistoryData = getPageDataContainer();
+    // pull out merge history data
+    const mHistoryData = mData[MESSAGE_SOURCE];
+
+    // create obj to hold missing history data
+    const missingHistoryDataArr = [];
+
+    // loop through current + merge data to find "missing" data
+    mHistoryData.forEach(mActionObj => {	
+        const actionName = mActionObj[ACTION_NAME];
+    
+        // check if there are currently actions with the same name
+        const currentActionsSameName =
+            currentHistoryData[actionName] || [];
+
+        // -> assume no matches by default
+        let anyActionMatch = false;
+
+        // loop through current actions, looking for match to mActionObj
+        currentActionsSameName.forEach(cActionObj => {
+            // quit early if possible
+            if (anyActionMatch) return;
+
+            // assume match by default
+            let actionMatch = true;
+
+            // loop through keys of current action object
+            Object.entries(cActionObj).forEach(([cKey, cVal]) => {
+                // check if key / value pair does NOT match exactly
+                // -> from mActionObj
+                const mVal = mActionObj[cKey];
+                // technically '' and undefined will not match,
+                // -> but are falsy (empty) so I want to treat
+                // -> them as the same 
+                if (!mVal && !cVal) {
+                    // do nothing (keep actionMatch = true)
+                }
+                // now any mismatch means actions are different!
+                else if (mVal !== cVal) {
+                    actionMatch = false;
+                }
+            });
+
+            // if actionMatch is true, set anyActionMatch to true
+            if (actionMatch) anyActionMatch = true;
+        });
+
+        // if no match, action doesn't exist yet so add to arr!
+        if (!anyActionMatch) {
+            missingHistoryDataArr.push(mActionObj);
+        }
+    });
+
+    // tell bkg we're ready to merge & send actions to merge
+    sendHistoryDataToAddAndRedirect(missingHistoryDataArr);
 }
 
 // ================================================================
@@ -116,20 +183,40 @@ const sendClientImportDone = () => {
 		code: PCs.CS_BKG_CLIENT_IMPORT_DONE
 	});
 }
+const sendHistoryDataToAddAndRedirect = ( data ) => {
+    port.postMessage({
+        code: PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT,
+        urlPart: 'ClientDetails/ClientServicesList',
+        data: data
+    });
+}
 
 // ================================================================
 //                          PORT LISTENERS
 // ================================================================
 port.onMessage.addListener(msg => {
+    const {
+        code, mergeData, // mergeDataIndex,
+        autoImport, autoMerge,
+        // postSaveRedirectFlag
+    } = msg;
+
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
-    switch ( msg.code ) {
+    switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            // if autoImport flag is true, start automatically!
-            if (msg.autoImport) {
-                startImport();
-            }
+            
+            // fail if multiple automatic triggers are true
+            // -> (can't do > 1 thing at same time)
+            if (autoImport && autoMerge) {
+                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                return;
+			}
+
+            // if any auto flag is true, start automatically!
+            if (autoImport) { startImport(); }
+            if (autoMerge) { startMerge( mergeData ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:
@@ -138,6 +225,6 @@ port.onMessage.addListener(msg => {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_HISTORY);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_HISTORY);
     }
 });

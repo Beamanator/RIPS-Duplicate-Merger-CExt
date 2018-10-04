@@ -168,12 +168,26 @@ const RIPS_FIELD_KEYS = {
     ACTION_SERVICE: 'Associated Service',
     ACTION_CASEWORKER: 'Caseworker',
     ACTION_NOTES: 'Attendance Notes',
-
+    
     // ------ dynamic fields for selectors ------
     // TODO: combine with similar keys above (addresses)
     ACTION_TABLE_HEADER_CELLS: 'ACTION_TABLE_HEADER_CELLS',
     ACTION_TABLE_BODY_ROWS: 'ACTION_TABLE_BODY_ROWS',
     ACTION_TABLE_BODY_CELLS_FROM_ROWS: 'ACTION_TABLE_BODY_CELLS_FROM_ROWS',
+    
+    // ======================= SERVICES: =======================
+    // ------ table column names ------
+    SERVICE_CREATE_NEW: 'SERVICE_CREATE_NEW',
+    
+    // ------ table column names ------
+    SERVICE_IS_LIVE: 'SERVICE_IS_LIVE',
+    SERVICE_DESCRIPTION: 'SERVICE_DESCRIPTION',
+    SERVICE_CASEWORKER: 'SERVICE_CASEWORKER',
+    
+    // ------ dynamic fields for selectors ------
+    SERVICES_TABLE_HEADER_CELL_LINKS: 'SERVICES_TABLE_HEADER_CELL_LINKS',
+    SERVICES_TABLE_BODY_ROWS: 'SERVICES_TABLE_BODY_ROWS',
+    SERVICES_TABLE_BODY_CELLS_FROM_ROWS: 'SERVICES_TABLE_BODY_CELLS_FROM_ROWS',
 
     // ======================= GENERAL: =======================
     // TODO: add the generic "fields" / elements here

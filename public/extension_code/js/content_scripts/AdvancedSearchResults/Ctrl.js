@@ -76,11 +76,6 @@ port.onMessage.addListener(function(msg) {
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(code) {
-        case PCs.BKG_CS_START_IMPORT:
-        case PCs.BKG_CS_START_MERGE:
-            Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
-            break;
-
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
@@ -97,6 +92,11 @@ port.onMessage.addListener(function(msg) {
             else {} // do nothing if no automatic process set
             break;
 
+        case PCs.BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_MERGE:
+            Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
+            break;
+            
         default: // code not recognized - send error back
 			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
     }

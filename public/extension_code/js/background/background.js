@@ -16,19 +16,24 @@ let CLIENT_INDEX = 0;
 let MERGED_DATA_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
 let MERGED_DATA_CONTAINER = {};
+let MERGE_HISTORY_DATA = null;
+let SERVICES_TO_CREATE = null;
 let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_REACT_APP,
-    PCs.PORTNAME_CS_ADVANCED_SEARCH,
-    PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
     PCs.PORTNAME_CS_ADDRESSES,
-    PCs.PORTNAME_CS_NOTES,
-    PCs.PORTNAME_CS_RELATIVES,
+    PCs.PORTNAME_CS_ADVANCED_SEARCH,
+    PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS,
+    PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
     PCs.PORTNAME_CS_CONTACTS,
     PCs.PORTNAME_CS_FILES,
     PCs.PORTNAME_CS_HISTORY,
-    PCs.PORTNAME_CS_REDIRECT
+    PCs.PORTNAME_CS_NEW_SERVICE,
+    PCs.PORTNAME_CS_NOTES,
+    PCs.PORTNAME_CS_REDIRECT,
+    PCs.PORTNAME_CS_RELATIVES,
+    PCs.PORTNAME_CS_SERVICES,
 ];
 
 // ==============================================================================
@@ -56,6 +61,17 @@ const storeClientData = (source, data) => {
     Utils_Log('BKG', 'New clnt data container:', CLIENT_DATA_CONTAINER);
 }
 
+const redirectTab = ( tabId, urlPart ) => {
+    // add url part to basic RIPS url
+    const url = 'http://rips.247lib.com/Stars/' + urlPart
+    
+    POST_SAVE_REDIRECT_FLAG = false;
+    MERGED_DATA_INDEX = 0;
+    
+    // update given tab's url
+    chrome.tabs.update(tabId, { url: url });
+}
+
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
@@ -69,8 +85,10 @@ const sendPortInit = (port, code) => {
         clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
             ? CLIENT_NUMS[CLIENT_INDEX] : null,
         mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
+        mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
         postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG,
-        mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null
+        mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null,
+        servicesToCreate: SERVICES_TO_CREATE
     });
 }
 
@@ -131,17 +149,24 @@ const initContentScriptPort = (port) => {
         console.log('<background.js> content script port msg received', msg);
 
         switch(msg.code) {
+            case PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT:
+                MERGE_HISTORY_DATA = msg.data;
+                redirectTab(
+                    MessageSender.sender.tab.id,
+                    msg.urlPart
+                );
+                break;
+
             case PCs.CS_BKG_STOP_IMPORT:
                 IMPORT_IN_PROGRESS = false;
                 sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
-                const msgTabId = MessageSender.sender.tab.id;
-                const url = 'http://rips.247lib.com/Stars/' + msg.urlPart
-                POST_SAVE_REDIRECT_FLAG = false;
-                MERGED_DATA_INDEX = 0;
-                chrome.tabs.update(msgTabId, { url: url });
+                redirectTab(
+                    MessageSender.sender.tab.id,
+                    msg.urlPart
+                )
                 break;
 
             case PCs.CS_BKG_DATA_RECEIVED:
@@ -172,6 +197,10 @@ const initContentScriptPort = (port) => {
             case PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX:
                 MERGED_DATA_INDEX++;
                 Utils_Log('BKG', 'Incrementing merge data index!', MERGED_DATA_INDEX);
+                break;
+
+            case PCs.CS_BKG_SAVE_NEEDED_SERVICES:
+                SERVICES_TO_CREATE = msg.data;
                 break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
@@ -260,15 +289,18 @@ chrome.runtime.onConnect.addListener(port => {
     Utils_Log('BKG',`Port <${port.name}> connected!`);
     
     switch (port.name) {
-        case PCs.PORTNAME_CS_ADVANCED_SEARCH:
-        case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
         case PCs.PORTNAME_CS_ADDRESSES:
-        case PCs.PORTNAME_CS_NOTES:
-        case PCs.PORTNAME_CS_RELATIVES:
+        case PCs.PORTNAME_CS_ADVANCED_SEARCH:
+        // case PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS:
+        case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
         case PCs.PORTNAME_CS_CONTACTS:
         case PCs.PORTNAME_CS_FILES:
         case PCs.PORTNAME_CS_HISTORY:
+        case PCs.PORTNAME_CS_NEW_SERVICE:
+        case PCs.PORTNAME_CS_NOTES:
         case PCs.PORTNAME_CS_REDIRECT:
+        case PCs.PORTNAME_CS_RELATIVES:
+        case PCs.PORTNAME_CS_SERVICES:
             // init content script port listener
             initContentScriptPort( port );
             break;

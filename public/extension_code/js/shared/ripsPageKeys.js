@@ -8,6 +8,11 @@ const RIPS_PAGE_KEYS = {
     CONTACTS:    'CtrlContacts',
     FILES:       'CtrlFiles',
     HISTORY:     'CtrlHistory',
+    // pages only for merging - only for adding new data
+    SERVICES:    'CtrlServices',
+    NEW_SERVICE: 'CtrlNewService',
+    ADD_ACTIONS: 'CtrlAddActions',
+    VIEW_ACTIONS: 'CtrlViewActions',
 
     // no client data
     ADVANCED_SEARCH: 'CtrlAdvancedSearch',
