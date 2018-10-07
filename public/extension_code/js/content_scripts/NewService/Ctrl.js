@@ -15,7 +15,10 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_NEW_SERVICE });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startMerge = ( services ) => {
+const startMerge = ( servicesToCreate ) => {
+    // first we have to narrow down services to add. Loop through
+    // -> servicesToCreate, matching each service only once AND
+    // -> prioritizing details from action "Service started"
     console.log(services)
     debugger;
 }

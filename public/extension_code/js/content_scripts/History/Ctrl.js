@@ -29,7 +29,12 @@ const getPageDataContainer = () => {
 		'Team': '',
 		'Major Action?': '',
         '': ''
-	}
+    }
+    
+    const actionsToSkip = [
+        'Service closed',
+        'Service was closed - reopened at the later date'
+    ]
 	
 	// populate column names array
     const tableHeaderCellsSelector =
@@ -92,6 +97,15 @@ const getPageDataContainer = () => {
             let err = `Error! No Action Name found in row among` +
                 ` rowData:`;
             Utils_Error(MESSAGE_SOURCE, err, historyRowData);
+        }
+        // throw warning if action name is not useful (and skip adding):
+        // -> Service closed [6],
+        // -> Service was closed - reopened at the later date [333]
+        else if (actionsToSkip.includes(actionName) ) {
+            let warn = `Warning: Found action ${actionName} which` +
+                ` cannot be merged! Skipping :)`;
+            Utils_Warn(MESSAGE_SOURCE, warn);
+            return;
         }
         
         // add actionName to historyData if not present yet
@@ -170,8 +184,16 @@ const startMerge = ( mData ) => {
         }
     });
 
-    // tell bkg we're ready to merge & send actions to merge
-    sendHistoryDataToAddAndRedirect(missingHistoryDataArr);
+    // if there are actions that are missing, add them!
+    if (missingHistoryDataArr.length > 0) {
+        // tell bkg we're ready to merge & send actions to merge
+        sendHistoryDataToAddAndRedirect(missingHistoryDataArr);
+    }
+    // otherwise, we don't need to add an actions! woot! we're done!
+    else {
+        // TODO: display something to the user (in RIPS aaand in App.js)
+        // TODO: also redirect? to Advanced Search maybe?
+    }
 }
 
 // ================================================================

@@ -45,7 +45,7 @@ const startMerge = (mHistData) => {
     // -> through merge history data, looking for matching service
     // -> descriptions!
     mHistData.forEach(mAction => {
-        // action name is same as 'service description' in table
+        // action's service is same as 'service description' in table
         const mServiceDescription = mAction[ACTION_SERVICE];
 
         // by default assume no match
@@ -89,9 +89,8 @@ const startMerge = (mHistData) => {
         createServiceElem.click();
     }
     // else just redirect to add actions page since services
-    // -> exist already!
+    // -> exist already! We don't need to create any services!
     else {
-        debugger; // TODO: untested. remove when tested.
         Utils_SendRedirectCode(port, 'MatterAction/CreateNewAction');
     }
 }

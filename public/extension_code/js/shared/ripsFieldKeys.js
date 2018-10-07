@@ -176,10 +176,9 @@ const RIPS_FIELD_KEYS = {
     ACTION_TABLE_BODY_CELLS_FROM_ROWS: 'ACTION_TABLE_BODY_CELLS_FROM_ROWS',
     
     // ======================= SERVICES: =======================
-    // ------ table column names ------
     SERVICE_CREATE_NEW: 'SERVICE_CREATE_NEW',
     
-    // ------ table column names ------
+    // ------ table column names (in RIPS) ------
     SERVICE_IS_LIVE: 'SERVICE_IS_LIVE',
     SERVICE_DESCRIPTION: 'SERVICE_DESCRIPTION',
     SERVICE_CASEWORKER: 'SERVICE_CASEWORKER',
@@ -188,6 +187,15 @@ const RIPS_FIELD_KEYS = {
     SERVICES_TABLE_HEADER_CELL_LINKS: 'SERVICES_TABLE_HEADER_CELL_LINKS',
     SERVICES_TABLE_BODY_ROWS: 'SERVICES_TABLE_BODY_ROWS',
     SERVICES_TABLE_BODY_CELLS_FROM_ROWS: 'SERVICES_TABLE_BODY_CELLS_FROM_ROWS',
+    
+    // ================== ADD NEW SERVICES: ===================
+    NEW_SERVICE_SAVE_BUTTON: 'NEW_SERVICE_SAVE_BUTTON',
+    
+    // ------ rips form fields ------
+    NEW_SERVICE_DESCRIPTION: 'NEW_SERVICE_DESCRIPTION',
+    NEW_SERVICE_START_DATE: 'NEW_SERVICE_START_DATE',
+    NEW_SERVICE_ACTION: 'NEW_SERVICE_ACTION',
+    NEW_SERVICE_CASEWORKER: 'NEW_SERVICE_CASEWORKER',
 
     // ======================= GENERAL: =======================
     // TODO: add the generic "fields" / elements here
