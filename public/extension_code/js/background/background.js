@@ -35,7 +35,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_REDIRECT,
     PCs.PORTNAME_CS_RELATIVES,
     PCs.PORTNAME_CS_SERVICES,
-    PORTNAME_CS_VIEW_ACTIONS,
+    PCs.PORTNAME_CS_VIEW_ACTIONS,
 ];
 
 // ==============================================================================

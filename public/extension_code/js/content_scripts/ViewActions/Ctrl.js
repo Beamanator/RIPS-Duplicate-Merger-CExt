@@ -15,8 +15,8 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_VIEW_ACTIONS });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startMerge = (  ) => {
-    console.log();
+const startMerge = ( mergeHistoryData ) => {
+    console.log(mergeHistoryData);
     debugger;
 }
 
@@ -31,7 +31,7 @@ const startMerge = (  ) => {
 port.onMessage.addListener(msg => {
     const {
         code,
-        // actionToCreate,
+        mergeHistoryData,
         autoImport, autoMerge,
         // postSaveRedirectFlag
     } = msg;
@@ -56,7 +56,7 @@ port.onMessage.addListener(msg => {
                 Utils_Error(MESSAGE_SOURCE, errMsg);
             }
             // if merge flag is true, start automatically!
-            else if (autoMerge) { startMerge(  ); }
+            else if (autoMerge) { startMerge( mergeHistoryData ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:
