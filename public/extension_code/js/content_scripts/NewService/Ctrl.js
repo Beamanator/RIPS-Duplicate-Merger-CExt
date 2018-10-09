@@ -74,13 +74,7 @@ const clickElem = (Elem) => {
     return true;
 }
 
-const startMerge = ( servicesToCreate, newServiceIndex ) => {
-    console.log(servicesToCreate)
-    debugger;
-    
-    // get data to add
-    const serviceData = servicesToCreate[newServiceIndex];
-
+const startMerge = ( serviceData ) => {
     // set service description
     const serviceDescSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_DESCRIPTION];
     
@@ -139,7 +133,7 @@ const startMerge = ( servicesToCreate, newServiceIndex ) => {
 port.onMessage.addListener(msg => {
     const {
         code,
-        servicesToCreate,
+        serviceToCreate,
         autoImport, autoMerge,
         // postSaveRedirectFlag
     } = msg;
@@ -156,7 +150,7 @@ port.onMessage.addListener(msg => {
                 Utils_Error(MESSAGE_SOURCE, errMsg);
             }
             // if merge flag is true, start automatically!
-            else if (autoMerge) { startMerge( servicesToCreate ); }
+            else if (autoMerge) { startMerge( serviceToCreate ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:

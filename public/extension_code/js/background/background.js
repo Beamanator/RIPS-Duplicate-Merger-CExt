@@ -17,7 +17,7 @@ let MERGED_DATA_INDEX = 0;
 let CLIENT_DATA_CONTAINER = {};
 let MERGED_DATA_CONTAINER = {};
 let MERGE_HISTORY_DATA = null;
-let SERVICES_TO_CREATE = null;
+let SERVICE_TO_CREATE = null;
 let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
@@ -88,7 +88,7 @@ const sendPortInit = (port, code) => {
         mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
         postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG,
         mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null,
-        servicesToCreate: SERVICES_TO_CREATE
+        serviceToCreate: SERVICE_TO_CREATE
     });
 }
 
@@ -200,7 +200,7 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_ADD_MISSING_SERVICES:
-                SERVICES_TO_CREATE = msg.data;
+                SERVICE_TO_CREATE = msg.data;
                 break;
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:

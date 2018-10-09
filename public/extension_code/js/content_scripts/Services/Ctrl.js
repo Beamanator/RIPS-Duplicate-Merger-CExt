@@ -122,7 +122,12 @@ const startMerge = (mHistData) => {
     // now send these services to bkg to store, then to create!
     if (servicesFromContainer.length > 0) {
         // store, then get 'New' button and click it!
-        sendServicesToCreate(servicesFromContainer);
+        // -> NOTE: only save 1 service b/c newService ctrl will
+        // -> save that service, then return here. FOllowing that,
+        // -> this ctrl will just store the next, then the next,
+        // -> until there are no more services to add, and will
+        // -> redirect to 'Add Action'
+        sendServiceToCreate(servicesFromContainer[0]);
 
         // click button!
         const createServiceSelector = FIELD_IDS_SERVICES[SERVICE_CREATE_NEW];
@@ -140,7 +145,7 @@ const startMerge = (mHistData) => {
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
-const sendServicesToCreate = ( serviceData ) => {
+const sendServiceToCreate = ( serviceData ) => {
     port.postMessage({
         code: PCs.CS_BKG_ADD_MISSING_SERVICES,
         data: serviceData
