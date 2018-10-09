@@ -22,6 +22,7 @@ let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_REACT_APP,
+    PCs.PORTNAME_CS_ADD_ACTION,
     PCs.PORTNAME_CS_ADDRESSES,
     PCs.PORTNAME_CS_ADVANCED_SEARCH,
     PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS,
@@ -34,6 +35,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_REDIRECT,
     PCs.PORTNAME_CS_RELATIVES,
     PCs.PORTNAME_CS_SERVICES,
+    PORTNAME_CS_VIEW_ACTIONS,
 ];
 
 // ==============================================================================
@@ -289,6 +291,7 @@ chrome.runtime.onConnect.addListener(port => {
     Utils_Log('BKG',`Port <${port.name}> connected!`);
     
     switch (port.name) {
+        case PCs.PORTNAME_CS_ADD_ACTION:
         case PCs.PORTNAME_CS_ADDRESSES:
         case PCs.PORTNAME_CS_ADVANCED_SEARCH:
         // case PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS:
@@ -301,6 +304,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_REDIRECT:
         case PCs.PORTNAME_CS_RELATIVES:
         case PCs.PORTNAME_CS_SERVICES:
+        case PCs.PORTNAME_CS_VIEW_ACTIONS:
             // init content script port listener
             initContentScriptPort( port );
             break;

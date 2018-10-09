@@ -5,18 +5,18 @@
 // ===============================================================
 //                           CONSTANTS
 // ===============================================================
-const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADD_ACTIONS;
+const MESSAGE_SOURCE = RIPS_PAGE_KEYS.VIEW_ACTIONS;
 
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADD_ACTION });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_VIEW_ACTIONS });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startMerge = ( actionToCreate ) => {
-    console.log(actionToCreate);
+const startMerge = (  ) => {
+    console.log();
     debugger;
 }
 
@@ -31,7 +31,7 @@ const startMerge = ( actionToCreate ) => {
 port.onMessage.addListener(msg => {
     const {
         code,
-        actionToCreate,
+        // actionToCreate,
         autoImport, autoMerge,
         // postSaveRedirectFlag
     } = msg;
@@ -56,7 +56,7 @@ port.onMessage.addListener(msg => {
                 Utils_Error(MESSAGE_SOURCE, errMsg);
             }
             // if merge flag is true, start automatically!
-            else if (autoMerge) { startMerge( actionToCreate ); }
+            else if (autoMerge) { startMerge(  ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:
@@ -65,6 +65,6 @@ port.onMessage.addListener(msg => {
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADD_ACTION);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_VIEW_ACTIONS);
     }
 });

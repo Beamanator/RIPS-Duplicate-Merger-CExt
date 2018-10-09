@@ -6,6 +6,7 @@ const PCs = {
     PORTNAME_REACT_APP: 'PORT_REACT_APP',
 
     // name of the content script / background.js ports
+    PORTNAME_CS_ADD_ACTION: 'PORT_CS_ADD_ACTION',
     PORTNAME_CS_ADDRESSES:  'PORT_CS_ADDRESSES',
     PORTNAME_CS_ADVANCED_SEARCH: 'PORT_CS_ADVANCED_SEARCH',
     PORTNAME_CS_ADVANCED_SEARCH_RESULTS: 'PORT_CS_ADVANCED_SEARCH_RESULTS',
@@ -18,6 +19,7 @@ const PCs = {
     PORTNAME_CS_REDIRECT:   'PORT_CS_REDIRECT',
     PORTNAME_CS_RELATIVES:  'PORT_CS_RELATIVES',
     PORTNAME_CS_SERVICES:   'PORT_CS_SERVICES',
+    PORTNAME_CS_VIEW_ACTIONS: 'PORT_CS_VIEW_ACTIONS',
 
     // ==============================================================================
     //                     REACT APP -> BKG SCRIPT CODES

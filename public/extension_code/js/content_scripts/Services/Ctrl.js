@@ -134,10 +134,10 @@ const startMerge = (mHistData) => {
         const createServiceElem = document.querySelector(createServiceSelector);
         createServiceElem.click();
     }
-    // else just redirect to add actions page since services
+    // else just redirect to view actions page since services
     // -> exist already! We don't need to create any services!
     else {
-        Utils_SendRedirectCode(port, 'MatterAction/CreateNewAction');
+        Utils_SendRedirectCode(port, 'MatterAction/MatterActionsList');
     }
 }
 

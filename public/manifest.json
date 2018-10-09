@@ -51,6 +51,7 @@
                 "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList", // history
                 "http://rips.247lib.com/Stars/MatterAction/CreateNewAction", // add action
                 "http://rips.247lib.com/Stars/MatterAction/CreateNewServices", // new service
+                "http://rips.247lib.com/Stars/MatterAction/MatterActionsList", // view actions
                 "http://rips.247lib.com/Stars/Relatives/Relatives", // relatives
                 "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch", // advanced search
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult", // advanced search results
@@ -125,7 +126,13 @@
                 "extension_code/js/content_scripts/AddAction/FIDs.js"
             ]
         }, 
-        // {}, View Actions page (just handled by redirect maybe?)
+        {   // View actions page
+           "matches": [ "http://rips.247lib.com/Stars/MatterAction/MatterActionsList" ],
+           "js": [
+               "extension_code/js/content_scripts/ViewActions/Ctrl.js",
+               "extension_code/js/content_scripts/ViewActions/FIDs.js"
+           ]
+        },
 		{	// History page
 			"matches": [ "http://rips.247lib.com/Stars/MatterAction/ActionHistoryList" ],
 			"js": [
