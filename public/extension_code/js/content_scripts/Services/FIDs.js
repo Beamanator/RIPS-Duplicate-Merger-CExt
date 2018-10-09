@@ -5,7 +5,7 @@ const {
     SERVICE_CASEWORKER,
 
     // action name is same as service description on this page
-    ACTION_SERVICE,
+    ACTION_SERVICE, ACTION_DATE,
 
     // other selectors
     SERVICE_CREATE_NEW,

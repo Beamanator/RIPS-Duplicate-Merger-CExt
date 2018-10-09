@@ -19,10 +19,11 @@ const startMerge = (mHistData) => {
     // if there are no actions to add, move to next step!
     if (!mHistData || mHistData.length == 0) {
         // TODO: next! add this please :)
-        // sendStartArchiving()
+        // technically we should never get here, but...
+        // sendStartArchivingClients()
     }
 
-    const servicesToCreate = [];
+    const actionsWithServicesToCreate = [];
     const servicesDescriptionColumnIndex = 2;
     
     // populate column names array
@@ -74,14 +75,54 @@ const startMerge = (mHistData) => {
 
         // if serviceMatch is false, no match has happened so we need to add!
         if (!serviceMatch) {
-            servicesToCreate.push(mAction);
+            actionsWithServicesToCreate.push(mAction);
         }
     });
 
+    // Narrow down actionsWithServicesToCreate to data that needs to
+    // -> be added. Loop through actionsWithServicesToCreate,
+    // -> adding data for each service only ONCE and taking care
+    // -> to add data from earliest action
+    const container = {};
+    actionsWithServicesToCreate.forEach(action => {
+        const associatedService = action[ACTION_SERVICE];
+        
+        // 1) add action details to container, if doesn't exist
+        if (!container[associatedService]) {
+            container[associatedService] = action;
+            return;
+        }
+
+        // 2) make sure service date is the earliest date
+        // 2.1) get current action's date (convert to d/m/y)
+        const [aMonthNum, aDayNum, ...aDateOther] = action[ACTION_DATE].split('/');
+        const aDateStr = [aDayNum, aMonthNum, ...aDateOther].join('/');
+        // 2.2) get service container's date (convert to d/m/y)
+        const [sMonthNum, sDayNum, ...sDateOther] = 
+            container[associatedService][ACTION_DATE].split('/');
+        const sDateStr = [sDayNum, sMonthNum, ...sDateOther].join('/');
+        // 2.3) compare dates and set earliest in container
+        if (new Date(aDateStr) < new Date(sDateStr)) {
+            // could explicitly set date / caseworker, but easier to
+            // -> just change the entire action obj (action name or
+            // -> notes may change, but that doesn't matter)
+            container[associatedService] = action;
+        } // else {} //-> else don't change anything
+    });
+
+    // convert service container into an array of services
+    const servicesFromContainer = [];
+    for (let serviceKey in container) {
+        // get data at current container key (service description)
+        const serviceData = container[serviceKey];
+        // push that obj to new array container
+        servicesFromContainer.push(serviceData);
+    }
+
     // now send these services to bkg to store, then to create!
-    if (servicesToCreate.length > 0) {
+    if (servicesFromContainer.length > 0) {
         // store, then get 'New' button and click it!
-        sendServicesToCreate(servicesToCreate);
+        sendServicesToCreate(servicesFromContainer);
 
         // click button!
         const createServiceSelector = FIELD_IDS_SERVICES[SERVICE_CREATE_NEW];
@@ -101,7 +142,7 @@ const startMerge = (mHistData) => {
 // Note: port codes come from "../js/portCodes.js"
 const sendServicesToCreate = ( serviceData ) => {
     port.postMessage({
-        code: PCs.CS_BKG_SAVE_NEEDED_SERVICES,
+        code: PCs.CS_BKG_ADD_MISSING_SERVICES,
         data: serviceData
     });
 }

@@ -33,12 +33,16 @@ Any field selected (with a green background) will be added to the merged client 
 
 Once you're ready to merge, move on to the next step.
 
+**Note**: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that new service.
+
 ## Click Merge
 Click the "Merge" button at the bottom of the page!
 
 Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!!
 
 You may also see a **Warning** which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!
+
+One more quick note: You maay also see an error starting with "ERROR: You selected at least 1 file that needs to be moved to the target client...". Basically, this merger program cannot move files from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged.
 
 ### Which Client Gets the New Data?
 This program assumes the first client number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.

@@ -199,7 +199,7 @@ const initContentScriptPort = (port) => {
                 Utils_Log('BKG', 'Incrementing merge data index!', MERGED_DATA_INDEX);
                 break;
 
-            case PCs.CS_BKG_SAVE_NEEDED_SERVICES:
+            case PCs.CS_BKG_ADD_MISSING_SERVICES:
                 SERVICES_TO_CREATE = msg.data;
                 break;
 

@@ -3,6 +3,9 @@ const {
     // save button
     NEW_SERVICE_SAVE_BUTTON,
 
+    // get some action keys for use during service processing
+    ACTION_SERVICE, ACTION_DATE, ACTION_CASEWORKER,
+
     // selectors needed for rips form elements
     NEW_SERVICE_DESCRIPTION, NEW_SERVICE_START_DATE,
     NEW_SERVICE_ACTION, NEW_SERVICE_CASEWORKER,

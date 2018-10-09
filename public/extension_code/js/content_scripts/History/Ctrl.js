@@ -192,7 +192,9 @@ const startMerge = ( mData ) => {
     // otherwise, we don't need to add an actions! woot! we're done!
     else {
         // TODO: display something to the user (in RIPS aaand in App.js)
+        // TODO: maybe have background.js clear stored data? stop merge? etc?
         // TODO: also redirect? to Advanced Search maybe?
+        console.log('deciding what to do...');
     }
 }
 
