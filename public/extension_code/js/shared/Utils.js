@@ -87,7 +87,6 @@
 // ==============================================================================
 //                   WAIT-CONDITION (NON-PORT) FUNCTIONS
 // ==============================================================================
-
 /**
  * Function checks to make sure active client matches client being
  * imported into de-duplicator
@@ -162,9 +161,6 @@ const Utils_OnPopupNotThrown = ( config ) => {
 	return classLocation === -1;
 }
 
-// ==============================================================================
-//                        MAIN (NON-PORT) FUNCTIONS
-// ==============================================================================
 /**
  * Function returns a promise that gets resolved whenever a specified function
  * returns true. Caller passes in a function and possibly a number (time between
@@ -204,6 +200,9 @@ function Utils_WaitForCondition( Fcondition, params, time = 1000, iter = 5 ) {
 	});
 }
 
+// ==============================================================================
+//                          ERROR HANDLER FUNCTIONS
+// ==============================================================================
 const Utils_Log = (source, ...args) => console.log(source, ':', ...args);
 const Utils_Warn = (source, ...args) => console.warn(source, ':', ...args);
 const Utils_Error = (source, ...args) => console.error(source, ':', ...args); 
@@ -247,4 +246,81 @@ const Utils_SendDataToBkg = (port, source="unknkown", data) => {
 		source: source,
 		data: data
 	})
+}
+
+// ==============================================================================
+//                       ELEM QUERY / SET FUNCTIONS
+// ==============================================================================
+/* document query functions (basic) */
+const Utils_QueryDoc = (selector) => document.querySelector(selector);
+const Utils_QueryDocA = (selector) => document.querySelectorAll(selector);
+
+/**
+ * Sets an 'option' on a 'select-one' element
+ * @param {*} Elem 
+ * @param {*} valToMatch 
+ */
+const Utils_SetSelectOneElem = (Elem, valToMatch) => {
+    // TODO: throw error if Elem isn't 'select-one'?
+    let success = false;
+    // throw error if either param doesn't exist :(
+    if (!Elem || !valToMatch) {
+        const errMsg = `Warning! no Elem <${Elem}> or val to match` +
+            ` <${valToMatch}>`;
+        Utils_Error(MESSAGE_SOURCE, errMsg);
+        return false;
+    }
+
+    // loop through Select elem's entries
+    Object.entries(Elem.options).forEach(([value, optElem]) => {
+        // quit looping early if possible
+        if (success) return;
+        // once an option's text matches the value we're
+        // -> looking for, that's our match!
+        if (optElem.innerText.trim() === valToMatch) {
+            Elem.options[value].selected = 'selected';
+            success = true;
+        }
+    });
+
+    return success;
+}
+
+/**
+ * Adds data to an 'input' element
+ * @param {*} Elem 
+ * @param {*} valToSet 
+ */
+const Utils_SetInputElem = (Elem, valToSet) => {
+    // TODO: throw error if Elem isn't an 'input'
+    // throw error if either param doesn't exist :(
+    if (!Elem || !valToSet) {
+        const errMsg = `Warning! no Elem <${Elem}> or val to set` +
+            ` <${valToMatch}>`;
+        Utils_Error(MESSAGE_SOURCE, errMsg);
+        return false;
+    }
+
+    // loop through Input elem's entries
+    Elem.value = valToSet;
+
+    return true;
+}
+
+/**
+ * Clicks a given element, as long as it exists
+ * @param {*} Elem 
+ */
+const Utils_ClickElem = (Elem) => {
+    // throw error if either param doesn't exist :(
+    if (!Elem) {
+        const errMsg = `Warning! no Elem <${Elem}> to click!`;
+        Utils_Error(MESSAGE_SOURCE, errMsg);
+        return false;
+    }
+
+    // click the element now :)
+    Elem.click();
+
+    return true;
 }

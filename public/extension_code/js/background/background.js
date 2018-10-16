@@ -13,11 +13,13 @@ let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
-let MERGED_DATA_INDEX = 0;
+let MERGED_DATA_INDEX = 0; // for arrays of addresses, contacts, NOT ACTIONS
 let CLIENT_DATA_CONTAINER = {};
 let MERGED_DATA_CONTAINER = {};
 let MERGE_HISTORY_DATA = null;
+let MERGE_HISTORY_INDEX = 0; // for ACTIONS only
 let SERVICE_TO_CREATE = null;
+let ACTION_TO_CREATE = null;
 let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
@@ -90,7 +92,9 @@ const sendPortInit = (port, code) => {
         mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
         postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG,
         mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null,
-        serviceToCreate: SERVICE_TO_CREATE
+        mergeHistoryIndex: MERGE_HISTORY_INDEX,
+        serviceToCreate: SERVICE_TO_CREATE,
+        actionToCreate: ACTION_TO_CREATE,
     });
 }
 
@@ -151,6 +155,17 @@ const initContentScriptPort = (port) => {
         console.log('<background.js> content script port msg received', msg);
 
         switch(msg.code) {
+            case PCs.CS_BKG_ADD_NEXT_ACTION:
+                ACTION_TO_CREATE = msg.data;
+                redirectTab(
+                    MessageSender.sender.tab.id,
+                    'MatterAction/CreateNewAction'
+                );
+                // increment history index so next time in View Actions,
+                // -> next action will be sent back here
+                mergeHistoryIndex++;
+                break;
+
             case PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT:
                 MERGE_HISTORY_DATA = msg.data;
                 redirectTab(

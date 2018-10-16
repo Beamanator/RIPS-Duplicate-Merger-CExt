@@ -15,65 +15,6 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_NEW_SERVICE });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const queryDoc = (selector) => document.querySelector(selector);
-const queryDocA = (selector) => document.querySelectorAll(selector);
-
-const setSelectElem = (Elem, valToMatch) => {
-    // TODO: throw error if Elem isn't 'select-one'?
-    let success = false;
-    // throw error if either param doesn't exist :(
-    if (!Elem || !valToMatch) {
-        const errMsg = `Warning! no Elem <${Elem}> or val to match` +
-            ` <${valToMatch}>`;
-        Utils_Error(MESSAGE_SOURCE, errMsg);
-        return false;
-    }
-
-    // loop through Select elem's entries
-    Object.entries(Elem.options).forEach(([value, optElem]) => {
-        // quit looping early if possible
-        if (success) return;
-        // once an option's text matches the value we're
-        // -> looking for, that's our match!
-        if (optElem.innerText.trim() === valToMatch) {
-            Elem.options[value].selected = 'selected';
-            success = true;
-        }
-    });
-
-    return success;
-}
-
-const setInputElem = (Elem, valToSet) => {
-    // TODO: throw error if Elem isn't an 'input'
-    // throw error if either param doesn't exist :(
-    if (!Elem || !valToSet) {
-        const errMsg = `Warning! no Elem <${Elem}> or val to set` +
-            ` <${valToMatch}>`;
-        Utils_Error(MESSAGE_SOURCE, errMsg);
-        return false;
-    }
-
-    // loop through Input elem's entries
-    Elem.value = valToSet;
-
-    return true;
-}
-
-const clickElem = (Elem) => {
-    // throw error if either param doesn't exist :(
-    if (!Elem) {
-        const errMsg = `Warning! no Elem <${Elem}> to click!`;
-        Utils_Error(MESSAGE_SOURCE, errMsg);
-        return false;
-    }
-
-    // click the element now :)
-    Elem.click();
-
-    return true;
-}
-
 const startMerge = ( serviceData ) => {
     // set service description
     const serviceDescSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_DESCRIPTION];
@@ -86,16 +27,16 @@ const startMerge = ( serviceData ) => {
     
     // input data & get successes
     const elemSetSuccesses = [
-        setSelectElem(
-            queryDoc(serviceDescSelector),
+        Utils_SetSelectOneElem(
+            Utils_QueryDoc(serviceDescSelector),
             serviceData[ACTION_SERVICE]
         ),
-        setInputElem(
-            queryDoc(serviceStartSelector),
+        Utils_SetInputElem(
+            Utils_QueryDoc(serviceStartSelector),
             serviceData[ACTION_DATE]
         ),
-        setSelectElem(
-            queryDoc(serviceCwSelector),
+        Utils_SetSelectOneElem(
+            Utils_QueryDoc(serviceCwSelector),
             serviceData[ACTION_CASEWORKER]
         )
     ];
@@ -112,8 +53,8 @@ const startMerge = ( serviceData ) => {
     // else, no errors so click save!
     else {
         const saveBtnSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_SAVE_BUTTON];
-        const clickSuccess = clickElem(
-            queryDoc(saveBtnSelector)
+        const clickSuccess = Utils_ClickElem(
+            Utils_QueryDoc(saveBtnSelector)
         );
         if (!clickSuccess) {
             let errMsg = `Couldn't click save somehow! ` +

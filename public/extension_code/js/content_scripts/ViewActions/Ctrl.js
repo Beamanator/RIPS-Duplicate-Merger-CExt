@@ -15,7 +15,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_VIEW_ACTIONS });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startMerge = ( mergeHistoryData ) => {
+const startMerge = ( mergeHistoryData, historyIndex ) => {
     // First, filter out actions that are service-only
     // -> like "Service started", "Service reopened"
     // -> Note: other actions 'closed', 'closed - reopened at...'
@@ -29,17 +29,45 @@ const startMerge = ( mergeHistoryData ) => {
         !actionsToFilter.includes(action[ACTION_NAME])
     );
 
-    // TODO: pop the first action off of the array, and store
-    // -> in background js, then redirect to add actions
-    // -> keep doing this until no more actions left to add! 
-    console.log(mergeHistoryData);
+    // Get the next action in the array, and store in background js,
+    // -> as ACTION_TO_ADD, then redirect to add actions.
+    // -> Keep doing this until no more actions left to add! 
+    const nextActionToCreate = mergeHistoryData[historyIndex];
+    
     debugger;
+
+    // if there is no action, we're probably done! check if index
+    // -> if out of bounds, or other error (bug)
+    if (!nextActionToCreate) {
+        // check index out of bounds - Merge is done!
+        // -> TODO: time to archive the other clients!
+        if (historyIndex >= mergeHistoryData.length) {
+            console.log('time to archive!');
+            debugger;
+        }
+
+        // other error?! What happened?!
+        else {
+            let errMsg = 'Why the heck are we not finding an action?? ' +
+                'Index is: ' + historyIndex;
+            Utils_Error(MESSAGE_SOURCE, errMsg, mergeHistoryData);
+        }
+    }
+
+    // store to background.js, redirect, + increment historyIndex
+    sendNextActionReady(nextActionToCreate);
 }
 
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
 // Note: port codes come from "../js/portCodes.js"
+const sendNextActionReady = (nextAction) => {
+    port.postMessage({
+        code: PCs.CS_BKG_ADD_NEXT_ACTION,
+        data: nextAction,
+    });
+}
 
 // ================================================================
 //                          PORT LISTENERS
@@ -47,7 +75,7 @@ const startMerge = ( mergeHistoryData ) => {
 port.onMessage.addListener(msg => {
     const {
         code,
-        mergeHistoryData,
+        mergeHistoryData, mergeHistoryIndex,
         autoImport, autoMerge,
         // postSaveRedirectFlag
     } = msg;
@@ -72,7 +100,7 @@ port.onMessage.addListener(msg => {
                 Utils_Error(MESSAGE_SOURCE, errMsg);
             }
             // if merge flag is true, start automatically!
-            else if (autoMerge) { startMerge( mergeHistoryData ); }
+            else if (autoMerge) { startMerge( mergeHistoryData, mergeHistoryIndex ); }
             break;
 
         case PCs.BKG_CS_START_IMPORT:

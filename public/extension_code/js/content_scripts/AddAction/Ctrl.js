@@ -16,6 +16,12 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADD_ACTION });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startMerge = ( actionToCreate ) => {
+    // add service, then wait a bit until the action select box
+    // -> populates with that service's actions
+    const serviceSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SERVICE];
+
+    // TODO: now that actions are populated, set action!
+
     console.log(actionToCreate);
     debugger;
 }
