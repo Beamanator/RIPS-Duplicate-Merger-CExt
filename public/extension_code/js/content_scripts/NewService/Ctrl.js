@@ -16,25 +16,28 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_NEW_SERVICE });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startMerge = ( serviceData ) => {
-    // set service description
+    // get service description selector
     const serviceDescSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_DESCRIPTION];
     
-    // set service start date box
+    // get service start date selector
     const serviceStartSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_START_DATE];
     
-    // set caseworker box
+    // get caseworker selector
     const serviceCwSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_CASEWORKER];
     
     // input data & get successes
     const elemSetSuccesses = [
+        // service description dropdown
         Utils_SetSelectOneElem(
             Utils_QueryDoc(serviceDescSelector),
             serviceData[ACTION_SERVICE]
         ),
+        // service start date input
         Utils_SetInputElem(
             Utils_QueryDoc(serviceStartSelector),
             serviceData[ACTION_DATE]
         ),
+        // service caseworker dropdown
         Utils_SetSelectOneElem(
             Utils_QueryDoc(serviceCwSelector),
             serviceData[ACTION_CASEWORKER]

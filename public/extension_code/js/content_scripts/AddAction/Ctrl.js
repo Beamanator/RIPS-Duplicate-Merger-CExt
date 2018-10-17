@@ -15,15 +15,55 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADD_ACTION });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startMerge = ( actionToCreate ) => {
-    // add service, then wait a bit until the action select box
-    // -> populates with that service's actions
+const startMerge = ( actionToCreate ) => {    
+    // get service dropdown selector
     const serviceSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SERVICE];
+    
+    // get date selector
+    const dateSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_DATE];
 
-    // TODO: now that actions are populated, set action!
+    // get caseworker selector
+    const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER]
 
-    console.log(actionToCreate);
-    debugger;
+    // insert easy data immediately into html
+    const elemSetSuccess = [
+        // service dropdown
+        Utils_SetSelectOneElem(
+            Utils_QueryDoc(serviceSelector),
+            actionToCreate[ACTION_SERVICE]
+        ),
+        // date input
+        Utils_SetInputElem(
+            Utils_QueryDoc(dateSelector),
+            actionToCreate[ACTION_DATE]
+        ),
+        // caseworker dropdown
+        Utils_SetSelectOneElem(
+            Utils_QueryDoc(caseworkerSelector),
+            actionToCreate[ACTION_CASEWORKER]
+        )
+    ];
+
+    // now wait a bit until the action select box
+    // -> populates with that service's actions. Hopefully the
+    // -> notes 'document' is also available in the HTML
+    const actionSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_NAME];
+    Utils_WaitForCondition(
+        Utils_OnSelectOneElemHasSelectedOption, {
+            selectElem: Utils_QueryDoc(actionSelector)
+        }, 500, 3
+    )
+    .then(() => {
+        // TODO: also check if attendance notes document is available
+        // -> in html? naah, wrap it up in the Fcondition param above
+        debugger;
+    })
+    .catch((errMsg) => {
+        // error if not all conditions passed
+        const err = `Some conditions failed! Check 'em!`;
+        Utils_Error(MESSAGE_SOURCE, err);
+        Utils_Error(MESSAGE_SOURCE, 'UTILS ERROR:', errMsg);
+    });
 }
 
 // ================================================================
