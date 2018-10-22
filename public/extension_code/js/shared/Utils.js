@@ -85,7 +85,6 @@ const Utils_OnPopupNotThrown = ( config ) => {
 }
 
 const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
-	debugger;
 	const { selectElem } = config;
 
 	// make sure element exists
@@ -108,7 +107,6 @@ const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
 }
 
 const Utils_OnElemFoundWithCustomFunction = ( config ) => {
-	debugger;
 	const { selectorFn } = config;
 
 	// make sure selector function IS a function

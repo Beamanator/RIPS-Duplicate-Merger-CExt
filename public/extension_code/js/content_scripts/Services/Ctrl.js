@@ -42,8 +42,6 @@ const startMerge = (mHistData) => {
         return;
     }
 
-    debugger;
-
     // now we know 3rd column [2] is Services Description, so loop
     // -> through merge history data, looking for matching service
     // -> descriptions!

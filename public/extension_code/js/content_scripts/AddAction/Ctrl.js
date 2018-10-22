@@ -65,11 +65,43 @@ const startMerge = ( actionToCreate ) => {
         ]], 500, 3
     )
     .then(() => {
-        // TODO: insert both elements!
         debugger;
+        // insert last two elements!
+        const actionSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_NAME];
+        const noteInsertFunction = FIELD_IDS_ADD_ACTION[ADD_ACTION_NOTES];
+
+        // insert 2nd group of data into html elements
+        const elemSetSuccess2 = [
+            Utils_SetSelectOneElem(
+                Utils_QueryDoc(actionSelector),
+                actionToCreate[ACTION_NAME]
+            ),
+            noteInsertFunction()
+        ];
+
+        // check if any initial insert failed
+        if (elemSetSuccess2.includes(false)) {
+            const errMsg = 'Not all fields inserted correctly! Check ' +
+                'array for fails [action, notes]:';
+            Utils_Error(MESSAGE_SOURCE, errMsg, elemSetSuccess2);
+            return;
+        }
+
+        // at this point, all fields have been entered, so click save!
+        const saveBtnSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SAVE_BUTTON];
+        const clickSuccess = Utils_ClickElem(
+            Utils_QueryDoc(saveBtnSelector)
+        );
+        // handle click fail
+        if (!clickSuccess) {
+            let errMsg = `Couldn't click save somehow! ` +
+                `<${saveBtnSelector}>`;
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+        }
     })
     .catch((errMsg) => {
         // error if not all conditions passed
+        // -> NOTE: Only one error message will be present here
         const err = `Some conditions failed! Check 'em!`;
         Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'UTILS ERROR:', errMsg);
