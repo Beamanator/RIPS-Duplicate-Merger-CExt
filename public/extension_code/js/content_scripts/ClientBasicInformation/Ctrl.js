@@ -228,6 +228,24 @@ const startMerge = (clientNum, mData) => {
     });
 };
 
+const startArchive = ( clientNum ) => {
+	// 1) check if we're looking at the correct client
+	const atCorrectClient = checkViewingCorrectClient(clientNum);
+
+	// 2.1) if client stars nums don't match, error and stop import
+	if (!atCorrectClient) {
+		// no error message here needed
+		// TODO: send error back to bkg, stop import
+		return;
+	}
+
+	// NEXT: we're at the correct client, so now click Archive and wait!
+
+	// TODO: FIXME: continue here!
+	console.log(clientNum);
+	debugger;
+}
+
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
@@ -245,7 +263,7 @@ const sendPostSaveFlag = () => {
 port.onMessage.addListener(msg => {
 	const {
 		code, clientNum, mergeData,
-		autoImport, autoMerge,
+		autoImport, autoMerge, autoArchive,
 		postSaveRedirectFlag
 	} = msg;
 
@@ -262,16 +280,27 @@ port.onMessage.addListener(msg => {
 				return;
 			}
 
-			// fail if multiple automatic triggers are true
+			// count how many 'auto...' flags are true
+            const autoStartFlags = [autoMerge, autoImport, autoArchive];
+            const countAutoStarts = autoStartFlags
+                .reduce((count, flag) => count + (flag ? 1 : 0), 0);
+
+            // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
-            if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+            if (countAutoStarts > 1) {
+                Utils_Error(
+                    MESSAGE_SOURCE,
+                    'Too many "auto start" flags are true!',
+                    '[autoMerge, autoImport, autoArchive]:',
+                    autoStartFlags
+                );
                 return;
-			}
+            }
 			
 			// if any auto flag is true, start automatically!
             if (autoImport) { startImport( clientNum ); }
 			if (autoMerge) { startMerge( clientNum, mergeData ); }
+			if (autoArchive) { startArchive( clientNum ); }
 			break;
 			
 		case PCs.BKG_CS_START_IMPORT:

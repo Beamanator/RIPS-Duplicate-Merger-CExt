@@ -72,21 +72,36 @@ const analyzeSearchResult = ( clientNum ) => {
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
-    const { code, clientNum, autoImport, autoMerge } = msg;
+    const {
+        autoImport, autoMerge, autoArchive,
+        code, clientNum,
+    } = msg;
+
     Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(code) {
         case PCs.BKG_CS_INIT_PORT:
             Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
+            // count how many 'auto...' flags are true
+            const autoStartFlags = [autoMerge, autoImport, autoArchive];
+            const countAutoStarts = autoStartFlags
+                .reduce((count, flag) => count + (flag ? 1 : 0), 0);
+
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
-            if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+            if (countAutoStarts > 1) {
+                Utils_Error(
+                    MESSAGE_SOURCE,
+                    'Too many "auto start" flags are true!',
+                    '[autoMerge, autoImport, autoArchive]:',
+                    autoStartFlags
+                );
                 return;
             }
+            debugger;
             // if any flag is true, start automatically analyzing results!
-            if (autoImport || autoMerge) {
+            if (autoImport || autoMerge || autoArchive) {
                 analyzeSearchResult( clientNum );
             }
             else {} // do nothing if no automatic process set

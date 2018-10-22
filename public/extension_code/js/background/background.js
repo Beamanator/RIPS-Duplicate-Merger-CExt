@@ -7,9 +7,9 @@
 // ==============================================================================
 let CSPort = null; // content script port
 let RAPort = null; // react app port
+let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
 let MERGE_IN_PROGRESS = false; // client merge 'in progress' flag
-let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
@@ -84,9 +84,10 @@ const sendPortInit = (port, code) => {
     // port should always exist, so don't handle other case
     port.postMessage({
         code: code,
+        autoArchive: ARCHIVE_IN_PROGRESS, // archiving should auto start (if true)
         autoImport: IMPORT_IN_PROGRESS, // import should auto start (if true)
         autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
-        clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS)
+        clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS || ARCHIVE_IN_PROGRESS)
             ? CLIENT_NUMS[CLIENT_INDEX] : null,
         mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
         mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
@@ -180,19 +181,36 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_START_ARCHIVE:
+                // 1) increment client index 1 & 2 are indices of 
+                //    -> clients to archive
+                CLIENT_INDEX++;
+
+                // 2) set 'archive' state
+                ARCHIVE_IN_PROGRESS = true;
+                IMPORT_IN_PROGRESS = false; // probably not necessary...
+                MERGE_IN_PROGRESS = false;
+
+                // 3) clear all data (except #s to archive)
+                CLIENT_DATA_CONTAINER = {};
+                MERGED_DATA_CONTAINER = {};
+                MERGE_HISTORY_DATA = null;
+                SERVICE_TO_CREATE = null;
+                ACTION_TO_CREATE = null;
+                
+                // 4) redirect to advanced search to start archiving
+                redirectTab(
+                    MessageSender.sender.tab.id,
+                    'SearchClientDetails/AdvancedSearch'
+                );
                 // TODO: FIXME: FINISH THIS!
-                // 1) clear all other data
-                // 2) redirect to advanced search
-                // 3) archive... etc
                 debugger;
-                console.log('HERE! ARCHIVE TIME!')
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
                 redirectTab(
                     MessageSender.sender.tab.id,
                     msg.urlPart
-                )
+                );
                 break;
 
             case PCs.CS_BKG_DATA_RECEIVED:
