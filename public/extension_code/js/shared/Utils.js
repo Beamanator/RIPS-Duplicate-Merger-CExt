@@ -2,88 +2,6 @@
 //     NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
 //--------------------------------------------------------------
 
-// /**
-//  * Function tells background.js to stop the auto import function via
-//  * action 'stopped_via_msg', and passes a message to background.js, then
-//  * the chrome runtime callback to caller
-//  * 
-//  * @param {string} message - message to pass to background.js
-//  * @param {function} callback - chrome runtime callback sent to caller. if not given,
-//  *                              defaults to console.error() fn
-//  */
-// function Utils_StopImport( message, callback ) {}
-
-
-// /**
-//  * Function navigates import to specific RIPS tab by clicking on the anchor with
-//  * specified href / URL
-//  * 
-//  * Called by: CtrlAdvancedSearch.js, MainController.js, CtrlServices
-//  * 
-//  * @param {string} tab_href - url piece that is contained within an anchor tag on the
-//  *                            left-hand navigation menu
-//  */
-// function Utils_NavigateToTab( tab_href ) {
-// 	if ( tab_href !== undefined)
-// 		$('a[href="' + tab_href + '"]')[0].click();
-// 	else
-// 		console.warn('Utils_NavigateToTab received invalid tab href');
-// }
-
-// /**
-//  * Function converts passed-in tab name to url piece that RIPS holds as a
-//  * location for each tab in navigation menu (left panel)
-//  * 
-//  * @param {string} tabName - name of tab you want url piece for 
-//  * @returns tab's href (location) - (or undefined if tabName is incorrect)
-//  */
-// function Utils_GetTabHref( tabName ) {}
-
-// /**
-//  * Function gets current page url (using jQuery) and returns it.
-//  * 
-//  * Called by: MainController.js
-//  * 
-//  * @returns gurrent page's url [as string]
-//  */
-// function Utils_GetPageURL() {
-// 	return $(location).attr('href');
-// }
-
-// /**
-//  * Function takes a URL as an input and returns a 'url piece' as output. This output
-//  * is the last two slices of a URL (a slice is some text between '/' characters)
-//  * -> example: 'Registration/Registration'
-//  * 
-//  * If url doesn't have '/' characters, returns url
-//  * 
-//  * Called by: MainController.js, Utils.js
-//  * 
-//  * @param {string} url a full URL
-//  * @returns {string} 'urlslice1/urlslice2' - the final 2 slices of a url
-//  */
-// function Utils_GetUrlPiece( url ) {}
-
-// /**
-//  * Function checks if a given piece of a URL is contained within the current page's
-//  * url string.  
-//  * 
-//  * Called By: CtrlAdvancedSearch.js
-//  * 
-//  * @param {string} urlPiece checks if this piece is within the current page url
-//  * @param {boolean} [throwErr=true] if true, throw error if urlPiece not found in url
-//  * @returns {boolean} true / false depending on if urlPiece is contained within current url
-//  */
-// function Utils_UrlContains(urlPiece, throwErr=true) {}
-
-// /**
-//  * Function adds error to chrome store (handled by options.js)
-//  * 
-//  * @param {string} message - error message to send to options.js
-//  * @param {function} callback - (optional) callback function after error is thrown
-//  */
-// function Utils_AddError( message, callback ) {}
-
 // ==============================================================================
 //                               CONSTANTS
 // ==============================================================================
@@ -106,7 +24,7 @@ const Utils_OnActiveClientMatches = ( config ) => {
 	// if activeClientElem invalid, throw error
 	if (!activeClientElem) {
 		Utils_Error(
-			'UTILS',
+			MESSAGE_SOURCE,
 			'active client elem not valid :( selector given:',
 			activeClientSelector
 		);
@@ -167,6 +85,7 @@ const Utils_OnPopupNotThrown = ( config ) => {
 }
 
 const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
+	debugger;
 	const { selectElem } = config;
 
 	// make sure element exists
@@ -188,46 +107,62 @@ const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
 	return selectedOption.value !== '';
 }
 
+const Utils_OnElemFoundWithCustomFunction = ( config ) => {
+	debugger;
+	const { selectorFn } = config;
+
+	// make sure selector function IS a function
+	if (typeof(selectorFn) !== 'function') {
+		Utils_Error(MESSAGE_SOURCE, 'given selector function is not a fn :(');
+		return false;
+	}
+
+	// return true / false which should come from the selector function
+	return selectorFn();
+}
+
 /**
  * Function handles multiple wrapped conditions for
  * Utils_WaitForCondition, returns true if ALL true,
  * false otherwise.
  * 
- * @param {array} FconditionArray - Array of functions to check true / false
+ * @param {array} FconditionParamArray - Array of functions to check true / false
  * @returns {boolean} - true if all Fconditions true, false otherwise
  */
-const Utils_WrapMultiConditions = ( FconditionArray ) => {
-	const success = false;
+const Utils_WrapMultiConditions = ( FconditionParamArray, time, iter ) => {
+	let promiseArr = [];
 
-	// loop through array, calling each function & 
+	// loop through array, calling each function
+	FconditionParamArray.forEach(([Fcondition, params]) => {
+		promiseArr.push(
+			Utils_WaitForCondition(Fcondition, params, time, iter)
+		);
+	});
+
+	// return outcome of all promises
+	return Promise.all(promiseArr);
 }
 
 /**
- * Function returns a promise that gets resolved whenever all specified functions
- * return true. 
- * Note: Slightly modified from Auto Import CExt
+ * Function returns a promise that gets resolved whenever a specified function
+ * returns true. Caller passes in a function and possibly a number (time between
+ * intervals)
+ * Note: Comes from Auto Import CExt
  * 
- * @param {array} FconditionArr - array of functions / conditions that must eventually return true
+ * @param {function} Fcondition - function / condition that must eventually return true
  * @param {object} params - array or object of parameters to pass to Fcondition
  * @param {number} [time=1000] - time between each interval call (in ms)
  * @param {number} [iter=5] - number of iterations allowed before rejecting
  * @returns {object} - Promise  - resolve when Fcondition returns true
  * 								- reject if iterates more than iter variable w/out success
  */
-function Utils_WaitForCondition( FconditionArr, params, time = 1000, iter = 5 ) {
+function Utils_WaitForCondition( Fcondition, params, time = 1000, iter = 5 ) {
 	return new Promise((resolve, reject) => {
 		let count = 0;
 		
 		const intervalID = setInterval(() => {
 			count++;
 			
-			// TODO: find a way to check all conditions tell they
-			// -> succeed ONCE (no need to keep checking after they
-			// -> succeed, right?)
-			FconditionArr.forEach((Fcondition, i) => {
-
-			})
-
 			// check if condition is true YET
 			if ( Fcondition(params) ) {
 				clearInterval(intervalID);
@@ -310,10 +245,10 @@ const Utils_QueryDocA = (selector) => document.querySelectorAll(selector);
 const Utils_SetSelectOneElem = (Elem, valToMatch) => {
     // TODO: throw error if Elem isn't 'select-one'?
 	let success = false;
-	
+
     // throw error if either param doesn't exist :(
     if (!Elem || !valToMatch) {
-        const errMsg = `Warning! no Elem <${Elem}> or val to match` +
+        const errMsg = `Error! no Elem <${Elem}> or val to match` +
             ` <${valToMatch}>`;
         Utils_Error(MESSAGE_SOURCE, errMsg);
         return false;

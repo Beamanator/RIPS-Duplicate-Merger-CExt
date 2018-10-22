@@ -76,9 +76,9 @@ const getPageDataContainer = () => {
             if (columnNames[colIndex] == '') {
                 // do nothing - not a useful column
             }
-            // add cell data (cell.innerText) to row object
+            // add cell data to row object
             else {
-                const cellData = cell.innerText;
+                const cellData = cell.innerText.trim();
                 const cellMapName = columnNames[colIndex];
                 // map data to columnNameMap in row data obj
                 historyRowData[cellMapName] = cellData;

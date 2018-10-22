@@ -31,7 +31,7 @@ const startMerge = (mHistData) => {
         FIELD_IDS_SERVICES[SERVICES_TABLE_HEADER_CELL_LINKS];
     const servicesDescriptionColText =
         document.querySelectorAll(tableHeaderCellsSelector)
-        [servicesDescriptionColumnIndex].innerText;
+        [servicesDescriptionColumnIndex].innerText.trim();
     
     // if 3rd column [index 2] doesn't match 'services description'
     // -> something is unexpected so stop!
@@ -41,6 +41,8 @@ const startMerge = (mHistData) => {
         Utils_Error(MESSAGE_SOURCE, errMsg);
         return;
     }
+
+    debugger;
 
     // now we know 3rd column [2] is Services Description, so loop
     // -> through merge history data, looking for matching service
@@ -60,12 +62,12 @@ const startMerge = (mHistData) => {
             // quit early if possible
             if (serviceMatch) return;
 
-            // get selector for selector for individual cells
+            // get selector for individual cells
             const tableBodyCellsFromRowsSelector =
                 FIELD_IDS_SERVICES[SERVICES_TABLE_BODY_CELLS_FROM_ROWS];
             const currentServiceDescription =
                 row.querySelectorAll(tableBodyCellsFromRowsSelector)
-                [servicesDescriptionColumnIndex].innerText;
+                [servicesDescriptionColumnIndex].innerText.trim();
 
             // now check if 'current' description matches 'merge''s!
             if (currentServiceDescription == mServiceDescription) {

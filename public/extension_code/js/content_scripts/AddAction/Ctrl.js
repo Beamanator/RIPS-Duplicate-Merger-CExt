@@ -16,16 +16,12 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADD_ACTION });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startMerge = ( actionToCreate ) => {    
-    // get service dropdown selector
+    // get service, date, caseworker selectors
     const serviceSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SERVICE];
-    
-    // get date selector
     const dateSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_DATE];
-
-    // get caseworker selector
     const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER]
 
-    // insert easy data immediately into html
+    // insert easy data immediately into html (ALL FIELDS ARE REQUIRED)
     const elemSetSuccess = [
         // service dropdown
         Utils_SetSelectOneElem(
@@ -44,18 +40,32 @@ const startMerge = ( actionToCreate ) => {
         )
     ];
 
+    // check if any initial insert failed
+    if (elemSetSuccess.includes(false)) {
+        const errMsg = 'Not all fields inserted correctly! Check ' +
+            'array for fails [Service, Date, Caseworker]:';
+        Utils_Error(MESSAGE_SOURCE, errMsg, elemSetSuccess);
+        return;
+    }
+
     // now wait a bit until the action select box
     // -> populates with that service's actions. Hopefully the
     // -> notes 'document' is also available in the HTML
     const actionSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_NAME];
-    Utils_WaitForCondition(
-        Utils_OnSelectOneElemHasSelectedOption, {
-            selectElem: Utils_QueryDoc(actionSelector)
-        }, 500, 3
+    const notesFinder = FIELD_IDS_ADD_ACTION[ADD_ACTION_NOTES_FINDER];
+    Utils_WrapMultiConditions(
+        [[
+            Utils_OnSelectOneElemHasSelectedOption, {
+                selectElem: Utils_QueryDoc(actionSelector)
+            }
+        ], [
+            Utils_OnElemFoundWithCustomFunction, {
+                selectorFn: notesFinder
+            }
+        ]], 500, 3
     )
     .then(() => {
-        // TODO: also check if attendance notes document is available
-        // -> in html? naah, wrap it up in the Fcondition param above
+        // TODO: insert both elements!
         debugger;
     })
     .catch((errMsg) => {

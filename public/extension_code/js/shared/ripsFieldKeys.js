@@ -177,6 +177,7 @@ const RIPS_FIELD_KEYS = {
 
     // ====================== ADD ACTION: ======================
     ADD_ACTION_SAVE_BUTTON: 'ADD_ACTION_SAVE_BUTTON',
+    ADD_ACTION_NOTES_FINDER: 'ADD_ACTION_NOTES_FINDER',
     
     // ------ fields for selectors ------
     ADD_ACTION_SERVICE: 'ADD_ACTION_SERVICE',

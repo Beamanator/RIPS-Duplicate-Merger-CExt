@@ -25,6 +25,7 @@ const startImport = () => {
         const dateModifiedElem =
             linkElem.parentElement.nextElementSibling;
         
+        // (.trim() not needed since we don't use this data elsewhere)
         const fileName = linkElem.innerText;
         const dateModified = dateModifiedElem.innerText;
         
