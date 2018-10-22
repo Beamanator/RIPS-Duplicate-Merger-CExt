@@ -10,7 +10,7 @@ const MESSAGE_SOURCE = RIPS_PAGE_KEYS.ADVANCED_SEARCH_RESULTS;
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
-const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH });
+const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
@@ -98,6 +98,6 @@ port.onMessage.addListener(function(msg) {
             break;
             
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS);
     }
 });

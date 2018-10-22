@@ -318,7 +318,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_ADD_ACTION:
         case PCs.PORTNAME_CS_ADDRESSES:
         case PCs.PORTNAME_CS_ADVANCED_SEARCH:
-        // case PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS:
+        case PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS:
         case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
         case PCs.PORTNAME_CS_CONTACTS:
         case PCs.PORTNAME_CS_FILES:
