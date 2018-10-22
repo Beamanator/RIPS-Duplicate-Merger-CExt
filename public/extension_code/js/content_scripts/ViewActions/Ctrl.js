@@ -50,9 +50,11 @@ const startMerge = ( mergeHistoryData, historyIndex ) => {
             Utils_Error(MESSAGE_SOURCE, errMsg, mergeHistoryData);
         }
     }
-
-    // store to background.js, redirect, + increment historyIndex
-    sendNextActionReady(nextActionToCreate);
+    // else we have an action, let's create (add) it!
+    // -> store to background.js, redirect, + increment historyIndex
+    else {
+        sendNextActionReady(nextActionToCreate);
+    }
 }
 
 // ================================================================
