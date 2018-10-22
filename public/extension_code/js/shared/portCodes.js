@@ -47,6 +47,7 @@ const PCs = {
     CS_BKG_INCREMENT_MERGE_DATA_INDEX: 'CS_BKG_INCREMENT_MERGE_DATA_INDEX',
     CS_BKG_PAGE_REDIRECT: 'CS_BKG_PAGE_REDIRECT',
     CS_BKG_POST_SAVE_REDIRECT: 'CS_BKG_POST_SAVE_REDIRECT',
+    CS_BKG_START_ARCHIVE: 'CS_BKG_START_ARCHIVE',
     CS_BKG_STOP_IMPORT: 'CS_BKG_STOP_IMPORT',
 
     // ==============================================================================

@@ -16,13 +16,9 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_NEW_SERVICE });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startMerge = ( serviceData ) => {
-    // get service description selector
+    // get service description, start date, caseworker selectors
     const serviceDescSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_DESCRIPTION];
-    
-    // get service start date selector
     const serviceStartSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_START_DATE];
-    
-    // get caseworker selector
     const serviceCwSelector = FIELD_IDS_NEW_SERVICE[NEW_SERVICE_CASEWORKER];
     
     // input data & get successes
@@ -59,6 +55,7 @@ const startMerge = ( serviceData ) => {
         const clickSuccess = Utils_ClickElem(
             Utils_QueryDoc(saveBtnSelector)
         );
+        // handle click fail
         if (!clickSuccess) {
             let errMsg = `Couldn't click save somehow! ` +
                 `<${saveBtnSelector}>`;

@@ -163,7 +163,7 @@ const initContentScriptPort = (port) => {
                 );
                 // increment history index so next time in View Actions,
                 // -> next action will be sent back here
-                mergeHistoryIndex++;
+                MERGE_HISTORY_INDEX++;
                 break;
 
             case PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT:
@@ -177,6 +177,15 @@ const initContentScriptPort = (port) => {
             case PCs.CS_BKG_STOP_IMPORT:
                 IMPORT_IN_PROGRESS = false;
                 sendImportErrorToReactApp(RAPort, msg.message);
+                break;
+
+            case PCs.CS_BKG_START_ARCHIVE:
+                // TODO: FIXME: FINISH THIS!
+                // 1) clear all other data
+                // 2) redirect to advanced search
+                // 3) archive... etc
+                debugger;
+                console.log('HERE! ARCHIVE TIME!')
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:

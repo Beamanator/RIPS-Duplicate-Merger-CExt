@@ -189,12 +189,9 @@ const startMerge = ( mData ) => {
         // tell bkg we're ready to merge & send actions to merge
         sendHistoryDataToAddAndRedirect(missingHistoryDataArr);
     }
-    // otherwise, we don't need to add an actions! woot! we're done!
+    // otherwise, we don't need to add an actions! woot! archive time!
     else {
-        // TODO: display something to the user (in RIPS aaand in App.js)
-        // TODO: maybe have background.js clear stored data? stop merge? etc?
-        // TODO: also redirect? to Advanced Search maybe?
-        console.log('deciding what to do...');
+        sendStartArchiveProcess();
     }
 }
 
@@ -212,6 +209,11 @@ const sendHistoryDataToAddAndRedirect = ( data ) => {
         code: PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT,
         urlPart: 'ClientDetails/ClientServicesList',
         data: data
+    });
+}
+const sendStartArchiveProcess = () => {
+    port.postMessage({
+        code: PCs.CS_BKG_START_ARCHIVE
     });
 }
 

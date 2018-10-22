@@ -65,7 +65,6 @@ const startMerge = ( actionToCreate ) => {
         ]], 500, 3
     )
     .then(() => {
-        debugger;
         // insert last two elements!
         const actionSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_NAME];
         const noteInsertFunction = FIELD_IDS_ADD_ACTION[ADD_ACTION_NOTES];
@@ -76,7 +75,9 @@ const startMerge = ( actionToCreate ) => {
                 Utils_QueryDoc(actionSelector),
                 actionToCreate[ACTION_NAME]
             ),
-            noteInsertFunction()
+            noteInsertFunction(
+                actionToCreate[ACTION_NOTES]
+            )
         ];
 
         // check if any initial insert failed

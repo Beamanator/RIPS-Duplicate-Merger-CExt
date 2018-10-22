@@ -16,15 +16,18 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_SERVICES });
 //                         MAIN FUNCTIONS
 // ===============================================================
 const startMerge = (mHistData) => {
-    // if there are no actions to add, move to next step!
+    // if there are no actions to add, something went wrong!
+    // -> we should be here (see startMerge() in Services Ctrl.js)
     if (!mHistData || mHistData.length == 0) {
-        // TODO: next! add this please :)
-        // technically we should never get here, but...
-        // sendStartArchivingClients()
+        const failErr = 'Error: At this point, we should have at least' +
+            ' one action in \'mHistData\' variable. Check `startMerge()`' +
+            ' in services/Ctrl.js?';
+        Utils_Error(MESSAGE_SOURCE, failErr, mHistData);
+        return;
     }
 
     const actionsWithServicesToCreate = [];
-    const servicesDescriptionColumnIndex = 2;
+    const servicesDescriptionColumnIndex = 2; // 3rd column in table
     
     // populate column names array
     const tableHeaderCellsSelector =
@@ -131,8 +134,15 @@ const startMerge = (mHistData) => {
 
         // click button!
         const createServiceSelector = FIELD_IDS_SERVICES[SERVICE_CREATE_NEW];
-        const createServiceElem = document.querySelector(createServiceSelector);
-        createServiceElem.click();
+        const clickSuccess = Utils_ClickElem(
+            Utils_QueryDoc(createServiceSelector)
+        );
+        // handle click fail
+        if (!clickSuccess) {
+            let errMsg = `Couldn't click save somehow! ` +
+                `<${createServiceSelector}>`;
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+        }
     }
     // else just redirect to view actions page since services
     // -> exist already! We don't need to create any services!

@@ -34,16 +34,13 @@ const startMerge = ( mergeHistoryData, historyIndex ) => {
     // -> Keep doing this until no more actions left to add! 
     const nextActionToCreate = mergeHistoryData[historyIndex];
     
-    debugger;
-
     // if there is no action, we're probably done! check if index
     // -> if out of bounds, or other error (bug)
     if (!nextActionToCreate) {
         // check index out of bounds - Merge is done!
-        // -> TODO: time to archive the other clients!
+        // -> Time to archive the other client records!
         if (historyIndex >= mergeHistoryData.length) {
-            console.log('time to archive!');
-            debugger;
+            sendStartArchiveProcess();
         }
 
         // other error?! What happened?!
@@ -66,6 +63,11 @@ const sendNextActionReady = (nextAction) => {
     port.postMessage({
         code: PCs.CS_BKG_ADD_NEXT_ACTION,
         data: nextAction,
+    });
+}
+const sendStartArchiveProcess = () => {
+    port.postMessage({
+        code: PCs.CS_BKG_START_ARCHIVE
     });
 }
 
