@@ -18,7 +18,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_BASIC_INFORMA
 const checkViewingCorrectClient = (clientNum) => {
 	// first get selector, then get data in selector (starsNum)
 	const starsNumFieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[STARS_NUMBER];
-	const starsNumElem = document.querySelector(starsNumFieldSelector);
+	const starsNumElem = Utils_QueryDoc(starsNumFieldSelector);
 	const starsNum = starsNumElem.value;
 	
 	// if client stars nums match, return true!
@@ -48,7 +48,10 @@ const startImport = (clientNum) => {
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array
 	let allPass = true;
-	const fieldsToSkip = [STARS_NUMBER, SAVE_BUTTON_CBI];
+	const fieldsToSkip = [
+		STARS_NUMBER, SAVE_BUTTON_CBI,
+		ARCHIVE_CLIENT_BUTTON
+	];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
 		.reduce((container, [key, selector]) => {
@@ -58,7 +61,7 @@ const startImport = (clientNum) => {
 			// skip fields that aren't necessary
 			if (fieldsToSkip.includes(key)) return container;
 
-			const elem = document.querySelector(selector);
+			const elem = Utils_QueryDoc(selector);
 			// TODO: stop import if elem is null
 			if (!elem) {
 				let err = 'ERR: Elem not found with selector: ' + selector;
@@ -98,13 +101,21 @@ const startImport = (clientNum) => {
 			return container;
 		}, {});
 
-	// 3) data gathered, now send it back to background.js to store
-	Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
-
-	// 4) redirect to next page
-	Utils_SendRedirectCode(port, 'Addresses/Addresses');
-	// Note: no need to handle "no vuln / dependent data" popup
-	// -> warning since redirect skips that check
+	// if everything passes successfully, move on :)
+	if (allPass) {
+		// 3) data gathered, now send it back to background.js to store
+		Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+	
+		// 4) redirect to next page
+		Utils_SendRedirectCode(port, 'Addresses/Addresses');
+		// Note: no need to handle "no vuln / dependent data" popup
+		// -> warning since redirect skips that check
+	}
+	// else, throw error and stop import here :(
+	else {
+		let newMsg = 'Import failed - check other errors!';
+		Utils_Error(MESSAGE_SOURCE, newMsg);
+	}
 }
 
 const startMerge = (clientNum, mData) => {
