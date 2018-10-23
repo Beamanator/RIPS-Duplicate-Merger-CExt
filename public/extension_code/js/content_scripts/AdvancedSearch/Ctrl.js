@@ -98,10 +98,26 @@ port.onMessage.addListener(function(msg) {
                 );
                 return;
             }
-            debugger;
+            
             // if any flag is true, start automatically searching for client!
-            if (autoImport || autoMerge || autoArchive) {
+            if (autoImport || autoMerge) {
                 runClientNumSearch( clientNum );
+            }
+            // -> for autoArchive, add extra logic before doing the same
+            else if (autoArchive) {
+                // if no client number
+                if (!clientNum) {
+                    // TODO: FIXME: we're done here!
+                    // 1) log a warning message
+                    // 2) send message back to bkg, then to react
+                    // to inform user that we're done :)
+                    // -> also try to open that tab programatically
+                    debugger;
+                }
+                // else, num exists so archive it!
+                else {
+                    runClientNumSearch( clientNum );
+                }
             }
             else {} // do nothing if no automatic process set
             break;

@@ -4,6 +4,11 @@
 const RIPS_FIELD_KEYS = {
     // ================== CLIENT BASIC INFORMATION: ==================
     STARS_NUMBER:   'StARS Number',
+    
+    // ------ GENERAL / FIELDS W/OUT DATA: ------
+    SAVE_BUTTON_CBI: 'SAVE_BUTTON_CBI',
+    ARCHIVE_CLIENT_BUTTON: 'ARCHIVE_CLIENT_BUTTON',
+
     // ------ CURRENT CONTACT DETAILS: ------
     FIRST_NAME:     'First Name',
     LAST_NAME:      'Surname',
@@ -207,9 +212,4 @@ const RIPS_FIELD_KEYS = {
     NEW_SERVICE_START_DATE: 'NEW_SERVICE_START_DATE',
     NEW_SERVICE_ACTION: 'NEW_SERVICE_ACTION',
     NEW_SERVICE_CASEWORKER: 'NEW_SERVICE_CASEWORKER',
-
-    // ======================= GENERAL: =======================
-    // TODO: add the generic "fields" / elements here
-    // ------ buttons ------
-    SAVE_BUTTON_CBI: 'SAVE_BUTTON_CBI',
 }

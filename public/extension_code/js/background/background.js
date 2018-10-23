@@ -10,6 +10,7 @@ let RAPort = null; // react app port
 let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
 let MERGE_IN_PROGRESS = false; // client merge 'in progress' flag
+let POST_ARCHIVE_REDIRECT_FLAG = false; // flat: if true, archive just happened, next = redirect
 let POST_SAVE_REDIRECT_FLAG = false; // flag: if true, save just happened, next = redirect
 let CLIENT_NUMS = null;
 let CLIENT_INDEX = 0;
@@ -70,6 +71,7 @@ const redirectTab = ( tabId, urlPart ) => {
     const url = 'http://rips.247lib.com/Stars/' + urlPart
     
     POST_SAVE_REDIRECT_FLAG = false;
+    POST_ARCHIVE_REDIRECT_FLAG = false;
     MERGED_DATA_INDEX = 0;
     
     // update given tab's url
@@ -91,6 +93,7 @@ const sendPortInit = (port, code) => {
             ? CLIENT_NUMS[CLIENT_INDEX] : null,
         mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
         mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
+        postArchiveRedirectFlag: POST_ARCHIVE_REDIRECT_FLAG,
         postSaveRedirectFlag: POST_SAVE_REDIRECT_FLAG,
         mergeDataIndex: MERGE_IN_PROGRESS ? MERGED_DATA_INDEX : null,
         mergeHistoryIndex: MERGE_HISTORY_INDEX,
@@ -180,10 +183,16 @@ const initContentScriptPort = (port) => {
                 sendImportErrorToReactApp(RAPort, msg.message);
                 break;
 
-            case PCs.CS_BKG_START_ARCHIVE:
-                // 1) increment client index 1 & 2 are indices of 
-                //    -> clients to archive
+            // Note: If index is out of range of CLIENT_NUMS, the
+            // -> unknown clientNum is handled in advanced search Ctrl
+            case PCs.CS_BKG_ARCHIVE_NEXT_CLIENT:
                 CLIENT_INDEX++;
+                break;
+
+            case PCs.CS_BKG_START_ARCHIVE:
+                // 1) set client index to 1 since we'll start archiving
+                //    -> with the second client (index 1 = position 2)
+                CLIENT_INDEX = 1;
 
                 // 2) set 'archive' state
                 ARCHIVE_IN_PROGRESS = true;
@@ -202,8 +211,6 @@ const initContentScriptPort = (port) => {
                     MessageSender.sender.tab.id,
                     'SearchClientDetails/AdvancedSearch'
                 );
-                // TODO: FIXME: FINISH THIS!
-                debugger;
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
@@ -221,7 +228,7 @@ const initContentScriptPort = (port) => {
                 // check if import should keep going
                 if (CLIENT_NUMS && CLIENT_INDEX+1 < CLIENT_NUMS.length) {
                     // increment client index
-                    CLIENT_INDEX++;
+                    CLIENT_INDEX = 1;
                     // FIXME: why still in progress?
                     IMPORT_IN_PROGRESS = true; // no change
                     sendStartImport(CSPort);
@@ -236,6 +243,10 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_POST_SAVE_REDIRECT:
                 POST_SAVE_REDIRECT_FLAG = true;
+                break;
+
+            case PCs.CS_BKG_POST_ARCHIVE_REDIRECT:
+                POST_ARCHIVE_REDIRECT_FLAG = true;
                 break;
 
             case PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX:
@@ -300,7 +311,7 @@ const initReactAppPort = (port) => {
                 // 2) store merge data to global
                 MERGED_DATA_CONTAINER = mergeData;
                 // 3) set client globals (nums arr & index)
-                CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
+                CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // 4) navigate to advanced search to begin the merge
                 sendStartMerge(CSPort);

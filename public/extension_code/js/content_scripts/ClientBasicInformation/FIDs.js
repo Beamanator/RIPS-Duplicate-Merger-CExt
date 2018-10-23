@@ -1,7 +1,7 @@
 // destructure field keys
 const {
-    // save buttons
-    SAVE_BUTTON_CBI,
+    // save / archive buttons
+    SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON,
     // client basic information
     STARS_NUMBER,
     FIRST_NAME, LAST_NAME, PHONE_NUMBER, ADDRESS1, ADDRESS2, OTHER_PHONE_NUMBER,
@@ -22,6 +22,7 @@ const {
 const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     // ======================= OTHER ELEMENTS: ========================
     [SAVE_BUTTON_CBI]: 'input.newField',
+    [ARCHIVE_CLIENT_BUTTON]: 'input[value="Archive"]',
 
     // ================== CURRENT CONTACT DETAILS: ==================
     [STARS_NUMBER]: '#NRU_NO',   // (note: hidden input field)

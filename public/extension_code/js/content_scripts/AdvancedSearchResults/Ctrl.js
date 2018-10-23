@@ -99,7 +99,7 @@ port.onMessage.addListener(function(msg) {
                 );
                 return;
             }
-            debugger;
+            
             // if any flag is true, start automatically analyzing results!
             if (autoImport || autoMerge || autoArchive) {
                 analyzeSearchResult( clientNum );

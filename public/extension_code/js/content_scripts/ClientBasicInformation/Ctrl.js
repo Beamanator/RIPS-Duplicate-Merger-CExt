@@ -229,21 +229,34 @@ const startMerge = (clientNum, mData) => {
 };
 
 const startArchive = ( clientNum ) => {
+	// TODO: FIXME: continue here!
+	debugger;
+
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
 	// 2.1) if client stars nums don't match, error and stop import
 	if (!atCorrectClient) {
 		// no error message here needed
-		// TODO: send error back to bkg, stop import
+		// TODO: send error back to bkg, stop archiving
 		return;
 	}
 
-	// NEXT: we're at the correct client, so now click Archive and wait!
+	// set 'archiveReady' flag or something in bkg.js to prep
+	// -> for redirect after archive's page reload
+	sendPostArchiveFlag();
 
-	// TODO: FIXME: continue here!
-	console.log(clientNum);
-	debugger;
+	// NEXT: we're at the correct client, so now click Archive and wait!
+	const archiveBtnSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION
+		[ARCHIVE_CLIENT_BUTTON];
+	
+	// click it!
+	const archiveClickSuccess = Utils_ClickElem(
+		Utils_QueryDoc(archiveBtnSelector)
+	);
+
+	// if click is successful, send message to increment client index
+	if (archiveClickSuccess) sendArchiveNextClient();
 }
 
 // ================================================================
@@ -255,6 +268,16 @@ const sendPostSaveFlag = () => {
 		code: PCs.CS_BKG_POST_SAVE_REDIRECT
 	});
 };
+const sendPostArchiveFlag = () => {
+	port.postMessage({
+		code: PCs.CS_BKG_POST_ARCHIVE_REDIRECT
+	});
+};
+const sendArchiveNextClient = () => {
+	port.postMessage({
+		code: PCs.CS_BKG_ARCHIVE_NEXT_CLIENT
+	});
+};
 
 // ================================================================
 //                          PORT LISTENERS
@@ -264,7 +287,7 @@ port.onMessage.addListener(msg => {
 	const {
 		code, clientNum, mergeData,
 		autoImport, autoMerge, autoArchive,
-		postSaveRedirectFlag
+		postSaveRedirectFlag, postArchiveRedirectFlag,
 	} = msg;
 
     Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
@@ -273,10 +296,18 @@ port.onMessage.addListener(msg => {
 		case PCs.BKG_CS_INIT_PORT:
 			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
 			
-			// if flag is set to true, we already saved, so now we just
-			// -> have to redirect the user to the next step!
+			// if save-redirect flag is set to true, we already saved,
+			// -> so now we just have to redirect the user to the
+			// -> next step!
 			if (postSaveRedirectFlag) {
 				Utils_SendRedirectCode(port, 'Addresses/Addresses');
+				return;
+			}
+			// if archive-redirect flag is set to true, we already
+			// -> archived, so now we should redirect back to
+			// -> advanced search page
+			if (postArchiveRedirectFlag) {
+				Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
 				return;
 			}
 
