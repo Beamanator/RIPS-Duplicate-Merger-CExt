@@ -40,7 +40,9 @@ const startMerge = ( mergeHistoryData, historyIndex ) => {
         // check index out of bounds - Merge is done!
         // -> Time to archive the other client records!
         if (historyIndex >= mergeHistoryData.length) {
-            sendStartArchiveProcess();
+            // sendStartArchiveProcess();
+            debugger;
+            Utils_Warn(MESSAGE_SOURCE, 'WAITING TO MOVE ON! MAKE SURE PREVIOUS STUFF WORKS')
         }
 
         // other error?! What happened?!

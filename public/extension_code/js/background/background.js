@@ -67,6 +67,8 @@ const storeClientData = (source, data) => {
 }
 
 const redirectTab = ( tabId, urlPart ) => {
+    Utils_Log('BKG', 'Redirecting user to ' + urlPart);
+    
     // add url part to basic RIPS url
     const url = 'http://rips.247lib.com/Stars/' + urlPart
     

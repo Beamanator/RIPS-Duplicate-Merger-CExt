@@ -27,8 +27,8 @@ const checkViewingCorrectClient = (clientNum) => {
 	}
 	// -> else, throw error and return false
 	else {
-		const err = 'ERR: Somehow got to CBI page' +
-			' of wrong client!! Given StARS number doesn\'t match!';
+		const err = 'ERR: Somehow got to CBI page of wrong client!! ' +
+			`Given StARS number <${starsNum}/${clientNum}> doesn\'t match!`;
 		Utils_Error(MESSAGE_SOURCE, err);
 		return false;
 	}
@@ -44,6 +44,35 @@ const startImport = (clientNum) => {
 		// TODO: send error back to bkg, stop import
 		return;
 	}
+
+	// TODO: figure out how to deal with vulns
+	// pass = true;
+	// vulnsCheckboxes = document.querySelectorAll('input[id^="PostedVulDicts"]');
+	// vulnsCheckboxes.forEach(inputElem => {
+	// 	let labelElem = inputElem.nextElementSibling;
+
+	// 	// get attributes from input & label elems that should match
+	// 	const inputAttr = inputElem.getAttribute('id');
+	// 	const labelAttr = labelElem.getAttribute('for');
+		
+	// 	// check the elements' attributes match (input's 'id' and label's 'for')
+	// 	if (inputAttr === labelAttr) {
+	// 		// get vuln title from label
+	// 		let vulnName = labelElem.innerText;
+
+	// 		// get true / false if checked or not
+	// 		let vulnChecked = inputElem.checked;
+
+	// 		// do something with name & checked
+	// 		console.log(vulnName, vulnChecked);
+	// 	}
+	// 	// if attributes don't match up, throw error!
+	// 	else {
+	// 		pass = false;
+	// 		let err = `input<${inputAttr}> and label<${labelAttr}> don't match :(`;
+	// 		// Utils_Error(MESSAGE_SOURCE, err);
+	// 	}
+	// });
 
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array

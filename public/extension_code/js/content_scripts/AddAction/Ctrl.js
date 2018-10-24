@@ -19,7 +19,7 @@ const startMerge = ( actionToCreate ) => {
     // get service, date, caseworker selectors
     const serviceSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SERVICE];
     const dateSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_DATE];
-    const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER]
+    // caseworkerSelector added later (after a delay)
 
     // insert easy data immediately into html (ALL FIELDS ARE REQUIRED)
     const elemSetSuccess = [
@@ -33,17 +33,14 @@ const startMerge = ( actionToCreate ) => {
             Utils_QueryDoc(dateSelector),
             actionToCreate[ACTION_DATE]
         ),
-        // caseworker dropdown
-        Utils_SetSelectOneElem(
-            Utils_QueryDoc(caseworkerSelector),
-            actionToCreate[ACTION_CASEWORKER]
-        )
+        // again, caseworker would be good here but we have to 
+        // -> insert after a time delay later
     ];
 
     // check if any initial insert failed
     if (elemSetSuccess.includes(false)) {
         const errMsg = 'Not all fields inserted correctly! Check ' +
-            'array for fails [Service, Date, Caseworker]:';
+            'array for fails [Service, Date]:';
         Utils_Error(MESSAGE_SOURCE, errMsg, elemSetSuccess);
         return;
     }
@@ -88,17 +85,42 @@ const startMerge = ( actionToCreate ) => {
             return;
         }
 
-        // at this point, all fields have been entered, so click save!
-        const saveBtnSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SAVE_BUTTON];
-        const clickSuccess = Utils_ClickElem(
-            Utils_QueryDoc(saveBtnSelector)
-        );
-        // handle click fail
-        if (!clickSuccess) {
-            let errMsg = `Couldn't click save somehow! ` +
-                `<${saveBtnSelector}>`;
-            Utils_Error(MESSAGE_SOURCE, errMsg);
-        }
+        // no fails yet, so keep going! caseworker time.
+        // -> introduce a 5 second delay before setting caseworker 
+        // -> so validation extension has some time to set this dropdown,
+        // -> then THIS extension can re-set it (if necessary)
+        const delay = 5000; // (milliseconds)
+        setTimeout((...params) => {
+            // now get caseworker selector
+            const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER];
+    
+            // now enter cw into dropdown & get success
+            const caseworkerSetSuccess = Utils_SetSelectOneElem(
+                Utils_QueryDoc(caseworkerSelector),
+                actionToCreate[ACTION_CASEWORKER]
+            );
+
+            // if cw set successful, trust it & click save!
+            if (caseworkerSetSuccess) {
+                // at this point, all fields have been entered, so click save!
+                const saveBtnSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_SAVE_BUTTON];
+                const clickSuccess = Utils_ClickElem(
+                    Utils_QueryDoc(saveBtnSelector)
+                );
+                // handle click fail
+                if (!clickSuccess) {
+                    let errMsg = `Couldn't click save somehow! ` +
+                        `<${saveBtnSelector}>`;
+                    Utils_Error(MESSAGE_SOURCE, errMsg);
+                }
+            }
+            // else, cw didn't get set successfully! error!
+            else {
+                let err = 'Caseworker couldn\t get set into elem with ' +
+                    `selector <${caseworkerSelector}>`;
+                Utils_Error(MESSAGE_SOURCE, err);
+            }
+        }, delay);
     })
     .catch((errMsg) => {
         // error if not all conditions passed

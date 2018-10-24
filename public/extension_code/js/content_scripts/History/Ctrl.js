@@ -29,17 +29,17 @@ const getPageDataContainer = () => {
 		'Team': '',
 		'Major Action?': '',
         '': ''
-    }
+    };
     
     const actionsToSkip = [
         'Service closed',
         'Service was closed - reopened at the later date'
-    ]
+    ];
 	
 	// populate column names array
     const tableHeaderCellsSelector =
         FIELD_IDS_HISTORY[ACTION_TABLE_HEADER_CELLS];
-    document.querySelectorAll(tableHeaderCellsSelector)
+    Utils_QueryDocA(tableHeaderCellsSelector)
     .forEach(cell => {
         const cellName = cell.innerText.trim();
         
@@ -73,9 +73,7 @@ const getPageDataContainer = () => {
         row.querySelectorAll(tableBodyCellsFromRowsSelector)
         .forEach((cell, colIndex) => {
             // if there's no column name, skip this cell's data
-            if (columnNames[colIndex] == '') {
-                // do nothing - not a useful column
-            }
+            if (columnNames[colIndex] == '') {}
             // add cell data to row object
             else {
                 const cellData = cell.innerText.trim();
