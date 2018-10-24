@@ -240,9 +240,6 @@ const startMerge = (clientNum, mData) => {
 };
 
 const startArchive = ( clientNum ) => {
-	// TODO: FIXME: continue here!
-	debugger;
-
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
@@ -268,6 +265,20 @@ const startArchive = ( clientNum ) => {
 
 	// if click is successful, send message to increment client index
 	if (archiveClickSuccess) sendArchiveNextClient();
+
+	// after click, wait 30 seconds (30,000 ms)
+	// -> if nothing happens, throw error! Tell user to refresh?
+	const timeMs = 30000; // 30 seconds
+	setInterval((...params) => {
+		// if we're here, that means 'timeMs' has passed. This is bad
+		// -> b/c we should have redirected (after client was archived)
+		// -> so throw error - warn user to refresh!
+		let errMsg = 'Still sitting on Client Basic Information page! ' +
+			'Page should have refreshed after "Archive" was clicked! ' +
+			'Click "Archive" to get the processing moving!!';
+		Utils_Error(MESSAGE_SOURCE, errMsg);
+		// TODO: maybe send to React as well?
+	}, timeMs);
 }
 
 // ================================================================
