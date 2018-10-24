@@ -86,10 +86,10 @@ const startMerge = ( actionToCreate ) => {
         }
 
         // no fails yet, so keep going! caseworker time.
-        // -> introduce a 5 second delay before setting caseworker 
+        // -> introduce a 3 second delay before setting caseworker 
         // -> so validation extension has some time to set this dropdown,
         // -> then THIS extension can re-set it (if necessary)
-        const delay = 5000; // (milliseconds)
+        const delay = 3000; // (milliseconds)
         setTimeout((...params) => {
             // now get caseworker selector
             const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER];

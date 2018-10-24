@@ -185,7 +185,7 @@ const startMerge = ( mData ) => {
     // if there are actions that are missing, add them!
     if (missingHistoryDataArr.length > 0) {
         // tell bkg we're ready to merge & send actions to merge
-        sendHistoryDataToAddAndRedirect(missingHistoryDataArr);
+        sendHistoryDataToBkgAddAndRedirect(missingHistoryDataArr);
     }
     // otherwise, we don't need to add an actions! woot! archive time!
     else {
@@ -202,7 +202,7 @@ const sendClientImportDone = () => {
 		code: PCs.CS_BKG_CLIENT_IMPORT_DONE
 	});
 }
-const sendHistoryDataToAddAndRedirect = ( data ) => {
+const sendHistoryDataToBkgAddAndRedirect = ( data ) => {
     port.postMessage({
         code: PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT,
         urlPart: 'ClientDetails/ClientServicesList',
