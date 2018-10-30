@@ -4,6 +4,9 @@ export const tableConfigs = [{
     title: 'Client Basic Information',
     key: R_KEYS.CLIENT_BASIC_INFORMATION,
 }, {
+    title: 'Client Vulnerabilities',
+    key: R_KEYS.VULNERABILITIES
+}, {
     title: 'Addresses',
     key: R_KEYS.ADDRESSES,
     type: 'lists',

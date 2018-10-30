@@ -32,6 +32,12 @@ if (process.env.NODE_ENV === 'development') {
             'End': ["", "", "Here!"],
             'Crazy text': ['oh\nbaby!', 'next oneis long', 'OIWENFAOIWNEF AINWEFO NIAWEOI FNAOIWENF AOIWNEF OAIN'],
         },
+        [R_KEYS.VULNERABILITIES]: {
+            'Someone has a Child': [false, true, false],
+            'Addiction (Frisbee)': [true, false, true],
+            'Too old': [true, true, false],
+            'At risk of stuff': [false, false, false],
+        },
         [R_KEYS.CONTACTS]: {
             CONTACTS: [
                 [],

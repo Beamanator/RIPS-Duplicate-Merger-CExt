@@ -30,6 +30,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_ADVANCED_SEARCH,
     PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS,
     PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION,
+    PCs.PORTNAME_CS_CLIENT_VULNERABILITIES,
     PCs.PORTNAME_CS_CONTACTS,
     PCs.PORTNAME_CS_FILES,
     PCs.PORTNAME_CS_HISTORY,
@@ -68,7 +69,7 @@ const storeClientData = (source, data) => {
 
 const redirectTab = ( tabId, urlPart ) => {
     Utils_Log('BKG', 'Redirecting user to ' + urlPart);
-    
+
     // add url part to basic RIPS url
     const url = 'http://rips.247lib.com/Stars/' + urlPart
     
@@ -351,6 +352,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_ADVANCED_SEARCH:
         case PCs.PORTNAME_CS_ADVANCED_SEARCH_RESULTS:
         case PCs.PORTNAME_CS_CLIENT_BASIC_INFORMATION:
+        case PCs.PORTNAME_CS_CLIENT_VULNERABILITIES:
         case PCs.PORTNAME_CS_CONTACTS:
         case PCs.PORTNAME_CS_FILES:
         case PCs.PORTNAME_CS_HISTORY:

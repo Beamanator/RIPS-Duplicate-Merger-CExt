@@ -1,4 +1,5 @@
 const CLIENT_BASIC_INFORMATION = 'CtrlClientBasicInformation';
+const VULNERABILITIES = 'CtrlVulnerabilities'; // (part of CBI page)
 const ADDRESSES =   'CtrlAddresses';
 const NOTES =       'CtrlNotes';
 const RELATIVES =   'CtrlRelatives';
@@ -11,6 +12,7 @@ const HISTORY =     'CtrlHistory';
 export const RIPS_KEYS = {
     // currently imported pages
     CLIENT_BASIC_INFORMATION: CLIENT_BASIC_INFORMATION,
+    VULNERABILITIES: VULNERABILITIES, // (part of CBI page)
     ADDRESSES:  ADDRESSES,
     NOTES:      NOTES,
     RELATIVES:  RELATIVES,

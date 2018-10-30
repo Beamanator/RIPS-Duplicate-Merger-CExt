@@ -13,9 +13,10 @@ const {
     HIGHEST_EDUCATION, CARE, CRS, EFRRA_OR_ACSFT, IOM, MSF, PSTIC, REFUGE_EGYPT,
     SAVE_THE_CHILDREN, UNICEF_OR_TDH, OTHER_SERVICE_PROVIDER,
     DATE_OF_ARRIVAL_IN_EGYPT, DATE_OF_UNHCR_REGISTRATION, RSD_DATE,
-    LAST_RSD_UPDATE, // TODO: dynamic vulns
-    VULNERABILITY_NOTES, FAMILY_SIZE, UNHCR_CASE_SIZE,
-    DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES
+    LAST_RSD_UPDATE, FAMILY_SIZE, UNHCR_CASE_SIZE,
+    DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
+    // TODO: client vulnerabilities
+    VULNERABILITY_TYPES, VULNERABILITY_NOTES, 
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
@@ -95,10 +96,7 @@ const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     [LAST_RSD_UPDATE]:		'#LPRIORITY',
 
     // ===================== VULNERABILITIES: ======================
-    // ------ CHECKBOXES: -----
-    // ... TODO: dynamic ...
-    // ------ TEXTBOXES: ------
-    [VULNERABILITY_NOTES]: '#DescNotes',
+    // elems in ClientVulnerabilities/FIDs.js
 
     // ======================== DEPENDENTS: ========================
     // ------ TEXTBOXES: ------

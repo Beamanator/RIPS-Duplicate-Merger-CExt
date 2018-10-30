@@ -45,41 +45,11 @@ const startImport = (clientNum) => {
 		return;
 	}
 
-	// TODO: figure out how to deal with vulns
-	// pass = true;
-	// vulnsCheckboxes = document.querySelectorAll('input[id^="PostedVulDicts"]');
-	// vulnsCheckboxes.forEach(inputElem => {
-	// 	let labelElem = inputElem.nextElementSibling;
-
-	// 	// get attributes from input & label elems that should match
-	// 	const inputAttr = inputElem.getAttribute('id');
-	// 	const labelAttr = labelElem.getAttribute('for');
-		
-	// 	// check the elements' attributes match (input's 'id' and label's 'for')
-	// 	if (inputAttr === labelAttr) {
-	// 		// get vuln title from label
-	// 		let vulnName = labelElem.innerText;
-
-	// 		// get true / false if checked or not
-	// 		let vulnChecked = inputElem.checked;
-
-	// 		// do something with name & checked
-	// 		console.log(vulnName, vulnChecked);
-	// 	}
-	// 	// if attributes don't match up, throw error!
-	// 	else {
-	// 		pass = false;
-	// 		let err = `input<${inputAttr}> and label<${labelAttr}> don't match :(`;
-	// 		// Utils_Error(MESSAGE_SOURCE, err);
-	// 	}
-	// });
-
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array
 	let allPass = true;
 	const fieldsToSkip = [
-		STARS_NUMBER, SAVE_BUTTON_CBI,
-		ARCHIVE_CLIENT_BUTTON
+		STARS_NUMBER, SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON
 	];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
@@ -130,21 +100,42 @@ const startImport = (clientNum) => {
 			return container;
 		}, {});
 
-	// if everything passes successfully, move on :)
-	if (allPass) {
-		// 3) data gathered, now send it back to background.js to store
-		Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
-	
-		// 4) redirect to next page
-		Utils_SendRedirectCode(port, 'Addresses/Addresses');
-		// Note: no need to handle "no vuln / dependent data" popup
-		// -> warning since redirect skips that check
-	}
-	// else, throw error and stop import here :(
-	else {
-		let newMsg = 'Import failed - check other errors!';
-		Utils_Error(MESSAGE_SOURCE, newMsg);
-	}
+	// wait for vuln analysis flag to be true
+	Utils_WaitForCondition(
+		// condition returns true only if passed-in var is true
+		// -> (after vulns have been analyzed)
+		({ flag }) => flag, {
+			flag: vulns_analyzed
+		}, 500, 4
+	)
+	.then(() => {
+		// if everything passes successfully, move on :)
+		// NOTE: vuln data is saved at the same time as
+		// -> vulns_analyzed is set to true, so if we got here,
+		// -> vulns should already be saved in bkg.js!
+		if (allPass) {
+			// 3) data gathered, now send it back to background.js to store
+			Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+		
+			// 4) redirect to next page
+			Utils_SendRedirectCode(port, 'Addresses/Addresses');
+			// Note: no need to handle "no vuln / dependent data" popup
+			// -> warning since redirect skips that check
+		}
+		// else, throw error and stop import here :(
+		else {
+			let newMsg = 'Import failed - check other errors!';
+			Utils_Error(MESSAGE_SOURCE, newMsg);
+		}
+	})
+	.catch(errMsg => {
+		// TODO: stop import w/ error message!
+		// if vulns weren't checked, something went wrong... ugh
+		const err = 'ERR: Vuln flag wasn\t true, meaning we ' +
+			'don\'t know if they were imported correctly or not.';
+		Utils_Error(MESSAGE_SOURCE, err);
+        Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+	});
 }
 
 const startMerge = (clientNum, mData) => {
@@ -235,6 +226,8 @@ const startMerge = (clientNum, mData) => {
 		}
 	});
 
+	// TODO: tell ClientVuln controller to input vulns!
+
 	// click save, after making sure the input button exists!
 	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
 	// add a bit of waiting time (2 seconds) for Validation Extension to work
@@ -284,8 +277,7 @@ const startArchive = ( clientNum ) => {
 	sendPostArchiveFlag();
 
 	// NEXT: we're at the correct client, so now click Archive and wait!
-	const archiveBtnSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION
-		[ARCHIVE_CLIENT_BUTTON];
+	const archiveBtnSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[ARCHIVE_CLIENT_BUTTON];
 	
 	// click it!
 	const archiveClickSuccess = Utils_ClickElem(

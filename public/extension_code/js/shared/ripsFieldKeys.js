@@ -65,7 +65,7 @@ const RIPS_FIELD_KEYS = {
     LAST_RSD_UPDATE: 'Last RSD Update',
 
     // ------ VULNERABILITIES: ------
-    // TODO: dynamic checkboxes
+    VULNERABILITY_TYPES: 'VULNERABILITY_TYPES', // dynamic fields
     VULNERABILITY_NOTES: 'Vulnerability Notes',
 
     // ------ DEPENDENTS: ------
