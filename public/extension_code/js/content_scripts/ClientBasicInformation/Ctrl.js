@@ -100,6 +100,7 @@ const startImport = (clientNum) => {
 			return container;
 		}, {});
 
+	let vulns_analyzed = false;
 	// wait for vuln analysis flag to be true
 	Utils_WaitForCondition(
 		// condition returns true only if passed-in var is true
@@ -131,7 +132,7 @@ const startImport = (clientNum) => {
 	.catch(errMsg => {
 		// TODO: stop import w/ error message!
 		// if vulns weren't checked, something went wrong... ugh
-		const err = 'ERR: Vuln flag wasn\t true, meaning we ' +
+		const err = 'ERR: Vuln flag wasn\'t true, meaning we ' +
 			'don\'t know if they were imported correctly or not.';
 		Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);

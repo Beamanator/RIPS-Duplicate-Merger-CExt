@@ -3,92 +3,100 @@
 //----------------------------------------------------------------
 
 // ===============================================================
-//                           CONSTANTS
+//                      CONSTANTS / GLOBALS
 // ===============================================================
-const MESSAGE_SOURCE = RIPS_PAGE_KEYS.CLIENT_VULNERABILITIES;
+const MESSAGE_SOURCE2 = RIPS_PAGE_KEYS.CLIENT_VULNERABILITIES;
 // ------- other globals -------
-let vulns_analyzed = false;
+// let vulns_analyzed = false; // declared in client basic info ctrl
 let vulns_set = [];
 
 // ===============================================================
 //                          PORT CONNECT
 // ===============================================================
 // Note: not sure if this will work...
-const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_VULNERABILITIES });
+const port2 = chrome.runtime.connect({ name: PCs.PORTNAME_CS_CLIENT_VULNERABILITIES });
 
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const startImport = () => {
+const startImport2 = () => {
     debugger;
+	let pass = true;
+	let vulnData = {};
+
+	// get selector & all checkbox elements
+	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_VULNERABILITIES[VULNERABILITY_TYPES];
+	const vulnCheckboxElems = Utils_QueryDocA(vulnCheckboxesSelector);
+	
+	// loop through all checkbox elems, getting labels & checked statuses
+	vulnCheckboxElems.forEach(inputElem => {
+		let labelElem = inputElem.nextElementSibling;
+
+		// get attributes from input & label elems that should match
+		const inputAttr = inputElem.getAttribute('id');
+		const labelAttr = labelElem.getAttribute('for');
+		// get vuln name from label elem
+		const vulnName = labelElem.innerText;
+		
+		// check the elements' attributes match (input's 'id' and label's 'for')
+		if (inputAttr === labelAttr) {
+			// get true / false if checked or not
+			const vulnChecked = inputElem.checked;
+
+			// add vuln name & checked status to vuln container
+			vulnData[vulnName] = vulnChecked;
+		}
+		// if attributes don't match up, throw error!
+		else {
+			pass = false;
+			const err = `input<${inputAttr}> and label<${labelAttr}> ` +
+				`don't match on vuln<${vulnName}> :(`;
+			Utils_Warn(MESSAGE_SOURCE2, err);
+		}
+	});
+
+	// if pass was successful, 
+	if (pass) {
+		// vulns_analyzed = true;
+		// TODO: send vulnData to bkg?
+		Utils_SendDataToBkg(port2, MESSAGE_SOURCE2, vulnData);
+	}
+	// otherwise, set another error, saying to look at previous
+	// -> mismatching vuln checkboxes / labels
+	else {
+		const err = 'Vulnerability import unsuccessful! Check above for errors';
+		Utils_Error(MESSAGE_SOURCE2, err);
+	}
 }
-// TODO: figure out how to deal with vulns
-// pass = true;
-// vulnsCheckboxes = document.querySelectorAll('input[id^="PostedVulDicts"]');
-// vulnsCheckboxes.forEach(inputElem => {
-// 	let labelElem = inputElem.nextElementSibling;
-
-// 	// get attributes from input & label elems that should match
-// 	const inputAttr = inputElem.getAttribute('id');
-// 	const labelAttr = labelElem.getAttribute('for');
-    
-// 	// check the elements' attributes match (input's 'id' and label's 'for')
-// 	if (inputAttr === labelAttr) {
-// 		// get vuln title from label
-// 		let vulnName = labelElem.innerText;
-
-// 		// get true / false if checked or not
-// 		let vulnChecked = inputElem.checked;
-
-// 		// do something with name & checked
-// 		console.log(vulnName, vulnChecked);
-// 	}
-// 	// if attributes don't match up, throw error!
-// 	else {
-// 		pass = false;
-// 		let err = `input<${inputAttr}> and label<${labelAttr}> don't match :(`;
-// 		// Utils_Error(MESSAGE_SOURCE, err);
-// 	}
-// });
 
 // ================================================================
 //                     MESSAGE POSTING FUNCTIONS
 // ================================================================
-// Note: port codes come from "../js/portCodes.js"
-    
-// ================================================================
-//                          PORT LISTENERS
-// ================================================================
+// Note: port2 codes come from "../js/portCodes.js"
+
 // ================================================================
 //                          PORT LISTENERS
 // ================================================================
 
-port.onMessage.addListener(msg => {
+port2.onMessage.addListener(msg => {
 	const {
         code, // clientNum,
         mergeData,
 		autoImport, autoMerge, // autoArchive,
-		postSaveRedirectFlag, // postArchiveRedirectFlag,
+		postSaveRedirectFlag, postArchiveRedirectFlag,
 	} = msg;
 
-    Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
+    Utils_Log(MESSAGE_SOURCE2, `port2 msg received`, msg);
 
     switch(code) {
 		case PCs.BKG_CS_INIT_PORT:
-			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+			Utils_Log(MESSAGE_SOURCE2, `Successfully connected to background.js`);
 			
-			// if save-redirect flag is set to true, we already saved,
-			// -> so now we just have to redirect the user to the
-			// -> next step!
-			// if (postSaveRedirectFlag) {
-			// 	Utils_SendRedirectCode(port, 'Addresses/Addresses');
-			// 	return;
-			// }
-			// if archive-redirect flag is set to true, we already
-			// -> archived, so now we should redirect back to
-			// -> advanced search page
-			if (postArchiveRedirectFlag) {
-				Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
+			// if save-redirect flag or archive-redirect flag are set
+			// -> to true, we already saved / archived the client,
+			// -> so now just wait for cbi ctrl to handle next step!
+			if (postSaveRedirectFlag || postArchiveRedirectFlag) {
+				// cbi ctrl will do stuff...
 				return;
 			}
 
@@ -101,7 +109,7 @@ port.onMessage.addListener(msg => {
             // -> (can't do > 1 thing at same time)
             if (countAutoStarts > 1) {
                 Utils_Error(
-                    MESSAGE_SOURCE,
+                    MESSAGE_SOURCE2,
                     'Too many "auto start" flags are true!',
                     '[autoMerge, autoImport]:',
                     autoStartFlags
@@ -110,18 +118,17 @@ port.onMessage.addListener(msg => {
             }
 			
 			// if any auto flag is true, start automatically!
-            if (autoImport) { startImport(); }
-			if (autoMerge) { startMerge( mergeData ); }
+            if (autoImport) { startImport2(); }
+			if (autoMerge) { startMerge2( mergeData ); }
 			// if (autoArchive) { ... } handled in CBI ctrl
 			break;
         
-        // -> these are already in CBI ctrl
-		// case PCs.BKG_CS_START_IMPORT:
-		// case PCs.BKG_CS_START_MERGE:
-		// 	Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
-        //     break;
+		case PCs.BKG_CS_START_IMPORT:
+		case PCs.BKG_CS_START_MERGE:
+			Utils_SendRedirectCode(port2, 'SearchClientDetails/AdvancedSearch');
+            break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_CLIENT_VULNERABILITIES);
+			Utils_SendPortCodeError(port2, code, PCs.PORTNAME_CS_CLIENT_VULNERABILITIES);
     }
 });

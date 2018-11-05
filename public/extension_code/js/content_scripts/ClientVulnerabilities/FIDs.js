@@ -8,6 +8,7 @@ const {
 const FIELD_IDS_CLIENT_VULNERABILITIES = {
     [SAVE_BUTTON_CBI]: 'input.newField', // button
 
-    [VULNERABILITY_TYPES]: '', // checkboxes
+    [VULNERABILITY_TYPES]: 'input[id^="PostedVulDicts"]', // checkboxes
+    // [VULNERABILITY_LABELS]: '',
     [VULNERABILITY_NOTES]: '#DescNotes', // textbox
 };

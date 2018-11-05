@@ -15,8 +15,7 @@ const {
     DATE_OF_ARRIVAL_IN_EGYPT, DATE_OF_UNHCR_REGISTRATION, RSD_DATE,
     LAST_RSD_UPDATE, FAMILY_SIZE, UNHCR_CASE_SIZE,
     DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
-    // TODO: client vulnerabilities
-    VULNERABILITY_TYPES, VULNERABILITY_NOTES, 
+    // Note: client vulnerabilities handled in client vuln ctrl
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
