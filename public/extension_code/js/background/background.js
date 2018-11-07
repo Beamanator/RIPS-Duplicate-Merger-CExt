@@ -5,7 +5,7 @@
 // ==============================================================================
 //                         GLOBAL VARS & PORT HOLDERS
 // ==============================================================================
-let CSPortContainer = {}; // content script port container
+let CSPort = null; // content script port (only 1 allowed)
 let RAPort = null; // react app port (only 1 allowed)
 let ARCHIVE_IN_PROGRESS = false; // archiving final clients 'in progress' flag
 let IMPORT_IN_PROGRESS = false; // data collect 'in progress' flag
@@ -104,41 +104,14 @@ const sendPortInit = (port, code) => {
     });
 }
 
-const sendStartImport = (portname) => {
-    let port = null;
-
-    // if no portname passed, find a connected port and use it!
-    if (!portname) {
-        // get first port inside container
-        let firstPort = Object.entries(CSPortContainer)[0];
-
-        // error if no port exists!
-        if (!firstPort) {
-            // TODO: throw error back to React?
-            let errMsg = 'Tried starting import, but no ports available to' +
-                ' connect to! Why??';
-            Utils_Error('BKG', errMsg);
-        }
-
-        // set port variable from first element in container
-        port = firstPort[1];
-    }
-    // else, use named port from container
-    else port = CSPortContainer[portname];
-
+const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
-    if (!port) {
-        // throw error
-        let errMsg = `Somehow port with name ${portname} not found :(`;
-        Utils_Error('BKG', errMsg);
-    } else {
-        // CLIENT_INDEX out of bounds (import complete) handled in
-        // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
-        port.postMessage({
-            code: PCs.BKG_CS_START_IMPORT,
-            clientNum: CLIENT_NUMS[CLIENT_INDEX]
-        });
-    }
+    // CLIENT_INDEX out of bounds (import complete) handled in
+    // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
+    port.postMessage({
+        code: PCs.BKG_CS_START_IMPORT,
+        clientNum: CLIENT_NUMS[CLIENT_INDEX]
+    });
 }
 
 const sendStartMerge = (port) => {
@@ -170,13 +143,10 @@ const sendImportDone = (port, clientData) => {
 //                           PORT MESSAGE LISTENERS
 // ==============================================================================
 const initContentScriptPort = (port) => {
-    const portname = port.name;
-
-    // If content script port already has been initialized, skip setting new listener
-    if (CSPortContainer[portname]) {
-        let errMsg = `Tried initializing CSPortContainer[${portname}]` +
-            ', but it already exists! Skipping...';
-        Utils_Warn('BKG', errMsg);
+    // If content script port already has been initialized,
+    // -> skip setting new listener
+    if (CSPort) {
+        console.warn('Tried initializing CSPort, even though already exists. Skipping');
         return;
     }
 
@@ -186,7 +156,7 @@ const initContentScriptPort = (port) => {
     );
 
     // set global content script port container
-    CSPortContainer[portname] = port;
+    CSPort = port;
 
     port.onMessage.addListener(function(msg, MessageSender) {
         console.log('<background.js> content script port msg received', msg);
@@ -264,7 +234,7 @@ const initContentScriptPort = (port) => {
                     CLIENT_INDEX = 1;
                     // FIXME: why still in progress?
                     IMPORT_IN_PROGRESS = true; // no change
-                    sendStartImport(portname);
+                    sendStartImport(CSPort);
                 }
                 // else, import should stop & analysis should be done
                 else {
@@ -303,9 +273,8 @@ const initContentScriptPort = (port) => {
     });
 
     port.onDisconnect.addListener(removedPort => {
-        const portname = removedPort.name;
-        console.log(`Port <${portname}> disconnected`);
-        CSPortContainer[portname] = null;
+        console.log(`Port <${removedPort.name}> disconnected`);
+        CSPort = null;
     });
 }
 
@@ -332,7 +301,7 @@ const initReactAppPort = (port) => {
                 IMPORT_IN_PROGRESS = true;
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
-                sendStartImport();
+                sendStartImport(CSPort);
                 break;
 
             case PCs.RA_BKG_START_MERGE:
@@ -348,7 +317,7 @@ const initReactAppPort = (port) => {
                 CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // 4) navigate to advanced search to begin the merge
-                sendStartMerge();
+                sendStartMerge(CSPort);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
