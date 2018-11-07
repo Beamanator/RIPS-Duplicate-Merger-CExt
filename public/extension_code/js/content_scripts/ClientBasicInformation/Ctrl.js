@@ -41,7 +41,7 @@ const importVulnData = () => {
 	let vulnData = {};
 
 	// get selector & all checkbox elements
-	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_TYPES];
+	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_CHECKS];
 	const vulnCheckboxElems = Utils_QueryDocA(vulnCheckboxesSelector);
 	
 	// loop through all checkbox elems, getting labels & checked statuses
@@ -98,7 +98,7 @@ const startImport = (clientNum) => {
 	let allPass = true;
 	const fieldsToSkip = [
 		STARS_NUMBER, SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON,
-		VULNERABILITY_TYPES, VULNERABILITY_NOTES
+		VULNERABILITY_CHECKS, VULNERABILITY_NOTES, VULNERABILITY_LABELS
 	];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
@@ -191,6 +191,9 @@ const startMerge = (clientNum, mData) => {
 		Utils_SendRedirectCode(port, 'Addresses/Addresses');
 		return;
 	}
+
+	// assume all pass by default
+	let allPass = true;
 
 	// 3.1) loop through basic merge data, adding each field to the page
 	basicMergeData.forEach(fieldObj => {
