@@ -41,7 +41,7 @@ const importVulnData = () => {
 	let vulnData = {};
 
 	// get selector & all checkbox elements
-	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_VULNERABILITIES[VULNERABILITY_TYPES];
+	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_TYPES];
 	const vulnCheckboxElems = Utils_QueryDocA(vulnCheckboxesSelector);
 	
 	// loop through all checkbox elems, getting labels & checked statuses
@@ -71,19 +71,15 @@ const importVulnData = () => {
 		}
 	});
 
-	// if pass was successful, 
-	if (pass) {
-		// update var so cbi ctrl can move on
-		vulns_analyzed = true;
-		// send vulnData to bkg?
-		Utils_SendDataToBkg(port2, MESSAGE_SOURCE2, vulnData);
-	}
-	// otherwise, set another error, saying to look at previous
-	// -> mismatching vuln checkboxes / labels
-	else {
-		const err = 'Vulnerability import unsuccessful! Check above for errors';
-		Utils_Error(MESSAGE_SOURCE2, err);
-	}
+	// get vulnerability notes
+	const vulnNotesSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_NOTES];
+	const vulnNotesElem = Utils_QueryDoc(vulnNotesSelector);
+
+	// add vuln notes to vuln data obj
+	vulnData[VULNERABILITY_NOTES] = vulnNotesElem.value.trim();
+
+	// return vulnerability data & import success flag (pass)
+	return [vulnData, pass];
 }
 
 const startImport = (clientNum) => {
@@ -153,7 +149,6 @@ const startImport = (clientNum) => {
 			return container;
 		}, {});
 
-	debugger;
 	// get client's vuln data too :)
 	let [vulnData, vulnPass] = importVulnData();
 	if (!vulnPass) allPass = false;
