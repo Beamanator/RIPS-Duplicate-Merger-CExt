@@ -16,7 +16,7 @@ const {
     LAST_RSD_UPDATE, FAMILY_SIZE, UNHCR_CASE_SIZE,
     DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
     // client vulnerabilities to be handled separate
-    VULNERABILITY_NOTES, VULNERABILITY_TYPES,
+    VULNERABILITY_NOTES, VULNERABILITY_CHECKS, VULNERABILITY_LABELS,
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
@@ -96,7 +96,8 @@ const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     [LAST_RSD_UPDATE]:		'#LPRIORITY',
 
     // ===================== VULNERABILITIES: ======================
-    [VULNERABILITY_TYPES]: 'input[id^="PostedVulDicts"]', // checkboxes
+    [VULNERABILITY_CHECKS]: 'input[id^="PostedVulDicts"]', // checkboxes
+    [VULNERABILITY_LABELS]: 'label[for^="PostedVulDicts"]', // labels
     [VULNERABILITY_NOTES]: '#DescNotes', // textbox
 
     // ======================== DEPENDENTS: ========================

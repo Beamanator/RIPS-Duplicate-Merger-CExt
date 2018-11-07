@@ -185,18 +185,15 @@ const startMerge = (clientNum, mData) => {
 	// 2.2) no issues! get page's basic data using MESSAGE_SOURCE
 	const basicMergeData = mData[MESSAGE_SOURCE] || [];
 	const vulnMergeData = mData[MESSAGE_SOURCE_V] || [];
-	
-	// combine arrs into 1 merge data arr
-	const allMergeData = basicMergeData.concat(vulnMergeData);
 
 	// if both arrs are empty, skip lower logic, move to next page
-	if (allMergeData.length == 0) {
+	if (basicMergeData.length + vulnMergeData.length == 0) {
 		Utils_SendRedirectCode(port, 'Addresses/Addresses');
 		return;
 	}
 
-	// 3) loop through all data, adding each field to the page
-	allMergeData.forEach(fieldObj => {
+	// 3.1) loop through basic merge data, adding each field to the page
+	basicMergeData.forEach(fieldObj => {
 		// each obj in CBI page should only contain 1 field, so take
 		// -> first element in the Object.entries array
 		const [fieldKey, fieldValue] = Object.entries(fieldObj)[0];
@@ -206,7 +203,7 @@ const startMerge = (clientNum, mData) => {
 		const elem = Utils_QueryDoc(fieldSelector);
 		// TODO: stop import if elem is null
 		if (!elem) {
-			let err = 'ERR: Elem not found with selector: ' + selector;
+			let err = 'ERR: Elem not found with selector: ' + fieldSelector;
 			Utils_Error(MESSAGE_SOURCE, err);
 			allPass = false;
 			return '';
@@ -228,7 +225,7 @@ const startMerge = (clientNum, mData) => {
 					const err = 'ERR: Checkbox value is invalid! ' +
 						'not sure what to do! Value: ' + fieldValue +
 						', selector: ' + fieldSelector;
-					Utils_Error(err);
+					Utils_Error(MESSAGE_SOURCE, err);
 					allPass = false;
 				}
 				break;
@@ -263,6 +260,57 @@ const startMerge = (clientNum, mData) => {
 				allPass = false;
 		}
 	});
+
+	debugger;
+	// get all vulnerability labels - to search through later
+	const vulnLabelsSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_LABELS];
+	const vulnLabelElems = Utils_QueryDocA(vulnLabelsSelector);
+
+	// 3.2) loop through vuln merge data, checking / unchecking all boxes
+	vulnMergeData.forEach(vulnObj => {
+		// each obj only has 1 field, so take first elem
+		const [vulnKey, vulnValue] = Object.entries(vulnObj)[0];
+
+		// by default, say we haven't found the vuln yet
+		let found = false;
+		
+		// search all vuln label elems for this vuln!
+		vulnLabelElems.forEach(labelElem => {
+			// quit early if possible
+			if (found) return;
+
+			// get actual inner text (vuln name) of this label
+			const thisLabelText = labelElem.innerText;
+			
+			// if they match, get input elem, then check / uncheck it!
+			if (thisLabelText === vulnKey) {
+				found = true;
+
+				// get vuln's input / checkbox element
+				let vulnInputElem = labelElem.previousElementSibling;
+				
+				// check / uncheck the vuln!
+				if (vulnValue === 'checked') {
+					vulnInputElem.checked = true;
+				} else if (vulnValue === 'not checked') {
+					vulnInputElem.checked = false;
+				} else {
+					const err = 'ERR: Checkbox value is invalid! ' +
+						'not sure what to do! Value: ' + vulnValue;
+					Utils_Error(MESSAGE_SOURCE_V, err);
+					allPass = false;
+				}
+			}
+		})
+	});
+
+	// throw error and don't continue if some error happened before!
+	if (!allPass) {
+		const warn = 'WARN: Somehow we didn\'t pass our previous ' +
+			'goals! Check other err messages!';
+		Utils_Warn(MESSAGE_SOURCE_V, warn);
+		return;
+	}
 
 	// click save, after making sure the input button exists!
 	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
