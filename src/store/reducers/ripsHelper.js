@@ -26,7 +26,10 @@ if (process.env.NODE_ENV === 'development') {
             'Date of Birth': ["The Man", "Schmoe", "Sacket"],
             'Check1?': [false, true, true],
             'Check2?': [true, false, false],
-            'Empty1': ["", "", ""],
+            'Check3?': [true, true, true],      // should hide
+            'Check4?': [false, false, false],   // should hide
+            'Check5?': [true, false, true],
+            'Empty1': ["", "", ""],     // should hide
             'Middle': ["", 'Here!', ""],
             'First': ["Here!", "", ""],
             'End': ["", "", "Here!"],
@@ -36,7 +39,7 @@ if (process.env.NODE_ENV === 'development') {
             'Someone has a Child': [false, true, false],
             'Addiction (Frisbee)': [true, false, true],
             'Too old': [true, true, false],
-            'At risk of stuff': [false, false, false],
+            'At risk of stuff': [false, false, false], // should hide
         },
         [R_KEYS.CONTACTS]: {
             CONTACTS: [
