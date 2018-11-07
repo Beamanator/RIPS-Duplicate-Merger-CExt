@@ -15,7 +15,8 @@ const {
     DATE_OF_ARRIVAL_IN_EGYPT, DATE_OF_UNHCR_REGISTRATION, RSD_DATE,
     LAST_RSD_UPDATE, FAMILY_SIZE, UNHCR_CASE_SIZE,
     DIRECT_BENEFICIARIES, INDIRECT_BENEFICIARIES,
-    // Note: client vulnerabilities handled in client vuln ctrl
+    // client vulnerabilities to be handled separate
+    VULNERABILITY_NOTES, VULNERABILITY_TYPES,
 } = RIPS_FIELD_KEYS;
 
 // loosely based off RIPS Auto Import CExt
@@ -95,7 +96,8 @@ const FIELD_IDS_CLIENT_BASIC_INFORMATION = {
     [LAST_RSD_UPDATE]:		'#LPRIORITY',
 
     // ===================== VULNERABILITIES: ======================
-    // elems in ClientVulnerabilities/FIDs.js
+    [VULNERABILITY_TYPES]: 'input[id^="PostedVulDicts"]', // checkboxes
+    [VULNERABILITY_NOTES]: '#DescNotes', // textbox
 
     // ======================== DEPENDENTS: ========================
     // ------ TEXTBOXES: ------

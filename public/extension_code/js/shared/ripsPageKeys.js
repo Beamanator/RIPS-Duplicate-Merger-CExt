@@ -2,7 +2,7 @@
 const RIPS_PAGE_KEYS = {
     // pages with client data
     CLIENT_BASIC_INFORMATION: 'CtrlClientBasicInformation',
-    CLIENT_VULNERABILITIES: 'CtrlVulnerabilities', // extension of CBI page
+    CLIENT_VULNERABILITIES: 'CtrlVulnerabilities', // vulns only on cbi
     ADDRESSES:   'CtrlAddresses',
     NOTES:       'CtrlNotes',
     RELATIVES:   'CtrlRelatives',

@@ -6,6 +6,8 @@
 //                           CONSTANTS
 // ===============================================================
 const MESSAGE_SOURCE = RIPS_PAGE_KEYS.CLIENT_BASIC_INFORMATION;
+// message_source_v only used to send vulns to bkg.js in new table
+const MESSAGE_SOURCE_V = RIPS_PAGE_KEYS.CLIENT_VULNERABILITIES;
 
 // ===============================================================
 //                          PORT CONNECT
@@ -34,6 +36,56 @@ const checkViewingCorrectClient = (clientNum) => {
 	}
 }
 
+const importVulnData = () => {
+	let pass = true;
+	let vulnData = {};
+
+	// get selector & all checkbox elements
+	const vulnCheckboxesSelector = FIELD_IDS_CLIENT_VULNERABILITIES[VULNERABILITY_TYPES];
+	const vulnCheckboxElems = Utils_QueryDocA(vulnCheckboxesSelector);
+	
+	// loop through all checkbox elems, getting labels & checked statuses
+	vulnCheckboxElems.forEach(inputElem => {
+		let labelElem = inputElem.nextElementSibling;
+
+		// get attributes from input & label elems that should match
+		const inputAttr = inputElem.getAttribute('id');
+		const labelAttr = labelElem.getAttribute('for');
+		// get vuln name from label elem
+		const vulnName = labelElem.innerText;
+		
+		// check the elements' attributes match (input's 'id' and label's 'for')
+		if (inputAttr === labelAttr) {
+			// get true / false if checked or not
+			const vulnChecked = inputElem.checked;
+
+			// add vuln name & checked status to vuln container
+			vulnData[vulnName] = vulnChecked;
+		}
+		// if attributes don't match up, throw error!
+		else {
+			pass = false;
+			const err = `input<${inputAttr}> and label<${labelAttr}> ` +
+				`don't match on vuln<${vulnName}> :(`;
+			Utils_Warn(MESSAGE_SOURCE_V, err);
+		}
+	});
+
+	// if pass was successful, 
+	if (pass) {
+		// update var so cbi ctrl can move on
+		vulns_analyzed = true;
+		// send vulnData to bkg?
+		Utils_SendDataToBkg(port2, MESSAGE_SOURCE2, vulnData);
+	}
+	// otherwise, set another error, saying to look at previous
+	// -> mismatching vuln checkboxes / labels
+	else {
+		const err = 'Vulnerability import unsuccessful! Check above for errors';
+		Utils_Error(MESSAGE_SOURCE2, err);
+	}
+}
+
 const startImport = (clientNum) => {
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
@@ -49,7 +101,8 @@ const startImport = (clientNum) => {
 	// convert FID container into array
 	let allPass = true;
 	const fieldsToSkip = [
-		STARS_NUMBER, SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON
+		STARS_NUMBER, SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON,
+		VULNERABILITY_TYPES, VULNERABILITY_NOTES
 	];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
@@ -100,43 +153,27 @@ const startImport = (clientNum) => {
 			return container;
 		}, {});
 
-	let vulns_analyzed = false;
-	// wait for vuln analysis flag to be true
-	Utils_WaitForCondition(
-		// condition returns true only if passed-in var is true
-		// -> (after vulns have been analyzed)
-		({ flag }) => flag, {
-			flag: vulns_analyzed
-		}, 500, 4
-	)
-	.then(() => {
-		// if everything passes successfully, move on :)
-		// NOTE: vuln data is saved at the same time as
-		// -> vulns_analyzed is set to true, so if we got here,
-		// -> vulns should already be saved in bkg.js!
-		if (allPass) {
-			// 3) data gathered, now send it back to background.js to store
-			Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
-		
-			// 4) redirect to next page
-			Utils_SendRedirectCode(port, 'Addresses/Addresses');
-			// Note: no need to handle "no vuln / dependent data" popup
-			// -> warning since redirect skips that check
-		}
-		// else, throw error and stop import here :(
-		else {
-			let newMsg = 'Import failed - check other errors!';
-			Utils_Error(MESSAGE_SOURCE, newMsg);
-		}
-	})
-	.catch(errMsg => {
-		// TODO: stop import w/ error message!
-		// if vulns weren't checked, something went wrong... ugh
-		const err = 'ERR: Vuln flag wasn\'t true, meaning we ' +
-			'don\'t know if they were imported correctly or not.';
-		Utils_Error(MESSAGE_SOURCE, err);
-        Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
-	});
+	debugger;
+	// get client's vuln data too :)
+	let [vulnData, vulnPass] = importVulnData();
+	if (!vulnPass) allPass = false;
+
+	// if everything passes successfully, move on :)
+	if (allPass) {
+		// 3) data gathered, now send it back to background.js to store
+		Utils_SendDataToBkg(port, MESSAGE_SOURCE, data);
+		Utils_SendDataToBkg(port, MESSAGE_SOURCE_V, vulnData);
+	
+		// 4) redirect to next page
+		Utils_SendRedirectCode(port, 'Addresses/Addresses');
+		// Note: no need to handle "no vuln / dependent data" popup
+		// -> warning since redirect skips that check
+	}
+	// else, throw error and stop import here :(
+	else {
+		let newMsg = 'Import failed - check other errors!';
+		Utils_Error(MESSAGE_SOURCE, newMsg);
+	}
 }
 
 const startMerge = (clientNum, mData) => {

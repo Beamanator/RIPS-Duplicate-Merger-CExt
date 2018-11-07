@@ -65,9 +65,7 @@
 			"matches": [ "http://rips.247lib.com/Stars/ClientDetails/ClientDetails" ],
 			"js": [
                 "extension_code/js/content_scripts/ClientBasicInformation/Ctrl.js",
-                "extension_code/js/content_scripts/ClientBasicInformation/FIDs.js",
-                "extension_code/js/content_scripts/ClientVulnerabilities/Ctrl.js",
-                "extension_code/js/content_scripts/ClientVulnerabilities/FIDs.js"
+                "extension_code/js/content_scripts/ClientBasicInformation/FIDs.js"
             ]
         },
         {   // Addresses page
