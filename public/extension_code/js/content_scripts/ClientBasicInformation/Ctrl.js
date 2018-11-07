@@ -182,23 +182,28 @@ const startMerge = (clientNum, mData) => {
 		return;
 	}
 
-	// 2.2) no issues! get page's data using MESSAGE_SOURCE
-	const pageMergeData = mData[MESSAGE_SOURCE];
+	// 2.2) no issues! get page's basic data using MESSAGE_SOURCE
+	const basicMergeData = mData[MESSAGE_SOURCE] || [];
+	const vulnMergeData = mData[MESSAGE_SOURCE_V] || [];
+	
+	// combine arrs into 1 merge data arr
+	const allMergeData = basicMergeData.concat(vulnMergeData);
 
-	if (pageMergeData.length == 0) {
+	// if both arrs are empty, skip lower logic, move to next page
+	if (allMergeData.length == 0) {
 		Utils_SendRedirectCode(port, 'Addresses/Addresses');
 		return;
 	}
 
-	// 3) loop through data, adding each field to the page
-	pageMergeData.forEach(fieldObj => {
+	// 3) loop through all data, adding each field to the page
+	allMergeData.forEach(fieldObj => {
 		// each obj in CBI page should only contain 1 field, so take
 		// -> first element in the Object.entries array
 		const [fieldKey, fieldValue] = Object.entries(fieldObj)[0];
 		// get selector from field_ids container
 		const fieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[fieldKey];
 		// get element
-		const elem = document.querySelector(fieldSelector);
+		const elem = Utils_QueryDoc(fieldSelector);
 		// TODO: stop import if elem is null
 		if (!elem) {
 			let err = 'ERR: Elem not found with selector: ' + selector;
@@ -258,8 +263,6 @@ const startMerge = (clientNum, mData) => {
 				allPass = false;
 		}
 	});
-
-	// TODO: tell ClientVuln controller to input vulns!
 
 	// click save, after making sure the input button exists!
 	const saveSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[SAVE_BUTTON_CBI];
