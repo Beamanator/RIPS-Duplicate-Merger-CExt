@@ -6,7 +6,7 @@ let initialData = {};
 
 // only change to sample data IFF we're in development mode
 if (process.env.NODE_ENV === 'development') {
-    initialData = {
+    let rawData = {
         [R_KEYS.ADDRESSES]: {
             ADDRESSES: [
                 [
@@ -102,7 +102,7 @@ if (process.env.NODE_ENV === 'development') {
         [R_KEYS.NOTES]: {
             Notes: [
                 'oofda this is a long ish note. just seeing what happens when we go big',
-                'note with \ttabs and\nnewlines ;)',
+                ' note with \ttabs and\nnewlines ;)',
                 ''
             ]
         },
@@ -122,7 +122,7 @@ if (process.env.NODE_ENV === 'development') {
     let formattedData = {};
     tableConfigs.forEach(({ key: tableKey, type }) => {
         formattedData[tableKey] = 
-            formatRawData(initialData[tableKey], tableKey, type);
+            formatRawData(rawData[tableKey], tableKey, type);
     })
     initialData = formattedData;
 }
