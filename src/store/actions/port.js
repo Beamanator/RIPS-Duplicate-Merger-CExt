@@ -66,7 +66,6 @@ export const backgroundPortInit = (chrome) => {
                     // tell import we're done and are successful
                     console.warn('done - data:', msg.data);
                     dispatch(actions.ripsFetchSuccess(msg.data));
-                    // TODO: something with the data now!
                     break;
 
                 // invalid msg code recognized in background.js
