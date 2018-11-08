@@ -109,19 +109,33 @@ export const formatRawData = (rawData, key, type="basic") => {
                 return [dataKey, ...data]
             }
         })
-        // filter -> hide row if all values are "blank"
-        .filter(data => {
+        // filter -> hide data field if specific conditions are met
+        .filter(dataField => {
             // make array holding 'blank' values (0 and false are not blank
             // -> since they are valid numbers / boolean values)
             const blankTypes = [undefined, null, ''];
             
+            // filter condition - returns true iff ALL params are
+            // -> undefined, null, or blank strings
+            const condition_allBlank = (a, b, c) =>
+                blankTypes.includes(a) &&
+                blankTypes.includes(b) &&
+                blankTypes.includes(c);
+
+            // filter condition - returns true iff ALL params are
+            // -> same (or just a, b if c is blank - not empty string)
+            const condition_allSame = (a, b, c) =>
+                (c === undefined || c === null)
+                    ? a === b
+                    : a === b && b === c;
+
             // first elem is fieldName (ex: 'FIRST_NAME'). If next 3 
             // -> fields are empty, don't display that data
-            return !(
-                blankTypes.includes(data[1]) &&
-                blankTypes.includes(data[2]) &&
-                blankTypes.includes(data[3])
-            );
+            return !condition_allBlank(
+                    dataField[1], dataField[2], dataField[3]
+                ) && !condition_allSame(
+                    dataField[1], dataField[2], dataField[3]
+                );
         });
     }
     // handle arrays of arrays
