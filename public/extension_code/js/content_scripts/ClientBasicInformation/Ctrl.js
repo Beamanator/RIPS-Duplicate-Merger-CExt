@@ -36,6 +36,7 @@ const checkViewingCorrectClient = (clientNum) => {
 	}
 }
 
+// Note: not importing vuln notes here
 const importVulnData = () => {
 	let pass = true;
 	let vulnData = {};
@@ -71,12 +72,8 @@ const importVulnData = () => {
 		}
 	});
 
-	// get vulnerability notes
-	const vulnNotesSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_NOTES];
-	const vulnNotesElem = Utils_QueryDoc(vulnNotesSelector);
-
-	// add vuln notes to vuln data obj
-	vulnData[VULNERABILITY_NOTES] = vulnNotesElem.value.trim();
+	// Note: vuln notes are added to other table to make this
+	// -> only vuln checkboxes
 
 	// return vulnerability data & import success flag (pass)
 	return [vulnData, pass];
@@ -98,7 +95,7 @@ const startImport = (clientNum) => {
 	let allPass = true;
 	const fieldsToSkip = [
 		STARS_NUMBER, SAVE_BUTTON_CBI, ARCHIVE_CLIENT_BUTTON,
-		VULNERABILITY_CHECKS, VULNERABILITY_NOTES, VULNERABILITY_LABELS
+		VULNERABILITY_CHECKS, VULNERABILITY_LABELS
 	];
 	const data = Object.entries(FIELD_IDS_CLIENT_BASIC_INFORMATION)
 		// convert field selectors to their field values
@@ -118,8 +115,6 @@ const startImport = (clientNum) => {
 				return '';
 			}
 			let val = '';
-
-			// TODO: make sure vuln data is imported (somewhere)
 
 			// handle html types differently
 			switch(elem.type) {
@@ -264,7 +259,6 @@ const startMerge = (clientNum, mData) => {
 		}
 	});
 
-	debugger;
 	// get all vulnerability labels - to search through later
 	const vulnLabelsSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[VULNERABILITY_LABELS];
 	const vulnLabelElems = Utils_QueryDocA(vulnLabelsSelector);
