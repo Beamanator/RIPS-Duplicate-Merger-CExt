@@ -428,7 +428,7 @@ class App extends Component {
         
         const { classes, ripsData } = this.props;
         const {
-            client3, client3Valid,
+            client1, client2, client3, client3Valid,
             mergeInProgress
         } = this.state;
 
@@ -437,15 +437,16 @@ class App extends Component {
             return (
                 <Grid item xs={12} className={classes.textCenter} key={title}>
                     <CustomTable
-                        title={title}
-                        tableKey={key}
+                        cellSelectHandler={this.handleCellSelected}
+                        clientNums={[client1, client2, client3]}
                         data={ripsData[key]}
                         errorHandler={this.handleError}
-                        cellSelectHandler={this.handleCellSelected}
-                        type={type}
                         locked={mergeInProgress}
                         multiSelect={multiSelect}
                         numCols={client3 && client3Valid ? 3 : 2}
+                        tableKey={key}
+                        title={title}
+                        type={type}
                     />
                 </Grid>
             );

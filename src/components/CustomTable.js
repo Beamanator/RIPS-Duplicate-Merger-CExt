@@ -66,7 +66,7 @@ class CustomTable extends Component {
     onCellSelect = (row, col) => (event) => {
         const {
             cellSelectHandler,
-            tableKey
+            tableKey, multiSelect,
         } = this.props;
 
         const {
@@ -79,7 +79,7 @@ class CustomTable extends Component {
         let selected = [...selectedRows];
 
         // change logic depending on multiSelect
-        if (this.props.multiSelect) {
+        if (multiSelect) {
             // get selected row's client index
             const selectedClientIndex = data[row][4];
             // loop through data, looking for same client index
@@ -207,7 +207,7 @@ class CustomTable extends Component {
     
     render() {
         const {
-            classes,
+            classes, clientNums,
             errorHandler,
             title,
             numCols,
@@ -235,10 +235,10 @@ class CustomTable extends Component {
                     <TableHead>
                         <TableRow>
                             <CustomTableCell>Field Names</CustomTableCell>
-                            <CustomTableCell>Client #1</CustomTableCell>
-                            <CustomTableCell>Client #2</CustomTableCell>
+                            <CustomTableCell>{`Client #1 (${clientNums[0]})`}</CustomTableCell>
+                            <CustomTableCell>{`Client #2 (${clientNums[1]})`}</CustomTableCell>
                             {numCols === 2 ? null : 
-                                <CustomTableCell>Client #3</CustomTableCell>
+                                <CustomTableCell>{`Client #3 (${clientNums[2]})`}</CustomTableCell>
                             }
                         </TableRow>
                     </TableHead>
