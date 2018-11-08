@@ -256,17 +256,17 @@ class CustomTable extends Component {
                                     // conditionally render column #4
                                     if (i > numCols) return null;
 
-                                    let props = { key: `${row}-${col}` };
+                                    let cellProps = { key: `${row}-${col}` };
                                     
                                     // make cell interactive if it has data
                                     if (n[i] && n[i].length > 0) {
-                                        props = {
-                                            ...props,
+                                        cellProps = {
+                                            ...cellProps,
                                             ...this.getInteractiveTableCellProps(row, col)
                                         }
                                     }
 
-                                    return <CustomTableCell {...props} >
+                                    return <CustomTableCell {...cellProps} >
                                         {n[i]}
                                     </CustomTableCell>
                                 })}
