@@ -63,7 +63,7 @@ class CustomTable extends Component {
         cellSelectHandler(tableKey, allRowsSelected, selectedRows);
     }
 
-    onCellSelect = (row, col) => (event) => {
+    onCellSelect = (rowi, coli) => (event) => {
         const {
             cellSelectHandler,
             tableKey, multiSelect,
@@ -81,7 +81,7 @@ class CustomTable extends Component {
         // change logic depending on multiSelect
         if (multiSelect) {
             // get selected row's client index
-            const selectedClientIndex = data[row][4];
+            const selectedClientIndex = data[rowi][4];
             // loop through data, looking for same client index
             data.forEach((dataRow, dataRowIndex) => {
                 const clientIndex = dataRow[4];
@@ -89,13 +89,13 @@ class CustomTable extends Component {
                 // indices match, set or unset value for client cells
                 if (clientIndex === selectedClientIndex) {
                     // if not selected, select!
-                    if (!selected[dataRowIndex][col]) {
-                        selected[dataRowIndex][col] = true;
+                    if (!selected[dataRowIndex][coli]) {
+                        selected[dataRowIndex][coli] = true;
                         // check other cells selected in bottom 'else'
                     }
                     else {
                         // else, de-select
-                        selected[dataRowIndex][col] = null;
+                        selected[dataRowIndex][coli] = null;
                         // check if ALL are de-selected
                         if (!selected[dataRowIndex].includes(true))
                             isAllSelected = false;
@@ -111,8 +111,8 @@ class CustomTable extends Component {
         // handle select / delect for single-select table
         else {
             // if not selected, select!
-            if (selected[row] !== col) {
-                selected[row] = col;
+            if (selected[rowi] !== coli) {
+                selected[rowi] = coli;
                 // check if all other cells are selected too!
                 selected.forEach((data, i) => {
                     if (data === null) isAllSelected = false;
@@ -120,7 +120,7 @@ class CustomTable extends Component {
             }
             // else, de-select
             else {
-                selected[row] = null;
+                selected[rowi] = null;
                 isAllSelected = false;
             }
         }
@@ -130,7 +130,7 @@ class CustomTable extends Component {
         this.setState({ selectedRows: selected })
     }
 
-    isSelected = (row, col) => {
+    isSelected = (rowi, coli) => {
         const {
             multiSelect,
             classes: { cellIsSelected },
@@ -142,19 +142,19 @@ class CustomTable extends Component {
 
         // multi-select logic
         if (multiSelect) {
-            return selectedRows[row][col] === true
+            return selectedRows[rowi][coli] === true
                 ? cellIsSelected
                 : null
         }
         // single-select logic
         else {
-            return selectedRows[row] === col
+            return selectedRows[rowi] === coli
                 ? cellIsSelected
                 : null
         }
     }
 
-    isRowSelected = (row) => {
+    isRowSelected = (rowi) => {
         const { selectedRows } = this.state;
         const {
             multiSelect, locked,
@@ -168,9 +168,9 @@ class CustomTable extends Component {
         // multi-select logic
         if (multiSelect) {
             return (
-                selectedRows[row][0] === true ||
-                selectedRows[row][1] === true ||
-                selectedRows[row][2] === true
+                selectedRows[rowi][0] === true ||
+                selectedRows[rowi][1] === true ||
+                selectedRows[rowi][2] === true
             ) ? rowIsSelected
             : locked
                 ? rowNotSelectedAndLocked
@@ -178,7 +178,7 @@ class CustomTable extends Component {
         }
         // single-select logic
         else {
-            return selectedRows[row] !== null
+            return selectedRows[rowi] !== null
                 ? rowIsSelected
                 : locked
                     ? rowNotSelectedAndLocked
@@ -188,15 +188,15 @@ class CustomTable extends Component {
 
     // set up click listener & className(s) for custom table cell with
     // -> populated text!
-    getInteractiveTableCellProps = (row, col) => {
+    getInteractiveTableCellProps = (rowi, coli) => {
         const { classes, locked } = this.props;
 
         // set up onClick function
         let clickFn = () => console.log('clicked! but locked');
-        if (!locked) clickFn = this.onCellSelect(row, col);
+        if (!locked) clickFn = this.onCellSelect(rowi, coli);
 
         // set up classes
-        const cellClasses = [this.isSelected(row, col)];
+        const cellClasses = [this.isSelected(rowi, coli)];
         if (!locked) cellClasses.push(classes.cellHover);
 
         return {
@@ -243,31 +243,34 @@ class CustomTable extends Component {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.map((n, row) =>
-                            <TableRow className={classes.row} key={row}>
+                        {data.map((rowData, rowi) =>
+                            <TableRow className={classes.row} key={rowi}>
                                 <CustomTableCell
                                     component="th"
                                     scope="row"
-                                    className={this.isRowSelected(row)}
+                                    className={this.isRowSelected(rowi)}
                                 >
-                                    {n[0]}
+                                    {rowData[0]}
                                 </CustomTableCell>
-                                {[1,2,3].map((i, col) => {
+                                {[1,2,3].map((colNum, coli) => {
                                     // conditionally render column #4
-                                    if (i > numCols) return null;
+                                    if (colNum > numCols) return null;
 
-                                    let cellProps = { key: `${row}-${col}` };
+                                    let cellProps = { key: `${rowi}-${coli}` };
                                     
-                                    // make cell interactive if it has data
-                                    if (n[i] && n[i].length > 0) {
+                                    // make cell interactive if it has data (check if
+                                    // -> data exists using .length b/c all data
+                                    // -> come as strings, even checkboxes are 
+                                    // -> 'checked' or 'not checked', so .length works)
+                                    if (rowData[colNum] && rowData[colNum].length > 0) {
                                         cellProps = {
                                             ...cellProps,
-                                            ...this.getInteractiveTableCellProps(row, col)
+                                            ...this.getInteractiveTableCellProps(rowi, coli)
                                         }
                                     }
 
                                     return <CustomTableCell {...cellProps} >
-                                        {n[i]}
+                                        {rowData[colNum]}
                                     </CustomTableCell>
                                 })}
                             </TableRow>
