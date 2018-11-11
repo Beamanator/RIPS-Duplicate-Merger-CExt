@@ -129,29 +129,159 @@ export const formatRawData = (rawData, key, type="basic") => {
                     ? a === b
                     : a === b && b === c;
 
-            // first elem is fieldName (ex: 'FIRST_NAME'). If next 3 
-            // -> fields are empty, don't display that data
+            // filter based on applied conditions
             return !condition_allBlank(
-                    dataField[1], dataField[2], dataField[3]
-                ) && !condition_allSame(
-                    dataField[1], dataField[2], dataField[3]
-                );
+                dataField[1], dataField[2], dataField[3]
+            ) && !condition_allSame(
+                dataField[1], dataField[2], dataField[3]
+            );
         });
     }
     // handle arrays of arrays
     else if (type === 'lists') {
-        let runningTotal = 0;
+        let runningTotal = 0, numClients = null;
+
         return Object.entries(
             // get array of Obj's props in raw data
+            // -> (CONTACTS, FILES, action1, action2, etc...)
             Object.entries(rawData)
-            // don't worry about keys, process inner arrays
+            // don't worry about keys (page names / categories),
+            // -> just process inner data container objects
+            // -> (outer obj keys - Notes, action1, action2, etc...)
             .reduce((output, [_, data_container], container_index) => {
-                // for each data container array...
+                // calculate # of clients by size of data_container
+                if (!numClients) numClients = data_container.length;
+                // if inconsistent number of clients found, throw err
+                else if (numClients !== data_container.length) {
+                    let errMsg = `Somehow found one container with size: ${numClients}, ` +
+                        `and one with size: ${data_container.length} - which is right?`;
+                    console.error(errMsg);
+                    console.error(data_container);
+                    return {};
+                }
+
+                // create array that holds all indices of matching client data
+                let matchIndexHolder = [[], [], []];
+
+                // this should not be possible... throw error
+                if (numClients < 2 || numClients > 3) {
+                    let errMsg = 'Whaat? Somehow we got an invalid # of clients: ' + numClients;
+                    console.error(errMsg);
+                    return {};
+                }
+                // if arrays for client 1 or 2 are undefined, no all-client matches
+                // -> are possible, so skip checks! move on to adding unique vals
+                // -> (also numClients have to be valid - 2 or 3)
+                else if (
+                    data_container[0] === undefined ||
+                    data_container[1] === undefined ||
+                    (
+                        data_container[2] === undefined &&
+                        numClients === 3
+                    )
+                ) {}
+                // check if there's matching data b/w clients 1, 2, and 3
+                else {
+                    // loop through client 1's data, searching for
+                    // -> exact matches in other clients' data
+                    data_container[0].forEach((c1obj, c1i) => {
+                        let c1index = c1i;
+                        let match2 = false, c2index;
+                        let match3 = false, c3index;
+
+                        // search for matches in client 2
+                        data_container[1].forEach((c2obj, c2i) => {
+                            if (match2) return; // quit early if prev match2 found
+
+                            // assume all props match by default
+                            let allPropsMatch = true;
+
+                            // loop through all props of c2obj, trying to match
+                            // -> to props in c1obj
+                            for (let c2prop in c2obj) {
+                                // if values don't match, fail
+                                if (c2obj[c2prop] !== c1obj[c2prop]) {
+                                    allPropsMatch = false;
+                                    break;
+                                }
+                            }
+
+                            // if all props match, set 'match2' and client 2 index
+                            if (allPropsMatch) {
+                                match2 = true;
+                                c2index = c2i;
+                            }
+                        });
+
+                        // search for matches in client 3 (if numClients === 3)
+                        if (numClients === 3) {
+                            data_container[2].forEach((c3obj, c3i) => {
+                                if (match3) return; // quit early if prev match3 found
+    
+                                // assume all props match by default
+                                let allPropsMatch = true;
+    
+                                // loop through all props of c3obj, trying to match
+                                // -> to props in c1obj
+                                for (let c3prop in c3obj) {
+                                    // if values don't match, fail
+                                    if (c3obj[c3prop] !== c1obj[c3prop]) {
+                                        allPropsMatch = false;
+                                        break;
+                                    }
+                                }
+
+                                // if all props match, set 'match3' and client3 index
+                                if (allPropsMatch) {
+                                    match3 = true;
+                                    c3index = c3i;
+                                }
+                            });
+                        }
+
+                        // if 2 clients & match found...
+                        if (numClients === 2 && match2) {
+                            // add matching c1 and c2 indices to match index holder
+                            matchIndexHolder[0].push(c1index);
+                            matchIndexHolder[1].push(c2index);
+                        }
+                        // if 3 clients & ALL matches found...
+                        else if (numClients === 3 && match2 && match3) {
+                            matchIndexHolder[0].push(c1index);
+                            matchIndexHolder[1].push(c2index);
+                            matchIndexHolder[2].push(c3index);
+                        }
+                        // else, do nothing (look at next client 1 object)
+                    });
+                }
+
+                // loop through 'matchIndexHolder', removing all elems
+                // -> with specified indices (unless no elems in 1st array)
+                if (matchIndexHolder[0].length > 0) {
+                    // loop through matching index arrays
+                    matchIndexHolder.forEach((indexMatchArr, clientIndex) => {
+                        // first, sort the array in reverse order (max -> min)
+                        // -> so we splice higher indexes out of data_container
+                        // -> first, not interrupting / disordering the smaller indices
+                        indexMatchArr.sort((a, b) => b - a);
+                        
+                        // loop through values (field indices) of each array
+                        indexMatchArr.forEach(fieldIndex => {
+                            // splice (remove) the duplicate field from the
+                            // -> correct client's array!
+                            data_container[clientIndex].splice(fieldIndex, 1);
+                        });
+                    });
+                }
+
+                // for each client array within the data arrays...
+                // -> (client 1 data, client 2 data, etc...)
                 data_container.forEach((client_data_array, client_index) => {
                     // quit if data array doesn't exist (this happens often in
                     // -> history arrays
                     if (!client_data_array) return;
-                    // for client's data array...
+                    
+                    // loop through all data in client's data array...
                     client_data_array.forEach((client_data, data_index) => {
                         // convert each object's props to array
                         Object.entries(client_data)
@@ -191,17 +321,25 @@ export const formatRawData = (rawData, key, type="basic") => {
         // change objs to correct format arr format
         .map(e => [e[0], ...e[1]])
         // filter -> hide row if all values are "blank"
-        .filter(data => {
+        .filter(dataField => {
             // make array holding 'blank' values (0 and false are not blank
             // -> since they are valid numbers / boolean values)
             const blankTypes = [undefined, null, ''];
+
+            // filter condition - returns true iff ALL params are
+            // -> undefined, null, or blank strings
+            const condition_allBlank = (a, b, c) =>
+                blankTypes.includes(a) &&
+                blankTypes.includes(b) &&
+                blankTypes.includes(c);
+
+            // Note: can't filter fields by 'all fields the same'
+            // -> like in the basic tables b/c matching / duplicate
+            // -> fields can show up in different rows :(
             
-            // first elem is fieldName (ex: 'FIRST_NAME'). If next 3 
-            // -> fields are empty, don't display that data
-            return !(
-                blankTypes.includes(data[1]) &&
-                blankTypes.includes(data[2]) &&
-                blankTypes.includes(data[3])
+            // filter based on applied conditions
+            return !condition_allBlank(
+                dataField[1], dataField[2], dataField[3]
             );
         });
 

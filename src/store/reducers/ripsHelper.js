@@ -11,13 +11,17 @@ if (process.env.NODE_ENV === 'development') {
             ADDRESSES: [
                 [
                     {'first line': '', 'phone number': ''},
+                    {'first line': 'should hide', 'phone number': '999'}, // should hide
+                    {'first line': 'street?', 'phone number': '456'},
                     {'first line': 'NOT empty', 'phone number': '1234'}
                 ],
                 [
-                    {'first line': 'NOT empty', 'phone number': '1234'}
+                    {'first line': 'NOT empty', 'phone number': '1234'},
+                    {'first line': 'should hide', 'phone number': '999'} // should hide
                 ],
                 [
-                    {'first line': '', 'phone number': ''},
+                    {'first line': 'should hide', 'phone number': '999'}, // should hide
+                    {'first line': '', 'phone number': ''}
                 ]
             ]
         },
@@ -92,11 +96,25 @@ if (process.env.NODE_ENV === 'development') {
                     {date: 'ut oh', name: 'action3'}
                 ],
                 [
-                    {date: '3-3-1', name: 'action3'},
-                    {date: '3-3-2', name: 'action3'},
-                    {date: '3-3-3', name: 'action3'}
+                    {date: '2-3-1', name: 'action3'},
+                    {date: '2-3-2', name: 'action3'},
+                    {date: '2-3-3', name: 'action3'}
                 ],
                 undefined
+            ],
+            hide1: [
+                [
+                    {date: 'hid-1', name: 'show'},
+                    {date: 'hid-2', name: 'hide'}, // should hide
+                    {date: 'hid-4', name: 'show 1'}
+                ],
+                [
+                    {date: 'hid-2', name: 'hide'} // should hide
+                ],
+                [
+                    {date: 'hid-3', name: 'show 2'},
+                    {date: 'hid-2', name: 'hide'} // should hide
+                ]
             ]
         },
         [R_KEYS.NOTES]: {
@@ -109,11 +127,16 @@ if (process.env.NODE_ENV === 'development') {
         [R_KEYS.RELATIVES]: {
             RELATIVES: [
                 [
+                    {name: 'isaiah', relation: 'nephew'}, // should hide
                     {name: 'bill', relation: 'bro'},
                     {name: 'jane', relation: 'mom'}
                 ],
-                [],
-                []
+                [
+                    {name: 'isaiah', relation: 'nephew'}, // should hide
+                ],
+                [
+                    {name: 'isaiah', relation: 'nephew'}, // should hide
+                ]
             ]
         }
     }
