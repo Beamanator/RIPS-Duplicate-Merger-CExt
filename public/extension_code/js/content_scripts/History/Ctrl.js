@@ -59,7 +59,7 @@ const getPageDataContainer = () => {
     const historyData = {};
     const tableBodyRowsSelector =
         FIELD_IDS_HISTORY[ACTION_TABLE_BODY_ROWS];
-    document.querySelectorAll(tableBodyRowsSelector)
+    Utils_QueryDocA(tableBodyRowsSelector)
     .forEach(row => {
         // make new objects for each row
         const historyRowData = {};
@@ -74,14 +74,15 @@ const getPageDataContainer = () => {
         .forEach((cell, colIndex) => {
             // if there's no column name, skip this cell's data
             if (columnNames[colIndex] == '') {}
-            // add cell data to row object
+            // else, we want this row! add cell data to row object
             else {
                 const cellData = cell.innerText.trim();
                 const cellMapName = columnNames[colIndex];
                 // map data to columnNameMap in row data obj
                 historyRowData[cellMapName] = cellData;
 
-                // if cellMapName == ACTION_NAME, store action name
+                // if current cell is ACTION_NAME column,
+                // -> save off action name
                 if (cellMapName === ACTION_NAME) {
                     actionName = cellData;
                 }
