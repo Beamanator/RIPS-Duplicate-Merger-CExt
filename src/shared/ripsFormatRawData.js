@@ -169,14 +169,14 @@ export const formatRawData = (rawData, key, type="basic") => {
                     console.error(errMsg);
                     return {};
                 }
-                // if arrays for client 1 or 2 are undefined, no all-client matches
+                // if arrays for client 1 or 2 are blank (or if there's 3 clients
+                // -> but the 3rd elem is blank), no all-client matches
                 // -> are possible, so skip checks! move on to adding unique vals
-                // -> (also numClients have to be valid - 2 or 3)
                 else if (
-                    data_container[0] === undefined ||
-                    data_container[1] === undefined ||
+                    data_container[0] == null ||
+                    data_container[1] == null ||
                     (
-                        data_container[2] === undefined &&
+                        data_container[2] == null &&
                         numClients === 3
                     )
                 ) {}

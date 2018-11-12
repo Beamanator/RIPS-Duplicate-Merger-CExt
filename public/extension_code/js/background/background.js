@@ -57,8 +57,7 @@ const storeClientData = (source, data) => {
         // initialize field array
         if (!CLIENT_DATA_CONTAINER[source][fieldName]) {
             // create blank array of length equal to # of clients
-            let blankArr = (new Array(CLIENT_NUMS.length))
-                .fill(undefined);
+            let blankArr = (new Array(CLIENT_NUMS.length));
             // populate field with blank array
             CLIENT_DATA_CONTAINER[source][fieldName] = blankArr;
         }
