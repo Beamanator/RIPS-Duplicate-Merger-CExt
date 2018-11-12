@@ -51,13 +51,19 @@ const storeClientData = (source, data) => {
     
     // loop through data, adding everything that's non-empty
     // -> to CLIENT_DATA_CONTAINER
+    // -> fieldName are page keys like 'Files', 'Notes', 'action1',
+    // -> 'action2', ... etc
     for (let [fieldName, value] of Object.entries(data)) {
         // initialize field array
-        if (!CLIENT_DATA_CONTAINER[source][fieldName])
-            CLIENT_DATA_CONTAINER[source][fieldName] = [];
+        if (!CLIENT_DATA_CONTAINER[source][fieldName]) {
+            // create blank array of length equal to # of clients
+            let blankArr = (new Array(CLIENT_NUMS.length))
+                .fill(undefined);
+            // populate field with blank array
+            CLIENT_DATA_CONTAINER[source][fieldName] = blankArr;
+        }
         
-        // add field value to container
-        // CLIENT_DATA_CONTAINER[source][fieldName].push(value);
+        // add field value to container at current client index location
         CLIENT_DATA_CONTAINER[source][fieldName]
             [CLIENT_INDEX] = value;
     }
