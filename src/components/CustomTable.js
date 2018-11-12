@@ -221,8 +221,9 @@ class CustomTable extends Component {
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
             let msg =
-                `[${title}] Table Error: Raw data passed to CustomTable is empty. ` +
-                'If this error doesn\'t go away, check implementation of this component for errors.';
+                `[${title}] Table Warning: Raw data passed to CustomTable is empty. ` +
+                'This can happen if no unique values were found, or if an error occurred. ' +
+                'Check if data is all the same, then check implementation of this component for errors.';
             errorHandler(msg, 'warn');
 
             return null;
