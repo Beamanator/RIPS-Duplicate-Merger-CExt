@@ -9,8 +9,7 @@ import {
 
 const CustomDialog = (props) => {
     const {
-        isOpen, handleClose, title,
-        dialogContent, buttonCloseText,
+        isOpen, handleClose, title, buttonCloseText,
         showActionButton, buttonActionText, buttonActionFunction,
     } = props;
 
@@ -25,7 +24,7 @@ const CustomDialog = (props) => {
                 {title}
             </DialogTitle>
             <DialogContent>
-                {dialogContent}
+                {props.children}
             </DialogContent>
             <DialogActions>
                 <Button
