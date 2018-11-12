@@ -3,6 +3,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
+import CustomDialog from './components/CustomDialog';
 import CustomTable from './components/CustomTable';
 
 // material-ui core components
@@ -11,8 +12,7 @@ import {
     Grid,
     Paper,
     TextField,
-    Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle,
+    DialogContentText,
     List, ListItem
 } from '@material-ui/core';
 
@@ -35,10 +35,11 @@ class App extends Component {
         importInProgress: false,
         mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
+
         mergeDialogOpen: false,
         mergeDialogError: false,
-        dialogContent: '',
-        // formattedData: {},
+        mergeDialogContent: '',
+        
         /**
          * <tableKey>_AllSelected,
          * -> Boolean values describing when a table has all rows
@@ -236,7 +237,6 @@ class App extends Component {
             });
         }
 
-
         // create some jsx - if there are some empty tables, display
         // -> them in a list w/ description. else, null!
         const newDialogContent = (
@@ -267,7 +267,7 @@ class App extends Component {
         this.setState({
             mergeDialogOpen: true,
             mergeDialogError,
-            dialogContent: newDialogContent
+            mergeDialogContent: newDialogContent
         });
     }
     handleMergeDialogClose = () => {
@@ -402,6 +402,9 @@ class App extends Component {
         // lock tables, disable merge button
         this.setState({ mergeInProgress: true });
     }
+    handleNotifyDialogClose = () => {        
+        this.props.onNotifyDialogClose();
+    }
 
     handleError = (msg, type='error') => {
         // TODO: display these errors / warnings somewhere?
@@ -466,10 +469,21 @@ class App extends Component {
             client1, client2, client3,
             importInProgress,
             mergeInProgress,
+        
             mergeDialogOpen,
             mergeDialogError,
-            dialogContent
+            mergeDialogContent,
+
         } = this.state;
+
+        const {
+            notifyDialogOpen,
+            notifyDialogTitle,
+            notifyDialogShowActionButton,
+            notifyDialogButtonActionText,
+            notifyDialogButtonCloseText,
+            notifyDialogContent,
+        } = this.props;
 
         return <Fragment>
             <Grid
@@ -615,33 +629,31 @@ class App extends Component {
             </Grid>
 
             {/* "Merge" dialog! */}
-            <Dialog
-                open={mergeDialogOpen}
-                onClose={this.handleMergeDialogClose}
-                aria-labelledby="merge-dialog-title"
-                aria-describedby="merge-dialog-description"
+            <CustomDialog
+                isOpen={mergeDialogOpen}
+                handleClose={this.handleMergeDialogClose}
+                title={"are you sure you're ready to merge?"}
+                buttonCloseText={"Take me back"}
+                showActionButton={!mergeDialogError}
+                buttonActionText={"Merge"}
+                buttonActionFunction={this.handleMergeDialogAgree}
             >
-                <DialogTitle id="merge-dialog-title">
-                    {"Are you sure you're ready to merge?"}
-                </DialogTitle>
-                <DialogContent>
-                    {dialogContent}
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={this.handleMergeDialogClose}
-                        color="primary"
-                    >
-                        Take me back
-                    </Button>   
-                    {!mergeDialogError ? <Button
-                        onClick={this.handleMergeDialogAgree}
-                        color="primary" autoFocus
-                    >
-                        Merge
-                    </Button> : null}
-                </DialogActions>
-            </Dialog>
+                {mergeDialogContent}
+            </CustomDialog>
+
+            {/* Notification dialog! */}
+            <CustomDialog
+                isOpen={notifyDialogOpen}
+                handleClose={this.handleNotifyDialogClose}
+                title={notifyDialogTitle}
+                buttonCloseText={notifyDialogButtonCloseText}
+                buttonActionText={notifyDialogButtonActionText}
+                showActionButton={notifyDialogShowActionButton}
+            >
+                <DialogContentText>
+                    {notifyDialogContent}
+                </DialogContentText>
+            </CustomDialog>
         </Fragment>
     }
 }
@@ -691,7 +703,13 @@ const mapStateToProps = state => {
         // TODO: isAuthenticated...
         bkgPort: state.port.port,
         ripsData: state.rips.data,
-        // selectedRows: state.tables.selected
+        // data for notify dialog box
+        notifyDialogOpen: state.notifyDialog.open,
+        notifyDialogTitle: state.notifyDialog.title,
+        notifyDialogShowActionButton: state.notifyDialog.showActionButton,
+        notifyDialogButtonActionText: state.notifyDialog.buttonActionText,
+        notifyDialogButtonCloseText: state.notifyDialog.buttonCloseText,
+        notifyDialogContent: state.notifyDialog.dialogContent,
     };
 };
 
@@ -699,7 +717,9 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
-        onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums))
+        onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums)),
+        onNotifyDialogClose: () => dispatch(actions.notifyDialogClose()),
+        onNotifyDialogOpenNew: (config) => dispatch(actions.notifyDialogOpenNew(config))
     };
 };
 

@@ -12,6 +12,11 @@ export {
     ripsMergeClients
 } from './rips';
 
+export {
+    notifyDialogClose,
+    notifyDialogOpenNew,
+} from './notifyDialog';
+
 // export {
 //     // tableAddClientData,
 //     tableAddSelected,

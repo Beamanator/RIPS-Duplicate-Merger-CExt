@@ -49,6 +49,20 @@ export const backgroundPortInit = (chrome) => {
             console.assert( msg.code && msg.code.trim() !== '');
             console.log('<port action.js> msg received from background.js', msg);
 
+            /**
+             * TODO: some time soon add a port receiver for
+             * setting data & showing the notification dialog
+             * // buttonActionFunction={() => {
+                //     this.props.onNotifyDialogOpenNew({
+                //         title: 'New title',
+                //         showActionButton: true,
+                //         buttonActionText: 'New Run',
+                //         buttonCloseText: 'New Close',
+                //         dialogContent: 'New updated content',
+                //     });
+                // }}
+             */
+
             switch( msg.code ) {
                 // called when port gets connected to background.js
                 case portCodes.BKG_RA_INIT_PORT:

@@ -10,6 +10,7 @@ import App from './App';
 import ripsReducer from './store/reducers/rips';
 import portReducer from './store/reducers/port';
 import tablesReducer from './store/reducers/tables';
+import notifyDialogReducer from './store/reducers/notifyDialog';
 
 // change to create-react-act dev environment specific code
 // process.env.NODE_ENV comes from config folder, env.js file
@@ -26,7 +27,8 @@ const composeEnhancers = process.env.NODE_ENV === 'development'
 const rootReducer = combineReducers({
     rips: ripsReducer,
     port: portReducer,
-    tables: tablesReducer
+    tables: tablesReducer,
+    notifyDialog: notifyDialogReducer,
 });
 
 const store = createStore(rootReducer, composeEnhancers(
