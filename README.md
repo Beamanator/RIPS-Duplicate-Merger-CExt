@@ -1,18 +1,35 @@
 # RIPS-Duplicate-Merger-CExt
-RIPS duplicate client merger - Chrome Extension
+RIPS Duplicate Client Merger - Chrome Extension
+
+Built by "the RIPS guy" in Fall 2018, for use by StARS
 
 # How it works
 
+## Identify Duplicate Client Records
+To begin working with this program, you should have identified at least 2 RIPS client records that are for the same client - a.k.a. duplicate client records. You can be confident that the two client records are for the same person if the following data matches:
+- UNHCR number
+- First and last name (some spelling mistakes are ok)
+- Nationality
+- Gender
+- Phone number
+- Date of birth
+
+Sometimes two client records may have 3 or 4 of the above fields matching, but a few may be different. In this case, it's best to ask caseworkers of the clients if the records are for the same person. It's possible that there are mutiple people on the same UNHCR card with similar names and genders, and same nationality - so <u>**you must be 100% sure the client records are duplicates before moving to the next steps.**</u>
+
 ## Enter StARS Numbers
-- Make sure they're in the correct format! (explain)
+Once you have identified duplicate client records, obtain the StARS number of each client. The StARS number is a unique number that identifies each client record in RIPS. It cannot be duplicated between accounts.
+
+Now that you have the StARS numbers for each client record, open "The Merger" and enter the StARS numbers into the appropriate fields at the top of the page.
+
+    Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
 ## Click Import
 Now that you have entered all of the StARS numbers you want to merge, click "Import". You should already have opened one tab with RIPS, and logged in. The import will not work correctly if you have more than one tab opened to RIPS.
 
-At this state, the program will reach out to RIPS and gather all of the necessary information from each client.
+At this state, the program will reach out to RIPS and gather all of the information saved on each client profile.
 
 ## How You Know Import has Finished
-You will know the import has finished once you see a few tables appear, with the clients' data inside.
+You will know the import has finished once you see a few tables appear on the main Merger page. Each table should have the clients' data inside.
 
 ## Select Data to Merge
 Now that you see each client's data next to each other, select the data you want to be merged into the final client's profile.
@@ -33,19 +50,19 @@ Any field selected (with a green background) will be added to the merged client 
 
 Once you're ready to merge, move on to the next step.
 
-**Note**: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that new service.
+    Note: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that service after the auto merger creates it.
 
 ## Click Merge
 Click the "Merge" button at the bottom of the page!
 
-Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!!
+Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!! So please be as accurate as possible!!
 
 You may also see a **Warning** which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!
 
-One more quick note: You maay also see an error starting with "ERROR: You selected at least 1 file that needs to be moved to the target client...". Basically, this merger program cannot move files from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged.
+One more quick note: You may also see an error starting with "ERROR: You selected at least 1 <u>**file**</u> that needs to be moved to the target client...". This merger program cannot move files from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged.
 
-### Which Client Gets the New Data?
-This program assumes the first client number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
+## Which Client Gets the New Data?
+This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
 
     Note: this is also why all of this first client's data is selected by default. You can still un-select any of this data if you know it is incorrect and needs to be changed.
 
@@ -53,6 +70,8 @@ This program assumes the first client number (entered into the box "Client StARS
 
 ## How You Know Merge has Finished
 Not sure yet :)
+
+# Developer Notes
 
 ## The Purpose
 Input a list of StARS numbers and this extension will show the user any mis-matching data, the user will select which data is correct, then all of the correct data will be merged into the oldest client. Finally, the newer client(s) will be archived.
