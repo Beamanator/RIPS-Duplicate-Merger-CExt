@@ -1,6 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 import * as portCodes from '../portCodes';
 import * as actions from './index';
+import * as dialogConfigs from '../../shared/notifyDialogConfigs';
 
 // store background port in store
 const portSet = (port) => {
@@ -10,22 +11,6 @@ const portSet = (port) => {
         port: port
     };
 };
-
-const portError = (error) => {
-    console.warn('<port action> found port error:', error);
-    return {
-        type: actionTypes.BACKGROUND_PORT_ERROR,
-        error: error
-    };
-};
-
-// remove background port in store
-// const portRemove = () => {
-//     console.log('<port action> removing port');
-//     return {
-//         type: actionTypes.BACKGROUND_PORT_REMOVE
-//     };
-// };
 
 export const backgroundPortInit = (chrome) => {
     if (!chrome) {
@@ -49,49 +34,50 @@ export const backgroundPortInit = (chrome) => {
             console.assert( msg.code && msg.code.trim() !== '');
             console.log('<port action.js> msg received from background.js', msg);
 
-            /**
-             * TODO: some time soon add a port receiver for
-             * setting data & showing the notification dialog
-             * // buttonActionFunction={() => {
-                //     this.props.onNotifyDialogOpenNew({
-                //         title: 'New title',
-                //         showActionButton: true,
-                //         buttonActionText: 'New Run',
-                //         buttonCloseText: 'New Close',
-                //         dialogContent: 'New updated content',
-                //     });
-                // }}
-             */
-
             switch( msg.code ) {
                 // called when port gets connected to background.js
                 case portCodes.BKG_RA_INIT_PORT:
                     dispatch(portSet(port));
                     break;
 
-                // called when import was supped b/c of some error message
+                // called when import was stopped b/c of some error message
                 case portCodes.BKG_RA_STOP_IMPORT_WITH_ERROR:
-                    const message = msg.message;
-                    console.error('<port action.js> import error message:', message);
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.importError(msg.message)
+                    ));
+                    // options page open - handled when error sent
                     break;
 
                 // called when rips data import has completed
                 case portCodes.BKG_RA_IMPORT_DONE:
                     // tell import we're done and are successful
-                    console.warn('done - data:', msg.data);
+                    console.info('import done - data:', msg.data);
                     dispatch(actions.ripsFetchSuccess(msg.data));
+
+                    // show the notification dialog
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.dialogConfigImportDone()
+                    ));
+                    // options page open - handled in background.js
                     break;
 
                 // invalid msg code recognized in background.js
                 case portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED:
-                    dispatch(portError( `${msg.source} - ${msg.data}` ));
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.dialogConfigRAPortError(`${msg.source} - ${msg.data}`)
+                    ));
+                    // options page open - handled when error sent
                     break;
                 
                 // invalid msg code recognized here :)
                 default:
-                    dispatch(portError(
-                        `REACT MSG CODE <${msg.code}> NOT VALID`
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.dialogConfigRAPortError(
+                            `REACT MSG CODE <${msg.code}> NOT VALID`
+                        )
                     ));
+                    // open options page
+                    chrome.runtime.openOptionsPage();
                     // tell background.js to stop import
                     port.postMessage({
                         code: portCodes.RA_BKG_STOP_IMPORT,
