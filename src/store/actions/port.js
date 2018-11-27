@@ -56,7 +56,7 @@ export const backgroundPortInit = (chrome) => {
 
                     // show the notification dialog
                     dispatch(actions.notifyDialogOpenNew(
-                        dialogConfigs.dialogConfigImportDone()
+                        dialogConfigs.importDone()
                     ));
                     // options page open - handled in background.js
                     break;
@@ -64,7 +64,7 @@ export const backgroundPortInit = (chrome) => {
                 // invalid msg code recognized in background.js
                 case portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED:
                     dispatch(actions.notifyDialogOpenNew(
-                        dialogConfigs.dialogConfigRAPortError(`${msg.source} - ${msg.data}`)
+                        dialogConfigs.RABkgPortError(`${msg.source} - ${msg.data}`)
                     ));
                     // options page open - handled when error sent
                     break;
@@ -72,7 +72,7 @@ export const backgroundPortInit = (chrome) => {
                 // invalid msg code recognized here :)
                 default:
                     dispatch(actions.notifyDialogOpenNew(
-                        dialogConfigs.dialogConfigRAPortError(
+                        dialogConfigs.RABkgPortError(
                             `REACT MSG CODE <${msg.code}> NOT VALID`
                         )
                     ));
