@@ -188,7 +188,11 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_STOP_IMPORT:
                 IMPORT_IN_PROGRESS = false;
+                MERGE_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
                 sendImportErrorToReactApp(RAPort, msg.message);
+                // open / focus options page since error occurred
+                chrome.runtime.openOptionsPage();
                 break;
 
             // Note: If index is out of range of CLIENT_NUMS, the
@@ -236,16 +240,15 @@ const initContentScriptPort = (port) => {
                 // check if import should keep going
                 if (CLIENT_NUMS && CLIENT_INDEX+1 < CLIENT_NUMS.length) {
                     // increment client index
-                    CLIENT_INDEX = 1;
-                    // FIXME: why still in progress?
-                    IMPORT_IN_PROGRESS = true; // no change
+                    CLIENT_INDEX++;
                     sendStartImport(CSPort);
                 }
                 // else, import should stop & analysis should be done
                 else {
                     IMPORT_IN_PROGRESS = false;
                     sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
-                    // console.warn('TMP - ALL ALL DONE??', CLIENT_DATA_CONTAINER);
+                    // open / focus options page since import is done
+                    chrome.runtime.openOptionsPage();
                 }
                 break;
 
