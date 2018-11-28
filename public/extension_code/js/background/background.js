@@ -21,7 +21,6 @@ let MERGE_HISTORY_DATA = null;
 let MERGE_HISTORY_INDEX = 0; // for ACTIONS only
 let SERVICE_TO_CREATE = null;
 let ACTION_TO_CREATE = null;
-let ERRORS = [];
 
 const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_REACT_APP,
@@ -85,6 +84,24 @@ const redirectTab = ( tabId, urlPart ) => {
     chrome.tabs.update(tabId, { url: url });
 }
 
+const highlightTab = ( tabId, callback ) => {
+    if (!callback) {
+        callback = (window) => {
+            console.warn('redirect to tab index #' + tabIndex, window);
+        }
+    }
+
+    // highlight tab / make specified tab index focused / visible
+    // -> (basically, open a specified tab for the user)
+    // first get Tab object from id
+    chrome.tabs.get(tabId, (Tab) => {
+        // next highlight the desired tab, by the Tab's id
+        chrome.tabs.highlight({
+            tabs: Tab.index
+        }, callback);
+    });
+}
+
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
@@ -109,10 +126,10 @@ const sendPortInit = (port, code) => {
     });
 }
 
+// Note: CLIENT_INDEX out of bounds (import complete) handled in
+// -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
 const sendStartImport = (port) => {
     // TODO: handle invalid / unknown port
-    // CLIENT_INDEX out of bounds (import complete) handled in
-    // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
@@ -127,20 +144,20 @@ const sendStartMerge = (port) => {
     });
 }
 
-const sendImportErrorToReactApp = (port, message) => {
-    // TODO: handle invalid / unknown port
-    // TODO: maybe send error array (ERRORS) to React
-    port.postMessage({
-        code: PCs.BKG_RA_STOP_IMPORT_WITH_ERROR,
-        message: message
-    });
-}
-
 const sendImportDone = (port, clientData) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
         code: PCs.BKG_RA_IMPORT_DONE,
         data: clientData
+    });
+}
+
+const sendKillAll = (port, source, error) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: PCs.BKG_RA_KILL_ALL,
+        source: source,
+        error: error,
     });
 }
 
@@ -184,15 +201,6 @@ const initContentScriptPort = (port) => {
                     MessageSender.sender.tab.id,
                     msg.urlPart
                 );
-                break;
-
-            case PCs.CS_BKG_STOP_IMPORT:
-                IMPORT_IN_PROGRESS = false;
-                MERGE_IN_PROGRESS = false;
-                ARCHIVE_IN_PROGRESS = false;
-                sendImportErrorToReactApp(RAPort, msg.message);
-                // open / focus options page since error occurred
-                chrome.runtime.openOptionsPage();
                 break;
 
             // Note: If index is out of range of CLIENT_NUMS, the
@@ -248,8 +256,18 @@ const initContentScriptPort = (port) => {
                     IMPORT_IN_PROGRESS = false;
                     sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
                     // open / focus options page since import is done
-                    chrome.runtime.openOptionsPage();
+                    highlightTab(RAPort.sender.tab.id);
                 }
+                break;
+
+            case PCs.CS_BKG_KILL_ALL:
+                IMPORT_IN_PROGRESS = false;
+                MERGE_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
+                
+                sendKillAll(RAPort, msg.source, msg.error);
+                // open / focus options page since error occurred
+                highlightTab(RAPort.sender.tab.id);
                 break;
 
             case PCs.CS_BKG_POST_SAVE_REDIRECT:
@@ -271,12 +289,15 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_ERROR_CODE_NOT_RECOGNIZED:
                 // console.error(`${msg.source} - ${msg.data}`);
-                // IMPORT_IN_PROGRESS = false;
+                IMPORT_IN_PROGRESS = false;
+                // TODO: stop everything?
+                // TODO: highlight react app?
                 break;
             
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
+                highlightTab(RAPort.sender.tab.id);
         }
     });
 
@@ -309,6 +330,8 @@ const initReactAppPort = (port) => {
                 IMPORT_IN_PROGRESS = true;
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
+                // open client script tab
+                highlightTab(CSPort.sender.tab.id);
                 sendStartImport(CSPort);
                 break;
 
@@ -324,12 +347,16 @@ const initReactAppPort = (port) => {
                 // 3) set client globals (nums arr & index)
                 CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
-                // 4) navigate to advanced search to begin the merge
+                // 4) highlight / open advanced search page
+                highlightTab(CSPort.sender.tab.id);
+                // 5) navigate to advanced search to begin the merge
                 sendStartMerge(CSPort);
                 break;
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
                 IMPORT_IN_PROGRESS = false;
+                // TODO: popup handled in react app?
+                // doesn't need to be redirected b/c it's already there!
                 // console.error(`Code sent to React <${msg.errCode}> not recognized`);
                 break;
 
