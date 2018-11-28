@@ -28,30 +28,46 @@ const runClientNumSearch = (clientNum) => {
         
         // 1) make sure field translator exists
         if (!FIELD_IDS_ADVANCED_SEARCH) {
-            Utils_Error(MESSAGE_SOURCE, 'Advanced Search Field IDs not found');
-            // TODO: send error message back to bkg, then to React
+            let errMsg = 'Advanced Search Field IDs not found';
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
             return;
         }
         
         // 2) put stars # into stars # field
         const searchFieldSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
-        // TODO: handle possibly missing element
-        let searchFieldElem = document.querySelector(searchFieldSelector);
+        if (!searchFieldSelector) {
+            let errMsg = 'search field selector not found :(';
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
+        }
+        let searchFieldElem = Utils_QueryDoc(searchFieldSelector);
         searchFieldElem.value = clientNum;
 
         // 3) click 'search' button
         const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON];
-        // TODO: handle possibly missing element
-        const searchButtonElem = document.querySelector(searchButtonSelector);
-        searchButtonElem.click();
+        if (!searchFieldSelector) {
+            let errMsg = 'search button selector not found :(';
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
+        }
+        let clickSuccess =
+            Utils_ClickElem(Utils_QueryDoc(searchButtonSelector));
+        if (!clickSuccess) {
+            let errMsg = 'search button click failed :(';
+            Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
+        }
 
         // end -> results analyzed in AdvancedSearchResults/Ctrl.js
     })
     .catch((errMsg) => {
-        // TODO: popup exists! cancel import 'n stuff since the
+        // popup exists! cancel import 'n stuff since the
         // -> search number was eff'd up!
-        Utils_Error(MESSAGE_SOURCE, 'Popup shown in advanced search! ',
-            'something must have gone wrong...', errMsg);
+        let err = 'Popup shown in advanced search! something must' + 
+            ' have gone wrong...';
+        Utils_Error(MESSAGE_SOURCE, err, errMsg);
+        Utils_KillAll(port, MESSAGE_SOURCE, err);
     });
 }
 
@@ -96,6 +112,10 @@ port.onMessage.addListener(function(msg) {
                     '[autoMerge, autoImport, autoArchive]:',
                     autoStartFlags
                 );
+                Utils_KillAll(
+					port, MESSAGE_SOURCE,
+					'Too many "auto start" flags are true!'
+				);
                 return;
             }
             
@@ -105,14 +125,9 @@ port.onMessage.addListener(function(msg) {
             }
             // -> for autoArchive, add extra logic before doing the same
             else if (autoArchive) {
-                // if no client number
+                // if no client number we're done! just log warning note
                 if (!clientNum) {
-                    // TODO: FIXME: we're done here!
-                    // 1) log a warning message
-                    // 2) send message back to bkg, then to react
-                    // to inform user that we're done :)
-                    // -> also try to open that tab programatically
-                    debugger;
+                    Utils_Warn(MESSAGE_SOURCE, 'Duplicate merge process complete!');
                 }
                 // else, num exists so archive it!
                 else {
