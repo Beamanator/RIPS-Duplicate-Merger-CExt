@@ -14,9 +14,10 @@ export const ERROR_BKG_CODE_NOT_RECOGNIZED = 'ERROR_BKG_CODE_NOT_RECOGNIZED';
 //                                EXTERNAL CODES
 // ==============================================================================
 // --------------- receive -> background (BKG) to react app (RA) ----------------
-export const BKG_RA_INIT_PORT = 'BKG_RA_INIT_PORT';
 export const BKG_RA_ERROR_CODE_NOT_RECOGNIZED = 'BKG_RA_ERROR_CODE_NOT_RECOGNIZED';
 export const BKG_RA_IMPORT_DONE = 'BKG_RA_IMPORT_DONE';
+export const BKG_RA_INIT_PORT = 'BKG_RA_INIT_PORT';
+export const BKG_RA_KILL_ALL = 'BKG_RA_KILL_ALL';
 export const BKG_RA_STOP_IMPORT_WITH_ERROR = 'BKG_RA_STOP_IMPORT_WITH_ERROR';
 
 // ----------------- send -> react app (RA) to background (BKG) -----------------
