@@ -21,7 +21,7 @@ Once you have identified duplicate client records, obtain the StARS number of ea
 
 Now that you have the StARS numbers for each client record, open "The Merger" and enter the StARS numbers into the appropriate fields at the top of the page.
 
-    Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
+>Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
 ## Click Import
 Now that you have entered all of the StARS numbers you want to merge, click "Import". You should already have opened one tab with RIPS, and logged in. The import will not work correctly if you have more than one tab opened to RIPS.
@@ -29,7 +29,7 @@ Now that you have entered all of the StARS numbers you want to merge, click "Imp
 At this state, the program will reach out to RIPS and gather all of the information saved on each client profile.
 
 ## How You Know Import has Finished
-You will know the import has finished once you see a few tables appear on the main Merger page. Each table should have the clients' data inside.
+You will know the import has finished once you see a popup on the import page stating that the import has finished. You will also see a few tables appear below. Each table should have separate categories of client data inside.
 
 ## Select Data to Merge
 Now that you see each client's data next to each other, select the data you want to be merged into the final client's profile.
@@ -46,11 +46,11 @@ In the other tables, you will be able to select multiple groups of cells per row
 - Contacts
 - Files
 
-Any field selected (with a green background) will be added to the merged client in the end. Rows with a green cell in the far left indicate that some data has been selected for that field. If the row does not have selected data, the far left cell will be yellow, indicating the user has probably missed something.
+Any field selected (with a green background) will be added to the merged client in the end. Rows with a green cell in the far left indicate that some data has been selected for that field. If the row does not have selected data, the far left cell will be yellow, indicating no data from this row will be saved. It is recommended to select at least one item per row to make sure no data is missed!
 
 Once you're ready to merge, move on to the next step.
 
-    Note: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that service after the auto merger creates it.
+>Note: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that service after the auto merger creates it.
 
 ## Click Merge
 Click the "Merge" button at the bottom of the page!
@@ -69,7 +69,12 @@ This program assumes the first client StARS number (entered into the box "Client
 **The Merger will not completely delete any client data!!** If any field has data that needs to be replaced (like wrong nationality, or a misspelled name), the target client (Client StARS #1) will get the updated information. However, if there is incorrect data (like actions with the wrong notes), this data will need to be changed manually.
 
 ## How You Know Merge has Finished
-Not sure yet :)
+Once the merge process finishes, "The Merger" will archive clients #2 and #3. Once this is all done, the process has finished and a popup will display in the main page, explaining that everything has completed successfully!
+
+**Note:** At this stage, it is highly recommended to check the newly merged client (Client StARS #1) and make sure all of the correct data has been added here.
+
+## That's all!
+You're done! As always, let "the RIPS Guy" know if anything goes wrong or if you have any questions.
 
 # Developer Notes
 
