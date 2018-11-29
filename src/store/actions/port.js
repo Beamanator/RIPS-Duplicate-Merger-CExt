@@ -48,6 +48,15 @@ export const backgroundPortInit = (chrome) => {
                     // options page open - handled when error sent
                     break;
 
+                // called when rips archive process has completed
+                case portCodes.BKG_RA_ARCHIVE_DONE:
+                    console.info('success! archive is done!');
+                    // show notification dialog
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.archiveDone()
+                    ));
+                    break;
+
                 // called when rips data import has completed
                 case portCodes.BKG_RA_IMPORT_DONE:
                     // tell import we're done and are successful
@@ -57,6 +66,15 @@ export const backgroundPortInit = (chrome) => {
                     // show the notification dialog
                     dispatch(actions.notifyDialogOpenNew(
                         dialogConfigs.importDone()
+                    ));
+                    // options page open - handled in background.js
+                    break;
+
+                // called when some error occurres anywhere, and everything
+                // -> should stop
+                case portCodes.BKG_RA_KILL_ALL:
+                    dispatch(actions.notifyDialogOpenNew(
+                        // dialogConfigs.fatalError(msg.stuff? source? error?)
                     ));
                     // options page open - handled in background.js
                     break;
@@ -80,7 +98,7 @@ export const backgroundPortInit = (chrome) => {
                     chrome.runtime.openOptionsPage();
                     // tell background.js to stop import
                     port.postMessage({
-                        code: portCodes.RA_BKG_STOP_IMPORT,
+                        code: portCodes.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED,
                         errCode: msg.code
                     });
             }
