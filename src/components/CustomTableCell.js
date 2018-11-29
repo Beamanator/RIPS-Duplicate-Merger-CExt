@@ -13,6 +13,11 @@ const CustomTableCell = (props) => {
 }
 
 const styles = theme => ({
+    root: {
+        flex: 1,
+        paddingTop: '15px',
+        paddingBottom: '15px',
+    },
     head: {
         backgroundColor: theme.palette.common.black,
         color: theme.palette.common.white,
@@ -20,7 +25,7 @@ const styles = theme => ({
     },
     body: {
         fontSize: 14
-    }
+    },
 });
 
 export default withStyles(styles)(CustomTableCell);

@@ -115,11 +115,25 @@ if (process.env.NODE_ENV === 'development') {
                     {date: 'hid-3', name: 'show 2'},
                     {date: 'hid-2', name: 'hide'} // should hide
                 ]
+            ],
+            longNotes: [
+                [
+                    {
+                        date: 'longnote-1',
+                        note: 'something something this is a super ' +
+                            'long note just to hopefully simulate what could ' +
+                            'happen with super long action notes in the system. ' +
+                            'sometimes entire email chains are pasted in, so they ' +
+                            'get pretty freaking big!'
+                    }
+                ],
+                undefined,
+                undefined
             ]
         },
         [R_KEYS.NOTES]: {
             Notes: [
-                'oofda this is a long ish note. just seeing what happens when we go big',
+                'oofda this is a long ish note. just seeing what happens when we go big (we can go bigger)',
                 ' note with \ttabs and\nnewlines ;)',
                 ''
             ]

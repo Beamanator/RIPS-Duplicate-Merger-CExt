@@ -234,7 +234,7 @@ class CustomTable extends Component {
                 <h3>{title}</h3>
                 <Table className={classes.table}>
                     <TableHead>
-                        <TableRow>
+                        <TableRow className={classes.tableRow}>
                             <CustomTableCell>Field Names</CustomTableCell>
                             <CustomTableCell>{`Client #1 (${clientNums[0]})`}</CustomTableCell>
                             <CustomTableCell>{`Client #2 (${clientNums[1]})`}</CustomTableCell>
@@ -245,7 +245,10 @@ class CustomTable extends Component {
                     </TableHead>
                     <TableBody>
                         {data.map((rowData, rowi) =>
-                            <TableRow className={classes.row} key={rowi}>
+                            <TableRow
+                                className={[classes.bodyRow, classes.tableRow].join(' ')}
+                                key={rowi}
+                            >
                                 <CustomTableCell
                                     component="th"
                                     scope="row"
@@ -270,7 +273,7 @@ class CustomTable extends Component {
                                         }
                                     }
 
-                                    return <CustomTableCell {...cellProps} >
+                                    return <CustomTableCell {...cellProps}>
                                         {rowData[colNum]}
                                     </CustomTableCell>
                                 })}
@@ -292,10 +295,14 @@ const styles = theme => ({
     table: {
         minWidth: 700,
     },
-    row: {
+    bodyRow: {
         '&:nth-of-type(odd)': {
             backgroundColor: theme.palette.background.default
         }
+    },
+    tableRow: {
+        display: 'flex', // make sure each cell gets specific horizontal spacing
+        height: 'auto', // make sure each cell in row spans full height
     },
     error: {
         color: 'red',
