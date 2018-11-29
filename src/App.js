@@ -598,7 +598,7 @@ class App extends Component {
                     <Grid container justify="center">
                         <div className={classes.dialogDescriptionPadding}>
                             <h4 className={classes.description}>
-                                When you're ready to merge two (or 3) client records
+                                When you're ready to merge two (or three) client records
                                 in RIPS, make sure you've selected all of the data
                                 you want to be saved in the final record! You'll see
                                 all green boxes in the "Field Names" column when
