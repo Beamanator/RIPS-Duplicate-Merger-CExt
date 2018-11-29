@@ -30,8 +30,9 @@ const checkViewingCorrectClient = (clientNum) => {
 	// -> else, throw error and return false
 	else {
 		const err = 'ERR: Somehow got to CBI page of wrong client!! ' +
-			`Given StARS number <${starsNum}/${clientNum}> doesn\'t match!`;
+			`Given StARS numbers <${starsNum}/${clientNum}> doesn\'t match!`;
 		Utils_Error(MESSAGE_SOURCE, err);
+		Utils_KillAll(port, MESSAGE_SOURCE, err);
 		return false;
 	}
 }
@@ -83,12 +84,9 @@ const startImport = (clientNum) => {
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
-	// 2.1) if client stars nums don't match, error and stop import
-	if (!atCorrectClient) {
-		// no error message here needed
-		// TODO: send error back to bkg, stop import
-		return;
-	}
+	// 2.1) if client stars nums don't match, quit early
+	// -> (error handling in checkViewingCorrectClient fn)
+	if (!atCorrectClient) return;
 
 	// 2.2) No issues! Gather all the rest of the data
 	// convert FID container into array
@@ -107,10 +105,11 @@ const startImport = (clientNum) => {
 			if (fieldsToSkip.includes(key)) return container;
 
 			const elem = Utils_QueryDoc(selector);
-			// TODO: stop import if elem is null
+			// stop import if elem is null
 			if (!elem) {
 				let err = 'ERR: Elem not found with selector: ' + selector;
 				Utils_Error(MESSAGE_SOURCE, err);
+				Utils_KillAll(port, MESSAGE_SOURCE, err);
 				allPass = false;
 				return '';
 			}
@@ -132,11 +131,12 @@ const startImport = (clientNum) => {
 					break;
 
 				default:
-					// TODO: stop import!
+					// stop import!
 					let err = 'ERR: Found an unhandled html elem ' +
 						'type while gathering client data! Stopping' +
 						' here - ' + selector;
 					Utils_Error(MESSAGE_SOURCE, err);
+					Utils_KillAll(port, MESSAGE_SOURCE, err);
 					allPass = false;
 					return '';
 			}
@@ -163,6 +163,7 @@ const startImport = (clientNum) => {
 	else {
 		let newMsg = 'Import failed - check other errors!';
 		Utils_Error(MESSAGE_SOURCE, newMsg);
+		Utils_KillAll(port, MESSAGE_SOURCE, newMsg);
 	}
 }
 
@@ -170,12 +171,9 @@ const startMerge = (clientNum, mData) => {
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
-	// 2.1) if client stars nums don't match, error and stop import
-	if (!atCorrectClient) {
-		// no error message here needed
-		// TODO: send error back to bkg, stop import
-		return;
-	}
+	// 2.1) if client stars nums don't match, quit early
+	// -> (error handling in checkViewingCorrectClient fn)
+	if (!atCorrectClient) return;
 
 	// 2.2) no issues! get page's basic data using MESSAGE_SOURCE
 	const basicMergeData = mData[MESSAGE_SOURCE] || [];
@@ -199,7 +197,7 @@ const startMerge = (clientNum, mData) => {
 		const fieldSelector = FIELD_IDS_CLIENT_BASIC_INFORMATION[fieldKey];
 		// get element
 		const elem = Utils_QueryDoc(fieldSelector);
-		// TODO: stop import if elem is null
+		// throw errors if elem is null
 		if (!elem) {
 			let err = 'ERR: Elem not found with selector: ' + fieldSelector;
 			Utils_Error(MESSAGE_SOURCE, err);
@@ -305,7 +303,8 @@ const startMerge = (clientNum, mData) => {
 	if (!allPass) {
 		const warn = 'WARN: Somehow we didn\'t pass our previous ' +
 			'goals! Check other err messages!';
-		Utils_Warn(MESSAGE_SOURCE_V, warn);
+		Utils_Warn(MESSAGE_SOURCE, warn);
+		Utils_KillAll(port, MESSAGE_SOURCE, warn);
 		return;
 	}
 
@@ -324,21 +323,23 @@ const startMerge = (clientNum, mData) => {
 		
 		// save button exists, so get it and click it!
 		// -> (Note: clicking save keeps us on the same page)
-		const saveButton = document.querySelector(saveSelector);
+		const saveButton = Utils_QueryDoc(saveSelector);
 		saveButton.click();
 
-		// will have to redirect after save is done
-		// -> handled in `.onMessage` listener (bottom of file)
+		// redirecting after page save is handled in `.onMessage`
+		// -> listener (bottom of file) after sendPostSaveFlag()
+		// -> sets a flag in background.js
     })
     .catch(errMsg => {
-		// TODO: stop merge w/ error message!
+		// stop merge w/ error message!
 		// if button doesn't exist, RUN FOR YOU LIVES!! (this probably
 		// -> means the Validation Extension isn't installed... ugh)
 		const err = 'ERR: Cannot find save button, meaning you ' +
 			'PROBABLY don\'t have the Validation extension instal' +
 			'led!! Shame on you!! Quitting now!';
 		Utils_Error(MESSAGE_SOURCE, err);
-        Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+		Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+		Utils_KillAll(port, MESSAGE_SOURCE, err);
     });
 };
 
@@ -346,12 +347,9 @@ const startArchive = ( clientNum ) => {
 	// 1) check if we're looking at the correct client
 	const atCorrectClient = checkViewingCorrectClient(clientNum);
 
-	// 2.1) if client stars nums don't match, error and stop import
-	if (!atCorrectClient) {
-		// no error message here needed
-		// TODO: send error back to bkg, stop archiving
-		return;
-	}
+	// 2.1) if client stars nums don't match, quit early
+	// -> (error handling in checkViewingCorrectClient fn)
+	if (!atCorrectClient) return;
 
 	// set 'archiveReady' flag or something in bkg.js to prep
 	// -> for redirect after archive's page reload
@@ -366,6 +364,9 @@ const startArchive = ( clientNum ) => {
 	);
 
 	// if click is successful, send message to increment client index
+	// -> Note: it's ok to send this after clicking b/c there's
+	// -> usually at least a 5 second delay (minimum) between clicking
+	// -> and page refreshing with updated 'Archive' status
 	if (archiveClickSuccess) sendArchiveNextClient();
 
 	// after click, wait 30 seconds (30,000 ms)
@@ -379,7 +380,7 @@ const startArchive = ( clientNum ) => {
 			'Page should have refreshed after "Archive" was clicked! ' +
 			'Click "Archive" to get the processing moving!!';
 		Utils_Error(MESSAGE_SOURCE, errMsg);
-		// TODO: maybe send to React as well?
+		Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
 	}, timeMs);
 }
 
@@ -448,7 +449,11 @@ port.onMessage.addListener(msg => {
                     'Too many "auto start" flags are true!',
                     '[autoMerge, autoImport, autoArchive]:',
                     autoStartFlags
-                );
+				);
+				Utils_KillAll(
+					port, MESSAGE_SOURCE,
+					'Too many "auto start" flags are true!'
+				);
                 return;
             }
 			
