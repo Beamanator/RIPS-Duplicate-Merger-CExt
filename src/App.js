@@ -168,7 +168,7 @@ class App extends Component {
     }
 
     handleClear = () => {
-        // TODO: also clear rips data from redux store?
+        // TODO: also clear rips data from redux store
         // -> including from bkg.js 
         // Clear client nums, and reset client#Valid variables
         this.setState({
