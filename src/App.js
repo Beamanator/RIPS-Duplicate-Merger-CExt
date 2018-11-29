@@ -495,13 +495,13 @@ class App extends Component {
             >
                 {/* Title */}
                 <Grid item xs={12} className={classes.textCenter}>
-                    <h1>Welcome to "The Merger"!</h1>
+                    <h1>{'Welcome to "The Merger"!'}</h1>
                 </Grid>
 
                 {/* Input elements - StARS #s*/}
                 <Grid item xs={12} className={classes.textCenter}>
+                    <h3>{"Enter StARS #s for each client below:"}</h3>
                     <Paper className={classes.clientNumContainer}>
-                        <h3>Enter StARS #s for each client below:</h3>
                         <Grid container justify="center" spacing={40}>
                             <Grid item xs={3}>
                                 <TextField
@@ -549,7 +549,7 @@ class App extends Component {
                                 disabled={this.handleImportDisabled()}
                                 onClick={this.handleImport}
                             >
-                                Import
+                                {"Import"}
                             </Button>
                         </Grid>
                         <Grid item xs={2}>
@@ -560,7 +560,7 @@ class App extends Component {
                                 size="large"
                                 onClick={this.handleClear}
                             >
-                                Clear
+                                {"Clear"}
                             </Button>
                         </Grid>
                     </Grid>
@@ -568,22 +568,33 @@ class App extends Component {
 
                 {/* Instructions */}
                 {ripsData && Object.keys(ripsData).length > 0 ? <Grid item xs={12} className={classes.textCenter}>
-                    <h1>Select the "correct" client data below!</h1>
+                    <h1>{'Select the "correct" client data below!'}</h1>
                     <h4 className={classes.description}>
-                        Each table below shows data that is inconsistent
-                        between client records. Therefore, please select
-                        a cell in each row that represents the accurate
-                        data for that field.
+                        {"Each table below shows data that is inconsistent " +
+                        "between client records. Therefore, please select " +
+                        "a cell in each row that shows the accurate data " +
+                        "for that field."}
                     </h4>
                     <h4 className={classes.description}>
-                        ----------------------------------
+                        {"----------------------------------"}
                     </h4>
                     <h4 className={classes.description}>
-                        Example: If the Date of Birth field is shown below,
-                        that means the clients entered have different Date of
-                        Birth saved in their RIPS record. Select the
-                        correct Date of Birth that will be saved in the
-                        merged record.
+                        {"Example: If the Date of Birth field is shown below, " +
+                        "that means the clients entered have different Dates of " +
+                        "Birth saved in their RIPS record. Select the " +
+                        "correct Date of Birth that should be saved in the " +
+                        "merged record."}
+                    </h4>
+                    <h4 className={classes.description}>
+                        {"----------------------------------"}
+                    </h4>
+                    <h4 className={classes.description}>
+                        {"NOTE: All of the data you select below will be " +
+                        "merged into the RIPS record for Client #1. Therefore, " +
+                        "you should make sure that the StARS number you enter " +
+                        "for Client #1 is the record with the most actions " +
+                        "and / or the most accurate data. Please contact " +
+                        "'the RIPS Guy' if you have questions!"}
                     </h4>
                 </Grid> : null}
 
@@ -598,17 +609,17 @@ class App extends Component {
                     <Grid container justify="center">
                         <div className={classes.dialogDescriptionPadding}>
                             <h4 className={classes.description}>
-                                When you're ready to merge two (or three) client records
-                                in RIPS, make sure you've selected all of the data
-                                you want to be saved in the final record! You'll see
-                                all green boxes in the "Field Names" column when
-                                there's no forgotten data.
+                                {"When you're ready to merge two (or three) client records " +
+                                "in RIPS, make sure you've selected all of the data " +
+                                "you want to be saved in the final record! You'll see " +
+                                "all green boxes in the 'Field Names' column when " +
+                                "there's no forgotten data."}
                             </h4>
                             <h4 className={classes.description}>
-                                ----------------------------------
+                                {"----------------------------------"}
                             </h4>
                             <h4 className={classes.description}>
-                                Finally, just press "Merge" below!
+                                {"Finally, just press 'Merge' below!"}
                             </h4>
                         </div>
 
@@ -621,7 +632,7 @@ class App extends Component {
                                 onClick={this.handleMergeDialogOpen}
                                 disabled={mergeInProgress}
                             >
-                                Merge
+                                {"Merge"}
                             </Button>
                         </Grid>
                     </Grid>
