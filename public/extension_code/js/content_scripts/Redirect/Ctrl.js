@@ -26,9 +26,9 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_REDIRECT });
 //                     MESSAGE POSTING FUNCTIONS
 // ===============================================================
 // Note: port codes come from "../js/portCodes.js"
-const sendStopImport = (msg) => {
+const sendKillAll = (msg) => {
     port.postMessage({
-        code: PCs.CS_BKG_STOP_IMPORT,
+        code: PCs.CS_BKG_KILL_ALL,
         message: msg
     });
 }
@@ -54,7 +54,7 @@ port.onMessage.addListener(function(msg) {
                 const err = `[${MESSAGE_SOURCE}] autoImport is ${msg.autoImport} but` +
                     ' should be unknown / false. User must have redirected on' +
                     ' accident. Stopping script.';
-                sendStopImport(err);
+                sendKillAll(err);
             }
             break;
 
