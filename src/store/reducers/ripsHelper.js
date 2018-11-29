@@ -141,15 +141,13 @@ if (process.env.NODE_ENV === 'development') {
         [R_KEYS.RELATIVES]: {
             RELATIVES: [
                 [
-                    {name: 'isaiah', relation: 'nephew'}, // should hide
-                    {name: 'bill', relation: 'bro'},
-                    {name: 'jane', relation: 'mom'}
+                    {name: 'isaiah', relation: 'nephew'} // should hide
                 ],
                 [
-                    {name: 'isaiah', relation: 'nephew'}, // should hide
+                    {name: 'isaiah', relation: 'nephew'} // should hide
                 ],
                 [
-                    {name: 'isaiah', relation: 'nephew'}, // should hide
+                    {name: 'isaiah', relation: 'nephew'} // should hide
                 ]
             ]
         }
