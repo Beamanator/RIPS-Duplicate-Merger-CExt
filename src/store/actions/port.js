@@ -77,7 +77,6 @@ export const backgroundPortInit = (chrome) => {
                         dialogConfigs.fatalError(
                             msg.error + `; source: <${msg.source}>`
                         )
-                        // (msg.stuff? source? error?)
                     ));
                     // options page open - handled in background.js
                     break;
@@ -97,8 +96,7 @@ export const backgroundPortInit = (chrome) => {
                             `REACT MSG CODE <${msg.code}> NOT VALID`
                         )
                     ));
-                    // open options page
-                    chrome.runtime.openOptionsPage();
+                    // open options page (handled in background.js)
                     // tell background.js to stop import
                     port.postMessage({
                         code: portCodes.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED,

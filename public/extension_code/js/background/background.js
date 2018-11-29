@@ -379,8 +379,10 @@ const initReactAppPort = (port) => {
                 IMPORT_IN_PROGRESS = false;
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
-                // popup / highlight handled in react app
+                // popup handled in react app
                 console.error(`Code sent to React <${msg.errCode}> not recognized`);
+                // highlight options page / react app
+                highlightTab(RAPort.sender.tab.id);
                 break;
 
             default: // code not recognized - send error back
