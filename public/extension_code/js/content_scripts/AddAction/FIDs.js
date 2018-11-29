@@ -47,9 +47,12 @@ const FIELD_IDS_ADD_ACTION = {
             const notesIFrame = Utils_QueryDoc('#cke_notes iframe')
             // get inner document's body tag
             .contentDocument.querySelector('body');
+
+            // set default note string
+            if (!notes) notes = 'Action added by Auto Merger';
             
             // fail = return false
-            if (!notesIFrame || !notes) {
+            if (!notesIFrame) {
                 return false;
             } else {
                 // insert new paragraph at end of body, with new notes
