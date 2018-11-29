@@ -42,7 +42,7 @@ const app = (
         
         {/* div container solves appbar padding issue. */}
         {/* See github issue: https://github.com/mui-org/material-ui/issues/7466 */}
-        <div style={{ padding: 20 }}>
+        <div style={{ padding: 20, backgroundColor: '#f0f0f0' }}>
             <App />
         </div>
     </Provider>
