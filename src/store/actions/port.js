@@ -74,7 +74,10 @@ export const backgroundPortInit = (chrome) => {
                 // -> should stop
                 case portCodes.BKG_RA_KILL_ALL:
                     dispatch(actions.notifyDialogOpenNew(
-                        // dialogConfigs.fatalError(msg.stuff? source? error?)
+                        dialogConfigs.fatalError(
+                            msg.error + `; source: <${msg.source}>`
+                        )
+                        // (msg.stuff? source? error?)
                     ));
                     // options page open - handled in background.js
                     break;

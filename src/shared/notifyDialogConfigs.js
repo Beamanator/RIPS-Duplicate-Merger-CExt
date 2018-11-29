@@ -29,6 +29,15 @@ export const importError = (content) => ({
     dialogContent: content,
 });
 
+// config used for any fatal error occurring during import, merge,
+// -> or archive processes.
+export const fatalError = (content) => ({
+    title: 'Fatal Error Hit! See below!',
+    showActionButton: false,
+    buttonCloseText: DEFAULT_BUTTON_CLOSE_TEXT,
+    dialogContent: content
+});
+
 // config used for errors between bkg and RA port
 export const RABkgPortError = (content) => ({
     title: 'React App / Bkg Port Error',
