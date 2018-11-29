@@ -31,8 +31,10 @@ const PCs = {
     // ==============================================================================
     //                 BKG SCRIPT -> REACT APP SCRIPT CODES
     // ==============================================================================
+    BKG_RA_ARCHIVE_DONE: 'BKG_RA_ARCHIVE_DONE',
     BKG_RA_INIT_PORT: 'BKG_RA_INIT_PORT',
     BKG_RA_IMPORT_DONE: 'BKG_RA_IMPORT_DONE',
+    BKG_RA_KILL_ALL: 'BKG_RA_KILL_ALL',
     BKG_RA_STOP_IMPORT_WITH_ERROR: 'BKG_RA_STOP_IMPORT_WITH_ERROR',
 
     // ==============================================================================
@@ -46,11 +48,11 @@ const PCs = {
     CS_BKG_DATA_RECEIVED: 'CS_BKG_DATA_RECEIVED',
     CS_BKG_ERROR_CODE_NOT_RECOGNIZED: 'CS_BKG_ERROR_CODE_NOT_RECOGNIZED',
     CS_BKG_INCREMENT_MERGE_DATA_INDEX: 'CS_BKG_INCREMENT_MERGE_DATA_INDEX',
+    CS_BKG_KILL_ALL: 'CS_BKG_KILL_ALL',
     CS_BKG_PAGE_REDIRECT: 'CS_BKG_PAGE_REDIRECT',
     CS_BKG_POST_ARCHIVE_REDIRECT: 'CS_BKG_POST_ARCHIVE_REDIRECT',
     CS_BKG_POST_SAVE_REDIRECT: 'CS_BKG_POST_SAVE_REDIRECT',
     CS_BKG_START_ARCHIVE: 'CS_BKG_START_ARCHIVE',
-    CS_BKG_STOP_IMPORT: 'CS_BKG_STOP_IMPORT',
 
     // ==============================================================================
     //                   BKG SCRIPT -> CONTENT SCRIPT CODES
