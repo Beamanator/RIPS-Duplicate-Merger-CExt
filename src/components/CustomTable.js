@@ -226,7 +226,15 @@ class CustomTable extends Component {
                 'Check if data is all the same, then check implementation of this component for errors.';
             errorHandler(msg, 'warn');
 
-            return null;
+            return (
+                <Paper style={{
+                    paddingBottom: '1px',
+                    paddingTop: '1px',
+                }}>
+                    <h3>{title}</h3>
+                    <h4>{"No data found OR all data matches between clients"}</h4>
+                </Paper>
+            );
         }
 
         return (
