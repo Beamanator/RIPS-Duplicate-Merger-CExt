@@ -152,6 +152,13 @@ const sendImportDone = (port, clientData) => {
     });
 }
 
+const sendArchiveDone = (port) => {
+    // TODO: handle invalid / unknown port
+    port.postMessage({
+        code: PCs.BKG_RA_ARCHIVE_DONE,
+    });
+}
+
 const sendKillAll = (port, source, error) => {
     // TODO: handle invalid / unknown port
     port.postMessage({
@@ -207,6 +214,15 @@ const initContentScriptPort = (port) => {
             // -> unknown clientNum is handled in advanced search Ctrl
             case PCs.CS_BKG_ARCHIVE_NEXT_CLIENT:
                 CLIENT_INDEX++;
+                // if client index out of bounds (no more clients left to archive)
+                // -> stop the archiving and highlight the options page
+                if (CLIENT_INDEX >= CLIENT_NUMS.length) {
+                    ARCHIVE_IN_PROGRESS = false;
+                    // send a note back up!
+                    sendArchiveDone(RAPort);
+                    // highlight options page
+                    highlightTab(RAPort.sender.tab.id);
+                }
                 break;
 
             case PCs.CS_BKG_START_ARCHIVE:
@@ -328,6 +344,9 @@ const initReactAppPort = (port) => {
         switch(msg.code) {
             case PCs.RA_BKG_START_IMPORT:
                 IMPORT_IN_PROGRESS = true;
+                MERGE_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
+                // set global clientnums arr - remove empty strings
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // open client script tab
@@ -342,10 +361,11 @@ const initReactAppPort = (port) => {
                 // 1) set merge in progress to true
                 MERGE_IN_PROGRESS = true;
                 IMPORT_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
                 // 2) store merge data to global
                 MERGED_DATA_CONTAINER = mergeData;
-                // 3) set client globals (nums arr & index)
-                CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
+                // 3) set client index global
+                // CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // 4) highlight / open advanced search page
                 highlightTab(CSPort.sender.tab.id);
@@ -355,9 +375,10 @@ const initReactAppPort = (port) => {
 
             case PCs.RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED:
                 IMPORT_IN_PROGRESS = false;
-                // TODO: popup handled in react app?
-                // doesn't need to be redirected b/c it's already there!
-                // console.error(`Code sent to React <${msg.errCode}> not recognized`);
+                MERGE_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
+                // popup / highlight handled in react app
+                console.error(`Code sent to React <${msg.errCode}> not recognized`);
                 break;
 
             default: // code not recognized - send error back
