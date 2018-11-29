@@ -99,8 +99,14 @@ const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
 		return false;
 	}
 
-	// get the 1 selected option
+	// get the 1 and only selected option
 	const selectedOption = selectElem.selectedOptions[0];
+
+	// fail if no selected option (yet) - should happen later right?
+	if (!selectedOption) {
+		Utils_Error(MESSAGE_SOURCE, 'No selected Option elem yet. Wait a bit more.');
+		return false;
+	}
 
 	// return true IFF selected option has non-empty value!
 	return selectedOption.value !== '';
@@ -225,7 +231,19 @@ const Utils_SendDataToBkg = (port, source="unknkown", data) => {
 		code: PCs.CS_BKG_DATA_RECEIVED,
 		source: source,
 		data: data
-	})
+	});
+}
+
+const Utils_KillAll = (port, source="unknown", error) => {
+	if (!port) {
+		const msg = `Error occurred in <${source}> - see message...`;
+		return Utils_Error('UTILS', msg, error);
+	}
+	port.postMessage({
+		code: PCs.CS_BKG_KILL_ALL,
+		source: source,
+		error: error,
+	});
 }
 
 // ==============================================================================
