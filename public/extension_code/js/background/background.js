@@ -210,21 +210,6 @@ const initContentScriptPort = (port) => {
                 );
                 break;
 
-            // Note: If index is out of range of CLIENT_NUMS, the
-            // -> unknown clientNum is handled in advanced search Ctrl
-            case PCs.CS_BKG_ARCHIVE_NEXT_CLIENT:
-                CLIENT_INDEX++;
-                // if client index out of bounds (no more clients left to archive)
-                // -> stop the archiving and highlight the options page
-                if (CLIENT_INDEX >= CLIENT_NUMS.length) {
-                    ARCHIVE_IN_PROGRESS = false;
-                    // send a note back up!
-                    sendArchiveDone(RAPort);
-                    // highlight options page
-                    highlightTab(RAPort.sender.tab.id);
-                }
-                break;
-
             case PCs.CS_BKG_START_ARCHIVE:
                 // 1) set client index to 1 since we'll start archiving
                 //    -> with the second client (index 1 = position 2)
@@ -247,6 +232,23 @@ const initContentScriptPort = (port) => {
                     MessageSender.sender.tab.id,
                     'SearchClientDetails/AdvancedSearch'
                 );
+                break;
+            
+            case PCs.CS_BKG_ARCHIVE_NEXT_CLIENT:
+                CLIENT_INDEX++;
+                // if client index out of bounds (no more clients left to archive)
+                // -> stop the archiving and highlight the options page
+                if (CLIENT_INDEX >= CLIENT_NUMS.length) {
+                    ARCHIVE_IN_PROGRESS = false;
+                    // send a note back up!
+                    sendArchiveDone(RAPort);
+                    // highlight options page handled with code:
+                    // -> CS_BKG_HIGHLIGHT_RA_TAB
+                }
+                break;
+
+            case PCs.CS_BKG_HIGHLIGHT_RA_TAB:
+                highlightTab(RAPort.sender.tab.id);
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
