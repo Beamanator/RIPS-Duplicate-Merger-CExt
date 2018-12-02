@@ -40,6 +40,9 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_VIEW_ACTIONS,
 ];
 
+const MISSING_PORT_ERROR_MSG = 'Background port not found! Make ' +
+    "sure there's no other errors, or race condition didn't happen.";
+
 // ==============================================================================
 //                               MAIN FUNCTIONS
 // ==============================================================================
@@ -129,7 +132,7 @@ const sendPortInit = (port, code) => {
 // Note: CLIENT_INDEX out of bounds (import complete) handled in
 // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
 const sendStartImport = (port) => {
-    // TODO: handle invalid / unknown port
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
@@ -137,7 +140,7 @@ const sendStartImport = (port) => {
 }
 
 const sendStartMerge = (port) => {
-    // TODO: handle invalid / unknown port
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_CS_START_MERGE,
         clientNum: CLIENT_NUMS[CLIENT_INDEX]
@@ -145,7 +148,7 @@ const sendStartMerge = (port) => {
 }
 
 const sendImportDone = (port, clientData) => {
-    // TODO: handle invalid / unknown port
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_IMPORT_DONE,
         data: clientData
@@ -153,14 +156,14 @@ const sendImportDone = (port, clientData) => {
 }
 
 const sendArchiveDone = (port) => {
-    // TODO: handle invalid / unknown port
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_ARCHIVE_DONE,
     });
 }
 
 const sendKillAll = (port, source, error) => {
-    // TODO: handle invalid / unknown port
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_KILL_ALL,
         source: source,

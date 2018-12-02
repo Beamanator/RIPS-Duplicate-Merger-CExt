@@ -89,13 +89,13 @@ const Utils_OnSelectOneElemHasSelectedOption = ( config ) => {
 
 	// make sure element exists
 	if (!selectElem) {
-		Utils_Error(MESSAGE_SOURCE, 'elem not found');
+		Utils_Error(MESSAGE_SOURCE, 'Select Elem not found');
 		return false;
 	}
 
 	// check if element type is correct
 	if (selectElem.type !== 'select-one') {
-		Utils_Error(MESSAGE_SOURCE, 'elem not "select-one"', selectElem);
+		Utils_Error(MESSAGE_SOURCE, 'Elem not type "select-one"', selectElem);
 		return false;
 	}
 
@@ -117,7 +117,8 @@ const Utils_OnElemFoundWithCustomFunction = ( config ) => {
 
 	// make sure selector function IS a function
 	if (typeof(selectorFn) !== 'function') {
-		Utils_Error(MESSAGE_SOURCE, 'given selector function is not a fn :(');
+		Utils_Error(MESSAGE_SOURCE, 'Given selector function is not a ' +
+			'function, but a ' + typeof(selectorFn));
 		return false;
 	}
 
