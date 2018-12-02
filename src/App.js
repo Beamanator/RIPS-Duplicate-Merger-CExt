@@ -738,7 +738,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
-        onClearAllData: (bkgPort) => dispatch(actions.portClearAllData(bkgPort)),
+        onClearAllData: (bkgPort) => dispatch(actions.ripsClearAllData(bkgPort)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
         onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums)),
         onNotifyDialogClose: () => dispatch(actions.notifyDialogClose()),
