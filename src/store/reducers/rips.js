@@ -29,11 +29,27 @@ const ripsFetchSuccess = (state, action) => {
     });
 };
 
+const ripsMergeStart = (state, action) => {
+    return updateObject(state, {
+        loading: true,
+    });
+};
+
+const ripsMergeFail = (state, action) => {
+    return updateObject(state, {
+        loading: false,
+        error: action.error
+    });
+};
+
 const reducer = (state = initialState, action) => {
     switch(action.type) {
         case actionTypes.RIPS_FETCH_START: return ripsFetchStart(state, action);
         case actionTypes.RIPS_FETCH_FAIL: return ripsFetchFail(state, action);
         case actionTypes.RIPS_FETCH_SUCCESS: return ripsFetchSuccess(state, action);
+
+        case actionTypes.RIPS_MERGE_START: return ripsMergeStart(state, action);
+        case actionTypes.RIPS_MERGE_FAIL: return ripsMergeFail(state, action);
 
         default:
             return state;

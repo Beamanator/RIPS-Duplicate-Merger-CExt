@@ -53,18 +53,33 @@ export const ripsFetchData = (port, clientNums) => {
         // -> and handled in actions/port.js - via a port listener
     };
 };
+// beginning of rips merge
+export const ripsMergeStart = () => {
+    console.warn('Rips merge begins :)');
+    return {
+        type: actionTypes.RIPS_MERGE_START
+    };
+};
+// rips merge failed somehow
+export const ripsMergeFail = (error) => {
+    console.warn(error);
+    return {
+        type: actionTypes.RIPS_MERGE_FAIL,
+        error: error
+    };
+};
 // KICK OFF PROCESS - start merging rips clients
 export const ripsMergeClients = (port, mData, clientNums) => {
     return dispatch => {
-        // TODO: call action indicating merge is starting?
-        // dispatch(ripsMergeStart());
+        // call action indicating merge is starting
+        dispatch(ripsMergeStart());
 
         console.log('Time to merge!', mData, clientNums);
 
         // if in development mode, port may not be available
         if (!port) {
             const errMsg = 'No Port available! Check connection & environment';
-            dispatch(ripsFetchFail(errMsg));
+            dispatch(ripsMergeFail(errMsg));
             return;
         }
 

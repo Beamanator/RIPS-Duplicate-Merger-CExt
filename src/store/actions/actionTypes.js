@@ -5,7 +5,8 @@ export const RIPS_FETCH_SUCCESS = 'RIPS_FETCH_SUCCESS';
 export const RIPS_FETCH_FAIL = 'RIPS_FETCH_FAIL';
 // const RIPS_FETCH_DATA... (container - no action connected to reducer)
 
-// export const RIPS_MERGE_START = 'RIPS_MERGE_START'; // -> probs dont need
+export const RIPS_MERGE_START = 'RIPS_MERGE_START';
+export const RIPS_MERGE_FAIL = 'RIPS_MERGE_FAIL';
 // const RIPS_MERGE_CLIENTS... (container - no action connected to reducer)
 
 export const BACKGROUND_PORT_SET = 'BACKGROUND_PORT_SET';
