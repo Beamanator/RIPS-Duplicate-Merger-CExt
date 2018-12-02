@@ -16,9 +16,3 @@ export {
     notifyDialogClose,
     notifyDialogOpenNew,
 } from './notifyDialog';
-
-// export {
-//     // tableAddClientData,
-//     tableAddSelected,
-//     tableCalcUnselected
-// } from './tables';
