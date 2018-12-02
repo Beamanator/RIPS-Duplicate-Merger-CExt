@@ -2,11 +2,11 @@
 // -> makes importing them into components easy!
 
 export {
-    backgroundPortInit,
-    portInitCollect
+    backgroundPortInit
 } from './port';
 
 export {
+    ripsClearAllData,
     ripsFetchData,
     ripsFetchSuccess,
     ripsMergeClients

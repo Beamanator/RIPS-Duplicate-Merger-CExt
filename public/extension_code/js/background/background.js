@@ -247,6 +247,7 @@ const initContentScriptPort = (port) => {
                     sendArchiveDone(RAPort);
                     // highlight options page handled with code:
                     // -> CS_BKG_HIGHLIGHT_RA_TAB
+                    // -> code sent by CBI page
                 }
                 break;
 
@@ -383,9 +384,22 @@ const initReactAppPort = (port) => {
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
                 // popup handled in react app
-                console.error(`Code sent to React <${msg.errCode}> not recognized`);
+                Utils_Warn('BKG',`Code sent to React <${msg.errCode}> not recognized`);
                 // highlight options page / react app
                 highlightTab(RAPort.sender.tab.id);
+                break;
+
+            case PCs.RA_BKG_CLEAR_ALL_DATA:
+                // clear 'auto's
+                IMPORT_IN_PROGRESS = false;
+                MERGE_IN_PROGRESS = false;
+                ARCHIVE_IN_PROGRESS = false;
+                // clear data vars
+                CLIENT_NUMS = null; CLIENT_INDEX = 0;
+                MERGED_DATA_INDEX = 0;
+                CLIENT_DATA_CONTAINER = {};
+                MERGED_DATA_CONTAINER = {};
+                Utils_Warn('BKG', 'All client data cleared');
                 break;
 
             default: // code not recognized - send error back

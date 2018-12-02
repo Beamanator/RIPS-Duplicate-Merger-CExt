@@ -42,6 +42,14 @@ const ripsMergeFail = (state, action) => {
     });
 };
 
+const ripsClearRedux = (state, action) => {
+    return updateObject(state, {
+        data: null,
+        loading: false,
+        error: null,
+    });
+};
+
 const reducer = (state = initialState, action) => {
     switch(action.type) {
         case actionTypes.RIPS_FETCH_START: return ripsFetchStart(state, action);
@@ -50,6 +58,8 @@ const reducer = (state = initialState, action) => {
 
         case actionTypes.RIPS_MERGE_START: return ripsMergeStart(state, action);
         case actionTypes.RIPS_MERGE_FAIL: return ripsMergeFail(state, action);
+
+        case actionTypes.RIPS_CLEAR_REDUX: return ripsClearRedux(state, action);
 
         default:
             return state;

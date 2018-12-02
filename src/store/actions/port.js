@@ -17,7 +17,7 @@ export const backgroundPortInit = (chrome) => {
         console.warn(
             'No "chrome" var available. Probably because code is' +
             ' running outside of an extension. Check if NODE_ENV' +
-            ' is set to \'development\' or \'production\'.\n' +
+            " is set to 'development' or 'production'.\n" +
             'NODE_ENV: ' + process.env.NODE_ENV
         );
         return { type: actionTypes.BLANK_ACTION };
@@ -55,6 +55,7 @@ export const backgroundPortInit = (chrome) => {
                     dispatch(actions.notifyDialogOpenNew(
                         dialogConfigs.archiveDone()
                     ));
+                    // options page open - handled in background.js
                     break;
 
                 // called when rips data import has completed

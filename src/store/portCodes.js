@@ -22,6 +22,7 @@ export const BKG_RA_KILL_ALL = 'BKG_RA_KILL_ALL';
 export const BKG_RA_STOP_IMPORT_WITH_ERROR = 'BKG_RA_STOP_IMPORT_WITH_ERROR';
 
 // ----------------- send -> react app (RA) to background (BKG) -----------------
+export const RA_BKG_CLEAR_ALL_DATA = 'RA_BKG_CLEAR_ALL_DATA';
 export const RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED = 'RA_BKG_ERROR_BKG_CODE_NOT_RECOGNIZED';
 export const RA_BKG_START_IMPORT = 'RA_BKG_START_IMPORT';
 export const RA_BKG_START_MERGE = 'RA_BKG_START_MERGE';

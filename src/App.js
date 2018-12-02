@@ -168,6 +168,10 @@ class App extends Component {
     }
 
     handleClear = () => {
+        const {
+            bkgPort, onClearAllData
+        } = this.props;
+        
         // TODO: also clear rips data from redux store
         // -> including from bkg.js 
         // Clear client nums, and reset client#Valid variables
@@ -178,6 +182,8 @@ class App extends Component {
             importInProgress: false,
             mergeInProgress: false
         });
+
+        onClearAllData(bkgPort);
     }
 
     handleMergeDialogOpen = () => {
@@ -732,6 +738,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
+        onClearAllData: (bkgPort) => dispatch(actions.portClearAllData(bkgPort)),
         onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
         onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums)),
         onNotifyDialogClose: () => dispatch(actions.notifyDialogClose()),

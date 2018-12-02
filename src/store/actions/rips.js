@@ -4,6 +4,24 @@ import * as portCodes from '../portCodes';
 import { tableConfigs } from '../../shared/ripsTableConfigHolder';
 import { formatRawData } from '../../shared/ripsFormatRawData';
 
+// clear rips redux data
+export const ripsClearRedux = () => {
+    return {
+        type: actionTypes.RIPS_CLEAR_REDUX
+    };
+};
+// container for clearing all data in the program
+export const ripsClearAllData = (port) => {
+    return dispatch => {
+        // clear redux data related to rips
+        dispatch(ripsClearRedux());
+
+        // clear background data
+        port.postMessage({
+            code: portCodes.RA_BKG_CLEAR_ALL_DATA
+        });
+    };
+}
 // tell UI the process has started
 const ripsFetchStart = () => {
     return {
