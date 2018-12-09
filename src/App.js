@@ -29,9 +29,9 @@ import {
 
 class App extends Component {
     state = {
-        client1: process.env.NODE_ENV === 'development' ? '201813794' : null, 
-        client2: process.env.NODE_ENV === 'development' ? '201815032' : null, 
-        client3: process.env.NODE_ENV === 'development' ? '201814527' : null,
+        client1: process.env.NODE_ENV === 'development' ? '201813794' : '', 
+        client2: process.env.NODE_ENV === 'development' ? '201815032' : '', 
+        client3: process.env.NODE_ENV === 'development' ? '201814527' : '',
 
         client1Valid: false,
         client2Valid: false,
