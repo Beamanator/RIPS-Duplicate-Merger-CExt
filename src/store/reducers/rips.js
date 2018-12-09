@@ -44,7 +44,7 @@ const ripsMergeFail = (state, action) => {
 
 const ripsClearRedux = (state, action) => {
     return updateObject(state, {
-        data: null,
+        data: initialData,
         loading: false,
         error: null,
     });
