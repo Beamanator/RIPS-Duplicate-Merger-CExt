@@ -87,17 +87,22 @@ const redirectTab = ( tabId, urlPart ) => {
     chrome.tabs.update(tabId, { url: url });
 }
 
-const highlightTab = ( tabId, callback ) => {
+const highlightTab = ( sourcePort, callback ) => {
     if (!callback) {
-        callback = (window) => {
-            console.warn('redirect to tab index #' + tabIndex, window);
+        callback = (param) => {
+            console.warn('redirect to tab index #' + tabIndex, param);
         }
+    }
+
+    if (!sourcePort) {
+        callback('No source port available! Bad news...');
+        return;
     }
 
     // highlight tab / make specified tab index focused / visible
     // -> (basically, open a specified tab for the user)
     // first get Tab object from id
-    chrome.tabs.get(tabId, (Tab) => {
+    chrome.tabs.get(sourcePort.sender.tab.id, (Tab) => {
         // next highlight the desired tab, by the Tab's id
         chrome.tabs.highlight({
             tabs: Tab.index
@@ -252,7 +257,7 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_HIGHLIGHT_RA_TAB:
-                highlightTab(RAPort.sender.tab.id);
+                highlightTab(RAPort);
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
@@ -278,7 +283,7 @@ const initContentScriptPort = (port) => {
                     IMPORT_IN_PROGRESS = false;
                     sendImportDone(RAPort, CLIENT_DATA_CONTAINER);
                     // open / focus options page since import is done
-                    highlightTab(RAPort.sender.tab.id);
+                    highlightTab(RAPort);
                 }
                 break;
 
@@ -289,7 +294,7 @@ const initContentScriptPort = (port) => {
                 
                 sendKillAll(RAPort, msg.source, msg.error);
                 // open / focus options page since error occurred
-                highlightTab(RAPort.sender.tab.id);
+                highlightTab(RAPort);
                 break;
 
             case PCs.CS_BKG_POST_SAVE_REDIRECT:
@@ -319,7 +324,7 @@ const initContentScriptPort = (port) => {
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
-                highlightTab(RAPort.sender.tab.id);
+                highlightTab(RAPort);
         }
     });
 
@@ -356,7 +361,7 @@ const initReactAppPort = (port) => {
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // open client script tab
-                highlightTab(CSPort.sender.tab.id);
+                highlightTab(CSPort);
                 sendStartImport(CSPort);
                 break;
 
@@ -374,7 +379,7 @@ const initReactAppPort = (port) => {
                 // CLIENT_NUMS = clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
                 // 4) highlight / open advanced search page
-                highlightTab(CSPort.sender.tab.id);
+                highlightTab(CSPort);
                 // 5) navigate to advanced search to begin the merge
                 sendStartMerge(CSPort);
                 break;
@@ -386,7 +391,7 @@ const initReactAppPort = (port) => {
                 // popup handled in react app
                 Utils_Warn('BKG',`Code sent to React <${msg.errCode}> not recognized`);
                 // highlight options page / react app
-                highlightTab(RAPort.sender.tab.id);
+                highlightTab(RAPort);
                 break;
 
             case PCs.RA_BKG_CLEAR_ALL_DATA:
