@@ -1,7 +1,7 @@
 # RIPS-Duplicate-Merger-CExt
 RIPS Duplicate Client Merger - Chrome Extension
 
-Built by "the RIPS guy" in Fall 2018, for use by StARS
+Built in Fall 2018, for use by StARS
 
 # How it works
 
@@ -14,7 +14,11 @@ To begin working with this program, you should have identified at least 2 RIPS c
 - Phone number
 - Date of birth
 
+![Identify Dupes](/readme_gifs/Identify_Duplicates1.gif)
+
 Sometimes two client records may have 3 or 4 of the above fields matching, but a few may be different. In this case, it's best to ask caseworkers of the clients if the records are for the same person. It's possible that there are mutiple people on the same UNHCR card with similar names and genders, and same nationality - so <u>**you must be 100% sure the client records are duplicates before moving to the next steps.**</u>
+
+![Make sure you select actual duplicates](/readme_gifs/Identify_Duplicates2.gif)
 
 ## Enter StARS Numbers
 Once you have identified duplicate client records, obtain the StARS number of each client. The StARS number is a unique number that identifies each client record in RIPS. It cannot be duplicated between accounts.
@@ -84,7 +88,7 @@ Input a list of StARS numbers and this extension will show the user any mis-matc
 ## Getting Started
 1. Run `npm install` to install the node packages in `package.json`
 1. Run `npm run build` to "build" the React app
-1. `chrome://extensions` in your browser, then `Load Unpacked`. Now navigate to your `build` directory that was created in the previous step. Finally, click 'ok'.
+1. Open `chrome://extensions` in your browser, then click `Load Unpacked`. Now navigate to your `build` directory that was created in the previous step. Finally, click 'ok'.
 
 Now you should have a new, working chrome extension!
 
