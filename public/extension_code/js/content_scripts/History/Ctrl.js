@@ -78,6 +78,15 @@ const getPageDataContainer = () => {
             else {
                 const cellData = cell.innerText.trim();
                 const cellMapName = columnNames[colIndex];
+
+                // if current cell is ACTION_NOTES (attendance notes),
+                // -> blank out notes if they're just the default
+                // -> action notes added by this auto merger utility
+                if (cellMapName === ACTION_NOTES &&
+                    cellData === U_DEFAULT_ACTION_NOTE) {
+                    cellData = '';
+                }
+
                 // map data to columnNameMap in row data obj
                 historyRowData[cellMapName] = cellData;
 
@@ -157,16 +166,6 @@ const startMerge = ( mData ) => {
 
             // assume match by default
             let actionMatch = true;
-
-            // if either obj's notes are the default note added
-            // -> by this Auto Merger util, blank them out for 
-            // -> duplicate action checking
-            if (mActionObj[ACTION_NOTES] == U_DEFAULT_ACTION_NOTE) {
-                mActionObj[ACTION_NOTES] = '';
-            }
-            if (cActionObj[ACTION_NOTES] == U_DEFAULT_ACTION_NOTE) {
-                mActionObj[ACTION_NOTES] = '';
-            }
 
             // loop through keys of current action object
             Object.entries(cActionObj).forEach(([cKey, cVal]) => {
