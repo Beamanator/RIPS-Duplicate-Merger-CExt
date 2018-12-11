@@ -34,10 +34,12 @@ const startMerge = ( serviceData ) => {
             serviceData[ACTION_DATE]
         ),
         // service caseworker dropdown
-        Utils_SetSelectOneElem(
-            Utils_QueryDoc(serviceCwSelector),
-            serviceData[ACTION_CASEWORKER]
-        )
+        // Note: returns true w/out adding cw if cw left stars
+        serviceData[ACTION_CASEWORKER].indexOf('(Left)') == -1
+            ? Utils_SetSelectOneElem(
+                Utils_QueryDoc(serviceCwSelector),
+                serviceData[ACTION_CASEWORKER]
+            ) : true
     ];
     
     // TODO: MAYBE check action box is populated

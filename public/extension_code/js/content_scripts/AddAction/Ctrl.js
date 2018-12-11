@@ -82,23 +82,38 @@ const startMerge = ( actionToCreate ) => {
             const errMsg = 'Not all fields inserted correctly! Check ' +
                 'array for fails [action, notes]:';
             Utils_Error(MESSAGE_SOURCE, errMsg, elemSetSuccess2);
+            // action wasn't found but notes entered successfully
+            // -> must be dealt with manually.
+            if (!elemSetSuccess2[0]) {
+                alert(
+                    'Warning: Action Name not found!\n\n' +
+                    'It is likely that the action being merged' +
+                    ` (${ actionToCreate[ACTION_NAME ]}) ` +
+                    'does not exist anymore. Try to find an ' +
+                    'existing, appropriate action. Then click save!\n\n' +
+                    "Ask the RIPS Guy if you aren't sure how to check."
+                );
+            }
             return;
         }
 
         // no fails yet, so keep going! caseworker time.
-        // -> introduce a 3 second delay before setting caseworker 
+        // -> introduce a 2.5 second delay before setting caseworker 
         // -> so validation extension has some time to set this dropdown,
         // -> then THIS extension can re-set it (if necessary)
-        const delay = 3000; // (milliseconds)
+        const delay = 2500; // (milliseconds)
         setTimeout((...params) => {
             // now get caseworker selector
             const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER];
     
             // now enter cw into dropdown & get success
-            const caseworkerSetSuccess = Utils_SetSelectOneElem(
-                Utils_QueryDoc(caseworkerSelector),
-                actionToCreate[ACTION_CASEWORKER]
-            );
+            // Note: returns true w/out adding cw if cw left stars
+            const caseworkerSetSuccess =
+                actionToCreate[ACTION_CASEWORKER].indexOf('(Left)') == -1
+                    ? Utils_SetSelectOneElem(
+                        Utils_QueryDoc(caseworkerSelector),
+                        actionToCreate[ACTION_CASEWORKER]
+                    ) : true;
 
             // if cw set successful, trust it & click save!
             if (caseworkerSetSuccess) {
@@ -116,7 +131,7 @@ const startMerge = ( actionToCreate ) => {
             }
             // else, cw didn't get set successfully! error!
             else {
-                let err = 'Caseworker couldn\t get set into elem with ' +
+                let err = 'Caseworker couldn\'t get set into elem with ' +
                     `selector <${caseworkerSelector}>`;
                 Utils_Error(MESSAGE_SOURCE, err);
             }

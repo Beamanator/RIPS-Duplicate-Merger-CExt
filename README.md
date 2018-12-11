@@ -54,7 +54,13 @@ Any field selected (with a green background) will be added to the merged client 
 
 Once you're ready to merge, move on to the next step.
 
->Note: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that service after the auto merger creates it.
+>Note 1: Some fields (Action Name / Caseworker) *may* not be imported exactly as they appear. This is because these types of data are changing most often. Actions can be renamed or removed, and Caseworkers leave relatively often. Here is how you can deal with either of these scenarios:
+- Missing Action:
+    - The auto-merge utility will advise the user to check for the valid action, so the user should first open the Actions dropdown box and check if a different action with a slightly different name is appropriate at this moment. If there is no action, the user needs to re-run the auto merger (Clear data first), then make sure not to slect that action in the *merge* stage.
+- Missing Caseworker:
+    - There's really nothing to be done here, just let the auto-merge utility keep yourself as the caseworker for any new services / actions.
+
+>Note 2: Some actions will not be able to be merged to new clients. These are actions related to service closed / reopened, such as: "Service closed" [6] and "Service was closed - reopened at the later date" [333]. These actions are not be mergable so *if a Service is closed, and you want to merge it AND keep it closed*, you have to manually close that service after the auto merger creates it.
 
 ## Click Merge
 Click the "Merge" button at the bottom of the page!
@@ -68,7 +74,7 @@ One more quick note: You may also see an error starting with "ERROR: You selecte
 ## Which Client Gets the New Data?
 This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
 
-    Note: this is also why all of this first client's data is selected by default. You can still un-select any of this data if you know it is incorrect and needs to be changed.
+>Note: this is also why all of this first client's data is selected by default. You can still un-select any of this data if you know it is incorrect and needs to be changed.
 
 **The Merger will not completely delete any client data!!** If any field has data that needs to be replaced (like wrong nationality, or a misspelled name), the target client (Client StARS #1) will get the updated information. However, if there is incorrect data (like actions with the wrong notes), this data will need to be changed manually.
 
