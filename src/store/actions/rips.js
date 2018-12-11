@@ -73,7 +73,6 @@ export const ripsFetchData = (port, clientNums) => {
 };
 // beginning of rips merge
 export const ripsMergeStart = () => {
-    console.warn('Rips merge begins :)');
     return {
         type: actionTypes.RIPS_MERGE_START
     };

@@ -42,6 +42,7 @@ port.onMessage.addListener(function(msg) {
 
     switch(msg.code) {
         case PCs.BKG_CS_START_IMPORT:
+        case PCs.BKG_CS_START_MERGE:
             Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
         

@@ -399,6 +399,7 @@ class App extends Component {
 
         // if data merge didn't work perfectly, 
         if (!mergeData.pass) {
+            // TODO: add notification or something here
             console.error('error somewhere');
             return;
         }
@@ -407,7 +408,8 @@ class App extends Component {
         onMergeBegin(
             bkgPort,
             mergeData, // pass mergeData here!
-            [client1, client2, client3] // [target num, ...other nums]
+            // [target num, ...other nums]
+            [client1, client2, client3]
         );
 
         // lock tables, disable merge button

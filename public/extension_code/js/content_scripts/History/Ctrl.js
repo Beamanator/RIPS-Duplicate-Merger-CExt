@@ -146,8 +146,6 @@ const startMerge = ( mData ) => {
     // create arr to hold missing history data
     const missingHistoryDataArr = [];
 
-    debugger;
-
     // loop through current + merge data to find "missing" data
     mHistoryData.forEach(mActionObj => {	
         const actionName = mActionObj[ACTION_NAME];
