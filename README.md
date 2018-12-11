@@ -14,16 +14,20 @@ To begin working with this program, you should have identified at least 2 RIPS c
 - Phone number
 - Date of birth
 
-![Identify Dupes](/readme_gifs/Identify_Duplicates1.gif)
+![Identify Dupes](/readme_gifs/1_Identify_Duplicates.gif)
 
 Sometimes two client records may have 3 or 4 of the above fields matching, but a few may be different. In this case, it's best to ask caseworkers of the clients if the records are for the same person. It's possible that there are mutiple people on the same UNHCR card with similar names and genders, and same nationality - so <u>**you must be 100% sure the client records are duplicates before moving to the next steps.**</u>
 
-![Make sure you select actual duplicates](/readme_gifs/Identify_Duplicates2.gif)
+![Make sure you select actual duplicates](/readme_gifs/2_Identify_Duplicates.gif)
 
 ## Enter StARS Numbers
 Once you have identified duplicate client records, obtain the StARS number of each client. The StARS number is a unique number that identifies each client record in RIPS. It cannot be duplicated between accounts.
 
+![Record StARS Numbers](/readme_gifs/3_Record_STARS_Nums.gif)
+
 Now that you have the StARS numbers for each client record, open "The Merger" and enter the StARS numbers into the appropriate fields at the top of the page.
+
+![Open Auto-Merger Extension](/readme_gifs/4_Open_Merger_Ext.gif)
 
 >Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
