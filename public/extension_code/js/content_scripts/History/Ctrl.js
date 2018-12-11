@@ -76,7 +76,7 @@ const getPageDataContainer = () => {
             if (columnNames[colIndex] == '') {}
             // else, we want this row! add cell data to row object
             else {
-                const cellData = cell.innerText.trim();
+                let cellData = cell.innerText.trim();
                 const cellMapName = columnNames[colIndex];
 
                 // if current cell is ACTION_NOTES (attendance notes),
