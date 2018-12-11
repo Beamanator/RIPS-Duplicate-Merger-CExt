@@ -49,8 +49,9 @@ const FIELD_IDS_ADD_ACTION = {
             .contentDocument.querySelector('body');
 
             // set default note string
-            if (!notes) notes = 'Action added by Auto Merger';
-            
+            if (!notes) notes = U_DEFAULT_ACTION_NOTE;
+            else notes += `... (${ U_DEFAULT_ACTION_NOTE })`;
+
             // fail = return false
             if (!notesIFrame) {
                 return false;

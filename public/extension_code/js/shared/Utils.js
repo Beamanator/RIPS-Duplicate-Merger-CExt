@@ -330,3 +330,13 @@ const Utils_ClickElem = (Elem) => {
 
     return true;
 }
+
+// ==============================================================================
+//                                CONSTS
+// ==============================================================================
+
+/**
+ * Returns default notes that will be appended to any action
+ * created / added by this Auto Merger utility
+ */
+const U_DEFAULT_ACTION_NOTE = 'Action added by Auto Merger';

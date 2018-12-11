@@ -134,8 +134,10 @@ const startMerge = ( mData ) => {
     // pull out merge history data
     const mHistoryData = mData[MESSAGE_SOURCE];
 
-    // create obj to hold missing history data
+    // create arr to hold missing history data
     const missingHistoryDataArr = [];
+
+    debugger;
 
     // loop through current + merge data to find "missing" data
     mHistoryData.forEach(mActionObj => {	
@@ -155,6 +157,16 @@ const startMerge = ( mData ) => {
 
             // assume match by default
             let actionMatch = true;
+
+            // if either obj's notes are the default note added
+            // -> by this Auto Merger util, blank them out for 
+            // -> duplicate action checking
+            if (mActionObj[ACTION_NOTES] == U_DEFAULT_ACTION_NOTE) {
+                mActionObj[ACTION_NOTES] = '';
+            }
+            if (cActionObj[ACTION_NOTES] == U_DEFAULT_ACTION_NOTE) {
+                mActionObj[ACTION_NOTES] = '';
+            }
 
             // loop through keys of current action object
             Object.entries(cActionObj).forEach(([cKey, cVal]) => {
