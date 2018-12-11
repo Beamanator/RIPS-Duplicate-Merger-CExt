@@ -232,6 +232,7 @@ const initContentScriptPort = (port) => {
                 CLIENT_DATA_CONTAINER = {};
                 MERGED_DATA_CONTAINER = {};
                 MERGE_HISTORY_DATA = null;
+                MERGE_HISTORY_INDEX = 0;
                 SERVICE_TO_CREATE = null;
                 ACTION_TO_CREATE = null;
                 
@@ -402,6 +403,7 @@ const initReactAppPort = (port) => {
                 // clear data vars
                 CLIENT_NUMS = null; CLIENT_INDEX = 0;
                 MERGED_DATA_INDEX = 0;
+                MERGE_HISTORY_INDEX = 0;
                 CLIENT_DATA_CONTAINER = {};
                 MERGED_DATA_CONTAINER = {};
                 Utils_Warn('BKG', 'All client data cleared');
