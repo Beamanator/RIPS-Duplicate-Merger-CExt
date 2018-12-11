@@ -251,14 +251,9 @@ const initContentScriptPort = (port) => {
                     ARCHIVE_IN_PROGRESS = false;
                     // send a note back up!
                     sendArchiveDone(RAPort);
-                    // highlight options page handled with code:
-                    // -> CS_BKG_HIGHLIGHT_RA_TAB
-                    // -> code sent by CBI page
+                    // highlight options page
+                    highlightTab(RAPort);
                 }
-                break;
-
-            case PCs.CS_BKG_HIGHLIGHT_RA_TAB:
-                highlightTab(RAPort);
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
