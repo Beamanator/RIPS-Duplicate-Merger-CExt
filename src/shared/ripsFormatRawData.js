@@ -182,15 +182,20 @@ export const formatRawData = (rawData, key, type="basic") => {
                 ) {}
                 // check if there's matching data b/w clients 1, 2, and 3
                 else {
+                    // extract client data to make things readable
+                    let c1Data = data_container[0];
+                    let c2Data = data_container[1];
+                    let c3Data = data_container[2];
+
                     // loop through client 1's data, searching for
                     // -> exact matches in other clients' data
-                    data_container[0].forEach((c1obj, c1i) => {
+                    c1Data.forEach((c1obj, c1i) => {
                         let c1index = c1i;
                         let match2 = false, c2index;
                         let match3 = false, c3index;
 
                         // search for matches in client 2
-                        data_container[1].forEach((c2obj, c2i) => {
+                        c2Data.forEach((c2obj, c2i) => {
                             if (match2) return; // quit early if prev match2 found
 
                             // assume all props match by default
@@ -215,7 +220,7 @@ export const formatRawData = (rawData, key, type="basic") => {
 
                         // search for matches in client 3 (if numClients === 3)
                         if (numClients === 3) {
-                            data_container[2].forEach((c3obj, c3i) => {
+                            c3Data.forEach((c3obj, c3i) => {
                                 if (match3) return; // quit early if prev match3 found
     
                                 // assume all props match by default
