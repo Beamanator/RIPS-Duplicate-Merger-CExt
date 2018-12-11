@@ -403,11 +403,6 @@ const sendArchiveNextClient = () => {
 		code: PCs.CS_BKG_ARCHIVE_NEXT_CLIENT
 	});
 };
-const sendHighlightRATab = () => {
-	port.postMessage({
-		code: PCs.CS_BKG_HIGHLIGHT_RA_TAB
-	});
-};
 
 // ================================================================
 //                          PORT LISTENERS
@@ -437,7 +432,6 @@ port.onMessage.addListener(msg => {
 			// -> archived, so now we should redirect back to
 			// -> advanced search page & highlight react app tab
 			if (postArchiveRedirectFlag) {
-				sendHighlightRATab();
 				Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
 				return;
 			}
