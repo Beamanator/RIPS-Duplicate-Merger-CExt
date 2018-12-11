@@ -32,9 +32,9 @@ Now that you have the StARS numbers for each client record, open "The Merger" an
 >Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
 ## Click Import
-Now that you have entered all of the StARS numbers you want to merge, click "Import". You should already have opened one tab with RIPS, and logged in. The import will not work correctly if you have more than one tab opened to RIPS.
+By this time, you should have already opened RIPS (in *only one tab*), and logged in. The import will not work correctly if you have RIPS open in more than one tab.
 
-At this state, the program will reach out to RIPS and gather all of the information saved on each client profile.
+Now that you have entered all of the StARS numbers you want to merge, click "Import". The program will now reach out to RIPS and gather all of the information saved on each client profile.
 
 ## How You Know Import has Finished
 You will know the import has finished once you see a popup on the import page stating that the import has finished. You will also see a few tables appear below. Each table should have separate categories of client data inside.
