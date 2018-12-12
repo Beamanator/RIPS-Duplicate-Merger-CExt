@@ -143,6 +143,13 @@ const startMerge = ( actionToCreate ) => {
         const err = `Some conditions failed! Check 'em!`;
         Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'UTILS ERROR:', errMsg);
+        alert(
+            'Warning: Your internet connection seems a little bit ' +
+            'slow. Please refresh the page now.' +
+            '\n\nIf this message shows up multiple times, please ' +
+            'contact the developer (the RIPS guy). Thanks!' +
+            '\n\nNote for the developer:\nError message: ' + errMsg
+        );
     });
 }
 

@@ -56,10 +56,10 @@ const analyzeSearchResult = ( clientNum ) => {
     .catch(errMsg => {
         Utils_Error(MESSAGE_SOURCE, 'Search Results ERROR:', errMsg);
         alert(
-            'Warning: Something went wrong. Your internet connection ' +
+            'Warning: Your internet connection ' +
             'may be a little bit slow. Please refresh the page now.' +
             '\n\nIf this message shows up multiple times, please ' +
-            'contact the creator (the RIPS guy). Thanks!' +
+            'contact the developer (the RIPS guy). Thanks!' +
             '\n\nNote for the developer:\nError message: ' + errMsg
         );
     });
