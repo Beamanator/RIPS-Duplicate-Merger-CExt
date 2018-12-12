@@ -17,8 +17,6 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_ADVANCED_SEARCH_RESU
 // ===============================================================
 const analyzeSearchResult = ( clientNum ) => {
     Utils_Log(MESSAGE_SOURCE, 'Analyzing client num: ', clientNum);
-    // TODO: think about waiting 1 - 4 seconds to wait for results
-    // -> to load (like Auto Import)
 
     // 1) get all search result rows
     const resultsSelector = FIELD_IDS_ADVANCED_SEARCH_RESULTS[SEARCH_RESULTS];
@@ -56,8 +54,14 @@ const analyzeSearchResult = ( clientNum ) => {
         cbiTabElem.click();
     })
     .catch(errMsg => {
-        // TODO: stop import w/ error message!
         Utils_Error(MESSAGE_SOURCE, 'Search Results ERROR:', errMsg);
+        alert(
+            'Warning: Something went wrong. Your internet connection ' +
+            'may be a little bit slow. Please refresh the page now.' +
+            '\n\nIf this message shows up multiple times, please ' +
+            'contact the creator (the RIPS guy). Thanks!' +
+            '\n\nNote for the developer:\nError message: ' + errMsg
+        );
     });
 }
 
