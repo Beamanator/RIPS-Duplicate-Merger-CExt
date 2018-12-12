@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
 // import core components
@@ -7,6 +7,7 @@ import {
     Paper
 } from '@material-ui/core';
 
+import CustomTableRowSpacer from './CustomTableRowSpacer';
 import CustomTableCell from './CustomTableCell';
 
 class CustomTable extends Component {
@@ -218,6 +219,8 @@ class CustomTable extends Component {
             clientData: data
         } = this.state;
 
+        this.dataRowGroupHolder = 0;
+
         // if data is empty, don't display table!
         if (!data || data.length === 0) {
             let msg =
@@ -250,43 +253,71 @@ class CustomTable extends Component {
                                 <CustomTableCell>{`Client #3 (${clientNums[2]})`}</CustomTableCell>
                             }
                         </TableRow>
+                        <CustomTableRowSpacer />
                     </TableHead>
                     <TableBody>
-                        {data.map((rowData, rowi) =>
-                            <TableRow
-                                className={[classes.bodyRow, classes.tableRow].join(' ')}
-                                key={rowi}
-                            >
-                                <CustomTableCell
-                                    component="th"
-                                    scope="row"
-                                    className={this.isRowSelected(rowi)}
+                        {data.map((rowData, rowi) => {
+                            // position 4 is where list group # is stored in rowData arr
+                            // -> Note: groupNum is not group index (it starts at 1, not 0)
+                            let groupNum = rowData[4];
+                            let spacerRow = null;
+
+                            // if data has groupNum (type 'list'), see if we need to add
+                            // -> extra spacer row(s) to make the table look nicer
+                            if (groupNum) {
+                                // if same group as before, don't add spacer
+                                if (groupNum === this.dataRowGroupHolder) {}
+                                // if groupNum is 1, don't add spacing before
+                                // -> spacer is automatically added after header row for
+                                // -> EVERY table, not just 'list' tables
+                                else if (groupNum === 1) {}
+                                // else, new groupnum starting - add spacer before
+                                else {
+                                    // add row spacer here
+                                    spacerRow = <CustomTableRowSpacer />;
+
+                                    // update row group holder number so future rows
+                                    // -> can match & not display a spacerRow
+                                    this.dataRowGroupHolder = groupNum;
+                                }
+                            }
+
+                            return (<Fragment key={rowi}>
+                                {spacerRow}
+                                <TableRow
+                                    className={[classes.bodyRow, classes.tableRow].join(' ')}
                                 >
-                                    {rowData[0]}
-                                </CustomTableCell>
-                                {[1,2,3].map((colNum, coli) => {
-                                    // conditionally render column #4
-                                    if (colNum > numCols) return null;
-
-                                    let cellProps = { key: `${rowi}-${coli}` };
-                                    
-                                    // make cell interactive if it has data (check if
-                                    // -> data exists using .length b/c all data
-                                    // -> come as strings, even checkboxes are 
-                                    // -> 'checked' or 'not checked', so .length works)
-                                    if (rowData[colNum] && rowData[colNum].length > 0) {
-                                        cellProps = {
-                                            ...cellProps,
-                                            ...this.getInteractiveTableCellProps(rowi, coli)
-                                        }
-                                    }
-
-                                    return <CustomTableCell {...cellProps}>
-                                        {rowData[colNum]}
+                                    <CustomTableCell
+                                        component="th"
+                                        scope="row"
+                                        className={this.isRowSelected(rowi)}
+                                    >
+                                        {rowData[0]}
                                     </CustomTableCell>
-                                })}
-                            </TableRow>
-                        )}
+                                    {[1,2,3].map((colNum, coli) => {
+                                        // conditionally render column #4
+                                        if (colNum > numCols) return null;
+
+                                        let cellProps = { key: `${rowi}-${coli}` };
+                                        
+                                        // make cell interactive if it has data (check if
+                                        // -> data exists using .length b/c all data
+                                        // -> come as strings, even checkboxes are 
+                                        // -> 'checked' or 'not checked', so .length works)
+                                        if (rowData[colNum] && rowData[colNum].length > 0) {
+                                            cellProps = {
+                                                ...cellProps,
+                                                ...this.getInteractiveTableCellProps(rowi, coli)
+                                            }
+                                        }
+
+                                        return <CustomTableCell {...cellProps}>
+                                            {rowData[colNum]}
+                                        </CustomTableCell>
+                                    })}
+                                </TableRow>
+                            </Fragment>);
+                        })}
                     </TableBody>
                 </Table>
             </Paper>
