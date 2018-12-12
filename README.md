@@ -90,6 +90,13 @@ Once the merge process finishes, "The Merger" will archive clients #2 and #3. On
 ## That's all!
 You're done! As always, let "the RIPS Guy" know if anything goes wrong or if you have any questions.
 
+## Common Issues
+If you're running into any issues while using this RIPS Duplicate Merger, check the list below for solutions to common issues! If you do not find the issue / solution you are looking for, contact the developer (`rips@stars-egypt.org`) for assistance.
+- RIPS stops doing anything (infinite spinning)
+    - Sometimes RIPS will stop loading, and you will be stuck watching one page infinitely load. If this happens to you, try stopping the page from loading, then click refresh.
+
+![Stop and Refresh Page](/readme_gifs/Stop_Refresh_Page.gif)
+
 # Developer Notes
 
 ## The Purpose
