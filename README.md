@@ -27,7 +27,7 @@ Once you have identified duplicate client records, obtain the StARS number of ea
 
 Now that you have the StARS numbers for each client record, open "The Merger" and enter the StARS numbers into the appropriate fields at the top of the page.
 
-![Open Auto-Merger Extension](/readme_gifs/4_Open_Merger_Ext.gif)
+![Open Auto-Merger & Enter StARS Nums](/readme_gifs/4_Add_Nums_To_Merger.gif)
 
 >Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
