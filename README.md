@@ -32,12 +32,20 @@ Now that you have the StARS numbers for each client record, open "The Merger" an
 >Note: StARS numbers must be entered 100% accurately! Each StARS number is a 9 digit number, starting with a valid year (2017, 2018, etc...). The final 5 numbers represent which order the clients were created in. You will not be able to merge clients if you do not enter the StARS numbers in the proper format. Also, you do not need to enter any number into the 3rd client StARS box, unless you have 3 RIPS client records for the same person.
 
 ## Click Import
-By this time, you should have already opened RIPS (in *only one tab*), and logged in. The import will not work correctly if you have RIPS open in more than one tab.
+By this time, you should have already opened RIPS (in *only one tab*), and logged in. The import will not work correctly if you haven't logged in to RIPS *or* if RIPS is open in more than one tab.
 
-Now that you have entered all of the StARS numbers you want to merge, click "Import". The program will now reach out to RIPS and gather all of the information saved on each client profile.
+Now that you have entered all of the StARS numbers you want to merge, click "Import".
+
+![Log in to RIPS and click 'Import'](/readme_gifs/5_Login_And_Import.gif)
+
+The program will now reach out to RIPS and gather all of the information saved on each client profile.
 
 ## How You Know Import has Finished
-You will know the import has finished once you see a popup on the import page stating that the import has finished. You will also see a few tables appear below. Each table should have separate categories of client data inside.
+You will know the import has finished once you see a popup on the import page stating that the import has finished, and that you should now select the data that should be merged into one final client record.
+
+![Import Complete. Merge next.](/readme_imgs/6_Import_Done_Msg.JPG)
+
+You will also see a few tables appear lower down on page with each client's data. Now move on to the next section, *Select Data to Merge*.
 
 ## Select Data to Merge
 Now that you see each client's data next to each other, select the data you want to be merged into the final client's profile.
