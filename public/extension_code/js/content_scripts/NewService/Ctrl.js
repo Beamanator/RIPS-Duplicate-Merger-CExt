@@ -34,7 +34,9 @@ const startMerge = ( serviceData ) => {
             serviceData[ACTION_DATE]
         ),
         // service caseworker dropdown
-        // Note: returns true w/out adding cw if cw left stars
+        // Note: returns true w/out adding cw if no cw
+        // -> or cw left stars
+        serviceData[ACTION_CASEWORKER] &&
         serviceData[ACTION_CASEWORKER].indexOf('(Left)') == -1
             ? Utils_SetSelectOneElem(
                 Utils_QueryDoc(serviceCwSelector),
