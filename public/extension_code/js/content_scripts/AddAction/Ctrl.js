@@ -107,8 +107,10 @@ const startMerge = ( actionToCreate ) => {
             const caseworkerSelector = FIELD_IDS_ADD_ACTION[ADD_ACTION_CASEWORKER];
     
             // now enter cw into dropdown & get success
-            // Note: returns true w/out adding cw if cw left stars
+            // Note: returns true w/out adding cw if no cw
+            // -> or cw left stars
             const caseworkerSetSuccess =
+                actionToCreate[ACTION_CASEWORKER] &&
                 actionToCreate[ACTION_CASEWORKER].indexOf('(Left)') == -1
                     ? Utils_SetSelectOneElem(
                         Utils_QueryDoc(caseworkerSelector),
