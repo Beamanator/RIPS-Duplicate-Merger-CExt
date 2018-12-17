@@ -176,6 +176,13 @@ const sendKillAll = (port, source, error) => {
     });
 }
 
+const sendNoRIPSTabs = (port) => {
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    port.postMessage({
+        code: BKG_RA_NO_RIPS_TABS,
+    });
+}
+
 // ==============================================================================
 //                           PORT MESSAGE LISTENERS
 // ==============================================================================
@@ -356,9 +363,14 @@ const initReactAppPort = (port) => {
                 // set global clientnums arr - remove empty strings
                 CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
                 CLIENT_INDEX = 0;
-                // open client script tab
-                highlightTab(CSPort);
-                sendStartImport(CSPort);
+                // open RIPS & begin import, if available
+                if (CSPort) {
+                    // open client script tab
+                    highlightTab(CSPort);
+                    sendStartImport(CSPort);
+                }
+                // RIPS not open, so send error back to React
+                else sendNoRIPSTabs(RAPort);
                 break;
 
             case PCs.RA_BKG_START_MERGE:

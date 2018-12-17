@@ -19,6 +19,7 @@ export const BKG_RA_ERROR_CODE_NOT_RECOGNIZED = 'BKG_RA_ERROR_CODE_NOT_RECOGNIZE
 export const BKG_RA_IMPORT_DONE = 'BKG_RA_IMPORT_DONE';
 export const BKG_RA_INIT_PORT = 'BKG_RA_INIT_PORT';
 export const BKG_RA_KILL_ALL = 'BKG_RA_KILL_ALL';
+export const BKG_RA_NO_RIPS_TABS = 'BKG_RA_NO_RIPS_TABS';
 export const BKG_RA_STOP_IMPORT_WITH_ERROR = 'BKG_RA_STOP_IMPORT_WITH_ERROR';
 
 // ----------------- send -> react app (RA) to background (BKG) -----------------

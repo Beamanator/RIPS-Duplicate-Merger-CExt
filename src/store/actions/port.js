@@ -82,6 +82,17 @@ export const backgroundPortInit = (chrome) => {
                     // options page open - handled in background.js
                     break;
 
+                // called when there are no RIPS tabs open! tell user
+                // -> to open RIPS, then start over
+                case portCodes.BKG_RA_NO_RIPS_TABS:
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.fatalError(
+                            'No RIPS tabs open! Please open and sign in ' +
+                            'to RIPS, then try again.'
+                        )
+                    ));
+                    break;
+
                 // invalid msg code recognized in background.js
                 case portCodes.BKG_RA_ERROR_CODE_NOT_RECOGNIZED:
                     dispatch(actions.notifyDialogOpenNew(

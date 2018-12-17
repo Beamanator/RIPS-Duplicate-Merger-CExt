@@ -36,6 +36,7 @@ const PCs = {
     BKG_RA_INIT_PORT: 'BKG_RA_INIT_PORT',
     BKG_RA_IMPORT_DONE: 'BKG_RA_IMPORT_DONE',
     BKG_RA_KILL_ALL: 'BKG_RA_KILL_ALL',
+    BKG_RA_NO_RIPS_TABS: 'BKG_RA_NO_RIPS_TABS',
     BKG_RA_STOP_IMPORT_WITH_ERROR: 'BKG_RA_STOP_IMPORT_WITH_ERROR',
 
     // ==============================================================================
