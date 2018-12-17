@@ -77,11 +77,11 @@ Once you're ready to merge, move on to the next step.
 ## Click Merge
 Click the "Merge" button at the bottom of the page!
 
-Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!! So please be as accurate as possible!!
+Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!! So please be as accurate as possible!! You don't *always* have to merge data between clients, as sometimes other staff members have already transferred one or more actions between profiles! So pay close attention!
 
-You may also see a **Warning** which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!
+One **important** note: You may also see an error starting with "ERROR: You selected at least 1 <u>**file**</u> that needs to be moved to the target client...". This merger program cannot move files from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged.
 
-One more quick note: You may also see an error starting with "ERROR: You selected at least 1 <u>**file**</u> that needs to be moved to the target client...". This merger program cannot move files from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged.
+One more quick note: you may see a **Warning** in the popup, which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!
 
 ## Which Client Gets the New Data?
 This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
@@ -95,10 +95,11 @@ Once the merge process finishes, "The Merger" will archive clients #2 and #3. On
 
 **Note:** At this stage, it is highly recommended to check the newly merged client (Client StARS #1) and make sure all of the correct data has been added here.
 
-## That's all!
-You're done! As always, let "the RIPS Guy" know if anything goes wrong or if you have any questions.
+Got more clients to merge? Go back to the top of the page and click "Clear", then repeat the steps above!
 
 ## Common Issues
+As always, let "the RIPS Guy" know if anything goes wrong or if you have any questions.
+
 If you're running into any issues while using this RIPS Duplicate Merger, check the list below for solutions to common issues! If you do not find the issue / solution you are looking for, contact the developer (`rips@stars-egypt.org`) for assistance.
 - RIPS stops doing anything (infinite spinning)
     - Sometimes RIPS will stop loading, and you will be stuck watching one page infinitely load. If this happens to you, try stopping the page from loading, then click refresh.
