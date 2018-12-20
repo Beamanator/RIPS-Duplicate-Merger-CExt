@@ -50,19 +50,21 @@ You will also see a few tables appear lower down on the page with each client's 
 ## Select Data to Merge
 Now that you see each client's data next to each other, select the data you want to be merged into the final client's profile.
 
-In some tables, you will only be able to select one cell per row. Examples:
-- First name
-- Last name
-- Phone number
+In these tables, you will only be able to select one cell per row:
+- Client Basic Information
+- Client Vulnerabilities
 - Notes
 
-In the other tables, you will be able to select multiple groups of cells per row. Examples:
+In these other tables, you will be able to select multiple groups of cells per row:
 - Actions (in the History table)
 - Relatives
 - Contacts
 - Files
+- Addresses
 
-Any field selected (with a green background) will be added to the merged client in the end. Rows with a green cell in the far left indicate that some data has been selected for that field. If the row does not have selected data, the far left cell will be yellow, indicating no data from this row will be saved. It is recommended to select at least one item per row to make sure no data is missed!
+Any field selected (with a green background) will be added to the merged client in the end. Rows with a green cell in the far left indicate that some data has been selected for that field. If the row does not have selected data, the far left cell will be yellow, indicating no data from this row will be added / merged to Client #1. It is recommended to select at least one item per row to make sure no data is missed!
+
+![View imported data and select data to merge to Client #1](/readme_gifs/7_Select_Data_To_Merge.gif)
 
 Once you're ready to merge, move on to the next step.
 
@@ -79,9 +81,15 @@ Click the "Merge" button at the bottom of the page!
 
 Now you will see a popup that serves to remind you (the user) to make sure you're 100% confident that the data you selected is 100% accurate. Remember that all of the data you select will be added to a client in RIPS, and all other RIPS profiles will be archived!! So please be as accurate as possible!! You don't *always* have to merge data between clients, as sometimes other staff members have already transferred one or more actions between profiles! So pay close attention!
 
+![Click Merge!](/readme_gifs/8_Click_Merge.gif)
+
 **Important Note**: _You may also see an error starting with "ERROR: You selected at least 1 <u>**file**</u> that needs to be moved to the target client...". This merger program cannot move files (like Microsoft Word, PDFs, images, etc.) from one client to another, so **if you see (and select) a file that needs to be moved from one client record to another, this must be done manually**. The merger will not allow you to begin merging until you are confident that the files have been moved already, and you do not select extra files that need to be merged._
 
+![Cannot Merge Files! Error](/readme_imgs/9_Error_Cannot_Merge_Files.JPG)
+
 _**Note 2**: you may see a **Warning** in the popup, which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!_
+
+![Warning To Include All Data!](/readme_imgs/10_Warnings_To_Include_All_Data.JPG)
 
 ## Which Client Gets the New Data?
 This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
