@@ -656,7 +656,7 @@ class App extends Component {
             <CustomDialog
                 isOpen={mergeDialogOpen}
                 handleClose={this.handleMergeDialogClose}
-                title={"are you sure you're ready to merge?"}
+                title={"Are you sure you're ready to merge?"}
                 buttonCloseText={"Take me back"}
                 showActionButton={!mergeDialogError}
                 buttonActionText={"Merge"}
