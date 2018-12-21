@@ -92,7 +92,7 @@ _**Note 2**: you may see a **Warning** in the popup, which shows a list of table
 ![Warning To Include All Data!](/readme_imgs/10_Warnings_To_Include_All_Data.JPG)
 
 ## Which Client Gets the New Data?
-This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore this client will receive all new, "Merged" data.
+This program assumes the first client StARS number (entered into the box "Client StARS #1") is the client with the most accurate information, and therefore **this client will receive all new, "Merged" data**.
 
 _**Note**: this is also why all of this first client's data is selected by default. You can still un-select any of this data if you know it is incorrect and needs to be changed._
 
