@@ -14,14 +14,19 @@
  * ]
  *
  * @param {object} rawData - js object holding raw data
- * @param {function} errorHandler - error handler function
  * @param {string} key - data key
+ * @param {string} type - options: 'basic' or 'lists', describing
+ *                        type of data table to format
+ * @param {function} errorHandler - error handler function
  */
-export const formatRawData = (rawData, key, type="basic") => {
+export const formatRawData = (rawData, key, type="basic", errorHandler) => {
+    // set default console error function
+    if (!errorHandler) errorHandler = (msg) => console.error('ERROR: ', msg);
+
     // throw error if data is empty
     if (!rawData || Object.keys(rawData).length === 0) {
         let msg = `rawData with key <${key}> is empty!`;
-        console.error(msg);
+        errorHandler(msg);
         return [];
     }
 
@@ -63,7 +68,7 @@ export const formatRawData = (rawData, key, type="basic") => {
             if (!dataTypesMatch) {
                 let err = dataKey + ' has mismatched data types' +
                     ' in data array! why?? fix this!';
-                console.error(err, dataCategory);
+                errorHandler(err, dataCategory);
                 // add errors to output
                 return [dataKey, ...data.map(e => 'ERROR')]
             }
@@ -74,7 +79,7 @@ export const formatRawData = (rawData, key, type="basic") => {
                     case 'string': // do nothing, just display data!
                         break;
                     case 'number': // do nothing, except add "confused" warning
-                        console.error('Huh? How is there a "number" dataType?', 'warn');
+                        errorHandler('Huh? How is there a "number" dataType?', 'warn');
                         break;
                     case 'object':
                         // throw warning if it's an object, not array :D
@@ -99,7 +104,7 @@ export const formatRawData = (rawData, key, type="basic") => {
                         // -> filtered out later - don't worry now
                         break;
                     default:
-                        console.error(
+                        errorHandler(
                             'How did we get here?? Data doesnt match' +
                             ' any expected values somehow...',
                             dataKey, dataType
@@ -155,8 +160,8 @@ export const formatRawData = (rawData, key, type="basic") => {
                 else if (numClients !== data_container.length) {
                     let errMsg = `Somehow found one container with size: ${numClients}, ` +
                         `and one with size: ${data_container.length} - which is right?`;
-                    console.error(errMsg);
-                    console.error(data_container);
+                    errorHandler(errMsg);
+                    errorHandler(data_container);
                     return {};
                 }
 
@@ -166,7 +171,7 @@ export const formatRawData = (rawData, key, type="basic") => {
                 // this should not be possible... throw error
                 if (numClients < 2 || numClients > 3) {
                     let errMsg = 'Whaat? Somehow we got an invalid # of clients: ' + numClients;
-                    console.error(errMsg);
+                    errorHandler(errMsg);
                     return {};
                 }
                 // if arrays for client 1 or 2 are blank (or if there's 3 clients
@@ -351,9 +356,7 @@ export const formatRawData = (rawData, key, type="basic") => {
     }
     // handle unknown type
     else {
-        const msg = `Type <${type}> unknown?? What is this??`;
-        console.error(msg);
-        // errorHandler(msg);
+        errorHandler(`Type <${type}> unknown?? What is this??`);
         return [];
     }
 }
