@@ -52,7 +52,7 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
 
         // error if no map found - maybe column name changed?
         if (mappedName === undefined) {
-            // TODO: throw error, stop the import - mapping failed
+            // throw error, stop the import - mapping failed
             const err = `Header Cell "${cellName}" not handled properly! ` +
                 'Check that var columnNameMap is set up correctly.';
             REJECT(err);
@@ -304,7 +304,10 @@ const startMerge = ( mData ) => {
         else {
             sendStartArchiveProcess();
         }
-    });
+    })
+    .catch(err => {
+        Utils_Error(MESSAGE_SOURCE, err);
+    });;
 }
 
 // ================================================================
