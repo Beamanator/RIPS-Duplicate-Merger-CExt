@@ -87,7 +87,7 @@ Now you will see a popup that serves to remind you (the user) to make sure you'r
 
 ![Cannot Merge Files! Error](/readme_imgs/9_Error_Cannot_Merge_Files.JPG)
 
-_**Note 2**: you may see a **Warning** in the popup, which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click *Take me back*, and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!_
+_**Note 2**: you may see a **Warning** in the popup, which shows a list of tables that do not have at least one field selected in each group. This warning doesn't necessarily require any action, but it gives users another chance to check if the selected data is accurate or if they missed something. If the user wants to check everything again, they can just click "Take me back", and they will return to the page where they can select / de-select client data. If the user is 100% sure they're ready to merge the clients, they can click *Merge* and the merge process will begin!_
 
 ![Warning To Include All Data!](/readme_imgs/10_Warnings_To_Include_All_Data.JPG)
 
@@ -137,6 +137,10 @@ Now you should have a new, working chrome extension!
 1. `chrome` not available:
     - Found in `App.js`
     - Resolution: Remember to add `/*global chrome*/` to the top of the js file.
+1. In Jan 2019 I found that `create-react-app` wasn't playing nicely with chrome extensions. I found this error: `"Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self' blob: filesystem: chrome-extension-resource:". Either the 'unsafe-inline' keyword, a hash ('sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='), or a nonce ('nonce-...') is required to enable inline execution."`
+    - Found in `index.html` (after doing `npm run build`)
+    - Resolution: Created a `.env` file in the root directory with the line `INLINE_RUNTIME_CHUNK=false`
+        - Found this resolution on Github [here](https://github.com/facebook/create-react-app/issues/5897)
 
 ## To "exclude" url matches from chrome extension manifest:
 https://developer.chrome.com/extensions/content_scripts#matchAndGlob
