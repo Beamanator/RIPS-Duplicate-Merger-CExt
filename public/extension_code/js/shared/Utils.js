@@ -67,6 +67,24 @@ const Utils_OnAllElemsExist = ( config ) => {
 	return allExist;
 }
 
+const Utils_OnVarChanged = ( config ) => {
+	const { origVar, newVarElemSelector } = config;
+	const newVarElem = document.querySelector(newVarElemSelector);
+
+	// throw error if no element fount with config selector
+	if (!newVarElem) {
+		Utils_Error(
+			MESSAGE_SOURCE,
+			'Cannot find element with given selector ',
+			newVarElemSelector
+		);
+		return false;
+	}
+
+	// return true IF variables are different! Otherwise false
+	return origVar !== newVarElem.innerText;
+}
+
 const Utils_OnPopupNotThrown = ( config ) => {
 	const { alertSelector, alertVisibleClass } = config;
 	const alertElem = document.querySelector(alertSelector);

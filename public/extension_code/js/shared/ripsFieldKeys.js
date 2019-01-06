@@ -176,6 +176,8 @@ const RIPS_FIELD_KEYS = {
     ACTION_NOTES: 'Attendance Notes',
     
     // ------ dynamic fields for selectors ------
+    ACTION_NOTES_TEXTAREA: 'ACTION_NOTES_TEXTAREA',
+    ACTION_NOTES_TEXTAREA_CLOSE: 'ACTION_NOTES_TEXTAREA_CLOSE',
     // TODO: combine with similar keys above (addresses)
     ACTION_TABLE_HEADER_CELLS: 'ACTION_TABLE_HEADER_CELLS',
     ACTION_TABLE_BODY_ROWS: 'ACTION_TABLE_BODY_ROWS',

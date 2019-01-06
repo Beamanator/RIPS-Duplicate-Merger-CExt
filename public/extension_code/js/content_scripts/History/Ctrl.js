@@ -15,7 +15,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_HISTORY });
 // ===============================================================
 //                         MAIN FUNCTIONS
 // ===============================================================
-const getPageDataContainer = () => {
+const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
 	const columnNames = [];
     const columnNameMap = {
         'Date/Time of Action': ACTION_DATE,
@@ -23,7 +23,8 @@ const getPageDataContainer = () => {
         'Service': ACTION_SERVICE,
         'Caseworker': ACTION_CASEWORKER,
 		'Attendance Note': ACTION_NOTES,
-		'Note?': '',
+        // every column mapped to an empty string (below) will be skipped
+        'Note?': '',
 		'Created By': '',
 		'Entered By': '',
 		'Team': '',
@@ -32,9 +33,12 @@ const getPageDataContainer = () => {
     };
     
     const actionsToSkip = [
-        'Service closed',
-        'Service was closed - reopened at the later date'
+        'Service closed', // [6]
+        'Service was closed - reopened at the later date' // [333]
     ];
+
+    let lastActionNoteData = ''; // no action notes looked at yet
+    const historyData = {};
 	
 	// populate column names array
     const tableHeaderCellsSelector =
@@ -46,161 +50,261 @@ const getPageDataContainer = () => {
         // push all mapped column names to columnNames array
         const mappedName = columnNameMap[cellName];
 
+        // error if no map found - maybe column name changed?
         if (mappedName === undefined) {
             // TODO: throw error, stop the import - mapping failed
-            const err = `Cell "${cellName}" failed to map!`;
-            Utils_Error(MESSAGE_SOURCE, err);
+            const err = `Header Cell "${cellName}" not handled properly! ` +
+                'Check that var columnNameMap is set up correctly.';
+            REJECT(err);
         } else {
             columnNames.push(mappedName);
         }
-	});
-	
-	// search through history data and send to bkg
-    const historyData = {};
-    const tableBodyRowsSelector =
-        FIELD_IDS_HISTORY[ACTION_TABLE_BODY_ROWS];
-    Utils_QueryDocA(tableBodyRowsSelector)
-    .forEach(row => {
-        // make new objects for each row
-        const historyRowData = {};
-        
-        // store actionName for each row
-        let actionName = '';
-
-        // get history data from specific row
-        const tableBodyCellsFromRowsSelector =
-            FIELD_IDS_HISTORY[ACTION_TABLE_BODY_CELLS_FROM_ROWS];
-        row.querySelectorAll(tableBodyCellsFromRowsSelector)
-        .forEach((cell, colIndex) => {
-            // if there's no column name, skip this cell's data
-            if (columnNames[colIndex] == '') {}
-            // else, we want this row! add cell data to row object
-            else {
-                let cellData = cell.innerText.trim();
-                const cellMapName = columnNames[colIndex];
-
-                // if current cell is ACTION_NOTES (attendance notes),
-                // -> blank out notes if they're just the default
-                // -> action notes added by this auto merger utility
-                if (cellMapName === ACTION_NOTES &&
-                    cellData === U_DEFAULT_ACTION_NOTE) {
-                    cellData = '';
-                }
-
-                // map data to columnNameMap in row data obj
-                historyRowData[cellMapName] = cellData;
-
-                // if current cell is ACTION_NAME column,
-                // -> save off action name
-                if (cellMapName === ACTION_NAME) {
-                    actionName = cellData;
-                }
-            }
-        });
-
-        // throw error if actionName wasn't found
-        if (actionName == '') {
-            // ERROR - somehow there wasn't anything listed in 
-            // -> the ACTION_NAME column??
-            let err = `Error! No Action Name found in row among` +
-                ` rowData:`;
-            Utils_Error(MESSAGE_SOURCE, err, historyRowData);
-        }
-        // throw warning if action name is not useful (and skip adding):
-        // -> Service closed [6],
-        // -> Service was closed - reopened at the later date [333]
-        else if (actionsToSkip.includes(actionName) ) {
-            let warn = `Warning: Found action ${actionName} which` +
-                ` cannot be merged! Skipping :)`;
-            Utils_Warn(MESSAGE_SOURCE, warn);
-            return;
-        }
-        
-        // add actionName to historyData if not present yet
-        if (!historyData[actionName]) historyData[actionName] = [];
-        // push row data onto history array
-        historyData[actionName].push(historyRowData);
     });
 
-    // return gathered actions!
-    return historyData;
-}
+    // analyze next history row
+    analyzeHistoryRows = (rows, i=0) => {
+        // create array of row promises that collect data 
+        let rowDataCollectPromises = [];
 
-const startImport = () => {
-    // first, get page data
-    const historyData = getPageDataContainer();
-	
-	// data gathered, now send it back to background.js to store
-    Utils_SendDataToBkg(port, MESSAGE_SOURCE, historyData);
-
-	// Tell bkg to start import on next client!
-	sendClientImportDone();
-}
-
-const startMerge = ( mData ) => {
-    // first, get page data
-    const currentHistoryData = getPageDataContainer();
-    // pull out merge history data
-    const mHistoryData = mData[MESSAGE_SOURCE];
-
-    // create arr to hold missing history data
-    const missingHistoryDataArr = [];
-
-    // loop through current + merge data to find "missing" data
-    mHistoryData.forEach(mActionObj => {	
-        const actionName = mActionObj[ACTION_NAME];
+        const tableBodyCellsFromRowsSelector = FIELD_IDS_HISTORY[ACTION_TABLE_BODY_CELLS_FROM_ROWS];
+        // collect data from row at index i
+        rows[i].querySelectorAll(tableBodyCellsFromRowsSelector)
+        .forEach((cell, colIndex) => {
+            // add promise to cell collection ALL BECAUSE extra-long-note
+            // -> click / collecting is asynchronous :(
+            rowDataCollectPromises.push(new Promise((resolve, reject) => {
+                // if there's no column name, skip collecting this cell's data
+                if (columnNames[colIndex] == '') { resolve('SKIP') }
+                // else, we want this row! add cell data to row object
+                else {
+                    let cellData = cell.innerText.trim();
+                    const cellMapName = columnNames[colIndex];
     
-        // check if there are currently actions with the same name
-        const currentActionsSameName =
-            currentHistoryData[actionName] || [];
+                    // if current cell is in ACTION_NAME column,
+                    // -> save off action name
+                    if (cellMapName === ACTION_NAME) {
+                        actionName = cellData;
+                        
+                        if (actionName == '') {
+                            // ERROR - somehow there wasn't anything listed in 
+                            // -> the ACTION_NAME column??
+                            let err = `Error! No Action Name found in row among` +
+                                ` rowData:`;
+                            Utils_Error(MESSAGE_SOURCE, err, rows[i]);
+                            reject(err);
+                        }
+                        // else unused action? -> taken care of below
+                        // else { resolve(actionName) } // taken care of below
+                    }
+    
+                    else if (cellMapName === ACTION_NOTES) {
+                        // blank out notes if they're just the default
+                        // -> action notes added by this auto merger utility
+                        // -> (so in future action note duplicate checking, default
+                        // -> notes will act the same as empty notes)
+                        if (cellData === U_DEFAULT_ACTION_NOTE) {
+                            cellData = '';
+                        }
+    
+                        // action notes exist. if they're long enough, we
+                        // -> have to click on the row to fetch the entire note
+                        // -> from the database
+                        // Note: max chars may be around 270, but need to use
+                        // -> lower # as max b/c some chars like html don't
+                        // -> display so aren't counted here, even they exist
+                        // -> in the database.
+                        else if (cellData.length > 150) {
+                            // 1) click the row / cell (long notes show up
+                            // -> asynchronously)
+                            cell.click();
 
-        // -> assume no matches by default
-        let anyActionMatch = false;
+                            // get note textarea selector
+                            const noteTextareaSelector = 
+                                FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA];
 
-        // loop through current actions, looking for match to mActionObj
-        currentActionsSameName.forEach(cActionObj => {
-            // quit early if possible
-            if (anyActionMatch) return;
+                            // 2) wait for textarea with notes to show up
+                            Utils_WaitForCondition(
+                                Utils_OnVarChanged, {
+                                    origVar: lastActionNoteData,
+                                    newVarElemSelector: noteTextareaSelector,
+                                }, 250, 8
+                            )
+                            .then(() => {
+                                // 3) collect data from new textarea with ALL notes
+                                const noteTextarea = Utils_QueryDoc(noteTextareaSelector);
+                                let longNote = noteTextarea.innerText;
 
-            // assume match by default
-            let actionMatch = true;
+                                // 4) update last action note data in case
+                                // -> there's another long on note in history
+                                lastActionNoteData = longNote;
 
-            // loop through keys of current action object
-            Object.entries(cActionObj).forEach(([cKey, cVal]) => {
-                // check if key / value pair does NOT match exactly
-                // -> from mActionObj
-                const mVal = mActionObj[cKey];
-                // technically '' and undefined will not match,
-                // -> but are falsy (empty) so I want to treat
-                // -> them as the same 
-                if (!mVal && !cVal) {
-                    // do nothing (keep actionMatch = true)
+                                // 5) close the textarea popup
+                                const closeSelector = 
+                                    FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA_CLOSE];
+                                const closeElem = Utils_QueryDoc(closeSelector);
+                                closeElem.click();
+                            
+                                // 6) resolve promise w/ long note
+                                resolve({ [cellMapName]: longNote });
+                            })
+                            .catch(err => {
+                                // custom error message
+                                let errMsg = `Cannot find textarea "${noteTextareaSelector}" ` +
+                                'OR var lastActionNoteData didnt change so cannot ' +
+                                'move on! Maybe internet is bad, maybe ' +
+                                'selector should be fixed, maybe code is broken.';
+                                Utils_Error(MESSAGE_SOURCE, errMsg);
+
+                                reject(err);
+                            })
+
+                            return; // avoid resolving too early
+                        }
+                    }
+
+                    // just resolve basic data here
+                    resolve({ [cellMapName]: cellData });
                 }
-                // now any mismatch means actions are different!
-                else if (mVal !== cVal) {
-                    actionMatch = false;
+            }));
+        });
+
+        // collect all data from row, and decide what to do next
+        Promise.all(rowDataCollectPromises)
+        .then((rowData) => {
+            // object to contain all props of this action
+            let historyRowData = {};
+
+            // filter 'skipped' columns
+            rowData.filter(cellData => {
+                return cellData !== 'SKIP';
+            })
+            // spread each cells's key & prop onto history row data object
+            .forEach(actionProp => {
+                historyRowData = {
+                    ...historyRowData, // copy in previous props
+                    ...actionProp      // add new action prop
                 }
             });
 
-            // if actionMatch is true, set anyActionMatch to true
-            if (actionMatch) anyActionMatch = true;
-        });
+            // throw warning if action name is not useful (and skip adding)
+            const actionName = historyRowData[ACTION_NAME];
+            if (actionsToSkip.includes(actionName) ) {
+                let warn = `Warning: Found action ${actionName} which` +
+                    ` cannot be merged! Skipping :)`;
+                Utils_Warn(MESSAGE_SOURCE, warn);
+                // DON'T add to historyData obj
+            }
+            // otherwise, useful action - add row data to historyData
+            else {
+                // add blank actionName arr to historyData if not present yet
+                if (!historyData[actionName]) historyData[actionName] = [];
+                // push row data onto history array
+                historyData[actionName].push(historyRowData);
+            }
 
-        // if no match, action doesn't exist yet so add to arr!
-        if (!anyActionMatch) {
-            missingHistoryDataArr.push(mActionObj);
+            // ============ Now decide what to do next ============
+
+            // if index out of bounds, analysis is done. return collected data
+            if (i + 1 >= rows.length) RESOLVE(historyData);
+            // not done yet - analyze next row
+            else analyzeHistoryRows(rows, i + 1);
+        })
+        .catch(err => {
+            Utils_Error(MESSAGE_SOURCE, err);
+            REJECT(err);
+        });
+    };
+	
+	// collect history data
+    const tableBodyRowsSelector = FIELD_IDS_HISTORY[ACTION_TABLE_BODY_ROWS];
+    const rawHistoryRows = Utils_QueryDocA(tableBodyRowsSelector)
+    
+    // kick off recursive, async analysis of rows
+    analyzeHistoryRows(rawHistoryRows);
+});
+
+const startImport = () => {
+    // first, get page data
+    getPageDataContainer().then(historyData => {
+        // data gathered, now send it back to background.js to store
+        Utils_SendDataToBkg(port, MESSAGE_SOURCE, historyData);
+    
+        // Tell bkg to start import on next client!
+        sendClientImportDone();
+    })
+    .catch(err => {
+        Utils_Error(MESSAGE_SOURCE, err);
+    });
+	
+}
+
+const startMerge = ( mData ) => {
+    // get history data on client we're merging data into
+    getPageDataContainer().then(currentHistoryData => {
+        // get data we want to merge into client record
+        const mHistoryData = mData[MESSAGE_SOURCE];
+    
+        // create arr to hold missing history data
+        const missingHistoryDataArr = [];
+    
+        // loop through current + merge data to find "missing" data
+        mHistoryData.forEach(mActionObj => {	
+            const actionName = mActionObj[ACTION_NAME];
+        
+            // check if there are currently actions with the same name
+            const currentActionsSameName =
+                currentHistoryData[actionName] || [];
+    
+            // -> assume no matches by default
+            let anyActionMatch = false;
+    
+            // loop through current actions with the same name as the action
+            // -> we're trying to merge, looking for exact matches to potentially
+            // -> ignore merging this action to the record
+            currentActionsSameName.forEach(cActionObj => {
+                // quit early if possible
+                if (anyActionMatch) return;
+    
+                // assume match by default
+                let actionMatch = true;
+    
+                // loop through keys of current action object
+                Object.entries(cActionObj).forEach(([cKey, cVal]) => {
+                    // check if key / value pair does NOT match exactly
+                    // -> from mActionObj
+                    const mVal = mActionObj[cKey];
+                    // technically '' and undefined aren't exactly the same,
+                    // -> but both are falsy (empty) so I want to treat
+                    // -> them as the same 
+                    if (!mVal && !cVal) {
+                        // do nothing (keep actionMatch = true)
+                    }
+                    // now any mismatch means actions are different!
+                    else if (mVal !== cVal) {
+                        actionMatch = false;
+                    }
+                });
+    
+                // if actionMatch is true, set anyActionMatch to true
+                if (actionMatch) anyActionMatch = true;
+            });
+    
+            // if no match, action doesn't exist yet so add to arr!
+            if (!anyActionMatch) {
+                missingHistoryDataArr.push(mActionObj);
+            }
+        });
+    
+        // if there are actions that are missing, add them!
+        if (missingHistoryDataArr.length > 0) {
+            // tell bkg we're ready to merge & send actions to merge
+            sendHistoryDataToBkgAddAndRedirect(missingHistoryDataArr);
+        }
+        // otherwise, we don't need to add an actions! woot! archive time!
+        else {
+            sendStartArchiveProcess();
         }
     });
-
-    // if there are actions that are missing, add them!
-    if (missingHistoryDataArr.length > 0) {
-        // tell bkg we're ready to merge & send actions to merge
-        sendHistoryDataToBkgAddAndRedirect(missingHistoryDataArr);
-    }
-    // otherwise, we don't need to add an actions! woot! archive time!
-    else {
-        sendStartArchiveProcess();
-    }
 }
 
 // ================================================================
