@@ -119,6 +119,10 @@ If you're running into any issues while using this RIPS Duplicate Merger, check 
 ## The Purpose
 Input a list of StARS numbers and this extension will show the user any mis-matching data, the user will select which data is correct, then all of the correct data will be merged into the oldest client. Finally, the newer client(s) will be archived.
 
+## Some potential shortcomings:
+1. The Relatives / Contacts pages can only import the basic data that shows up in tables, for now
+2. Action notes that are very long only display up to around 270 characters in the History page. Sometimes long notes even display less characters, if more HTML is stored in the note (especially when text has styling). In order to not need the import to click on EVERY action, I set a threshold of 150 characters. If the note has over 150 characters (showing - not including html characters), the merger will click on the row & import / merge the entire attendance note.
+
 ## Getting Started
 1. Run `npm install` to install the node packages in `package.json`
 1. Run `npm run build` to "build" the React app
