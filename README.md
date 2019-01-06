@@ -121,7 +121,8 @@ Input a list of StARS numbers and this extension will show the user any mis-matc
 
 ## Some potential shortcomings:
 1. The Relatives / Contacts pages can only import the basic data that shows up in tables, for now
-2. Action notes that are very long only display up to around 270 characters in the History page. Sometimes long notes even display less characters, if more HTML is stored in the note (especially when text has styling). In order to not need the import to click on EVERY action, I set a threshold of 150 characters. If the note has over 150 characters (showing - not including html characters), the merger will click on the row & import / merge the entire attendance note.
+1. Action notes that are very long only display up to around 270 characters in the History page. Sometimes long notes even display less characters, if more HTML is stored in the note (especially when text has styling). In order to not need the import to click on EVERY action, I set a threshold of 150 characters. If the note has over 150 characters (showing - not including html characters), the merger will click on the row & import / merge the entire attendance note.
+    - This can also happen when there are duplicate actions! If an action is being added and 'Save' is clicked multiple times very quickly, sometimes multiple actions are created.
 
 ## Getting Started
 1. Run `npm install` to install the node packages in `package.json`

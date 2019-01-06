@@ -152,8 +152,14 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
                                 let errMsg = `Cannot find textarea "${noteTextareaSelector}" ` +
                                 'OR var lastActionNoteData didnt change so cannot ' +
                                 'move on! Maybe internet is bad, maybe ' +
-                                'selector should be fixed, maybe code is broken.';
-                                Utils_Error(MESSAGE_SOURCE, errMsg);
+                                'selector should be fixed, maybe code is broken. ' +
+                                'Its ALSO possible there are duplicate actions!';
+                                Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
+                                Utils_KillAll(
+                                    port, MESSAGE_SOURCE,
+                                    'Error: May be duplicate actions! If not, contact ' +
+                                    'the developer. Check actions with note: ' + cellData
+                                );
 
                                 reject(err);
                             })
