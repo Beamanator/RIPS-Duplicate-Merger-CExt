@@ -136,30 +136,29 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
 
                                 // 4) update last action note data in case
                                 // -> there's another long on note in history
-                                lastActionNoteData = longNote;
+                                lastActionNoteData = '';
 
-                                // 5) close the textarea popup
+                                // 5) delete the note element's data (in case there's
+                                // -> duplicate actions with same notes)
+                                noteTextarea.innerText = '';
+
+                                // 6) close the textarea popup
                                 const closeSelector = 
                                     FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA_CLOSE];
                                 const closeElem = Utils_QueryDoc(closeSelector);
                                 closeElem.click();
                             
-                                // 6) resolve promise w/ long note
+                                // 7) resolve promise w/ long note
                                 resolve({ [cellMapName]: longNote });
                             })
                             .catch(err => {
                                 // custom error message
                                 let errMsg = `Cannot find textarea "${noteTextareaSelector}" ` +
-                                'OR var lastActionNoteData didnt change so cannot ' +
-                                'move on! Maybe internet is bad, maybe ' +
-                                'selector should be fixed, maybe code is broken. ' +
-                                'Its ALSO possible there are duplicate actions!';
+                                    'OR var lastActionNoteData didnt change so cannot ' +
+                                    'move on! Maybe internet is bad, maybe ' +
+                                    'selector should be fixed, maybe code is broken. ' +
+                                    'Its ALSO possible there are duplicate actions!';
                                 Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
-                                Utils_KillAll(
-                                    port, MESSAGE_SOURCE,
-                                    'Error: May be duplicate actions! If not, contact ' +
-                                    'the developer. Check actions with note: ' + cellData
-                                );
 
                                 reject(err);
                             })
@@ -240,6 +239,7 @@ const startImport = () => {
     })
     .catch(err => {
         Utils_Error(MESSAGE_SOURCE, err);
+        Utils_KillAll(port, MESSAGE_SOURCE, err);
     });
 	
 }
@@ -313,6 +313,7 @@ const startMerge = ( mData ) => {
     })
     .catch(err => {
         Utils_Error(MESSAGE_SOURCE, err);
+        Utils_KillAll(port, MESSAGE_SOURCE, err);
     });;
 }
 
