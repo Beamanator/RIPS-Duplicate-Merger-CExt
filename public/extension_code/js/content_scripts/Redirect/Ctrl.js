@@ -26,40 +26,39 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_REDIRECT });
 //                     MESSAGE POSTING FUNCTIONS
 // ===============================================================
 // Note: port codes come from "../js/portCodes.js"
-const sendKillAll = (msg) => {
-    port.postMessage({
-        code: PCs.CS_BKG_KILL_ALL,
-        message: msg
-    });
-}
 
 // ===============================================================
 //                          PORT LISTENERS
 // ===============================================================
 
 port.onMessage.addListener(function(msg) {
-    console.log(`[${MESSAGE_SOURCE}] port msg received`, msg);
+    const {
+        code, autoImport
+    } = msg;
 
-    switch(msg.code) {
+    // Utils_Log(MESSAGE_SOURCE, `Port msg received`, msg);
+
+    switch(code) {
         case PCs.BKG_CS_START_IMPORT:
         case PCs.BKG_CS_START_MERGE:
             Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             break;
         
         case PCs.BKG_CS_INIT_PORT:
-            console.log(`[${MESSAGE_SOURCE}] Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            
             // if autoImport flag is true, send error message bkg because user
             // -> may have moved us off the path of data gathering. Stop
             // -> everything here!
-            if (msg.autoImport) {
-                const err = `[${MESSAGE_SOURCE}] autoImport is ${msg.autoImport} but` +
+            if (autoImport) {
+                const err = `AutoImport is ${autoImport} but` +
                     ' should be unknown / false. User must have redirected on' +
                     ' accident. Stopping script.';
-                sendKillAll(err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err);
             }
             break;
 
         default: // code not recognized - send error back
-			Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_CS_REDIRECT);
+			Utils_SendPortCodeError(port, code, PCs.PORTNAME_CS_REDIRECT);
     }
 });

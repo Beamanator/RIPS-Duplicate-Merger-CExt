@@ -168,27 +168,30 @@ port.onMessage.addListener(msg => {
         code,
         actionToCreate,
         autoImport, autoMerge,
-        // postSaveRedirectFlag
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                let errMsg = 'Auto import / merge are both true! Not possible. ' +
+                    'Reset import and try again.';
+                Utils_Error(MESSAGE_SOURCE, errMsg);
+                Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
                 return;
             }
             
             // auto import should never be true here...
             if (autoImport) {
-                const errMsg = 'Somehow got here & auto import is set?' +
+                let errMsg = 'Somehow got here & auto import is set?' +
                     ' How?!? Shouldn\'t happen!!';
                 Utils_Error(MESSAGE_SOURCE, errMsg);
+                Utils_KillAll(port, MESSAGE_SOURCE, errMsg)
             }
             // if merge flag is true, start automatically!
             else if (autoMerge) { startMerge( actionToCreate ); }

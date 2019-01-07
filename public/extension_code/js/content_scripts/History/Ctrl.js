@@ -56,6 +56,7 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
             const err = `Header Cell "${cellName}" not handled properly! ` +
                 'Check that var columnNameMap is set up correctly.';
             REJECT(err);
+            // killall handled later
         } else {
             columnNames.push(mappedName);
         }
@@ -92,6 +93,7 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
                                 ` rowData:`;
                             Utils_Error(MESSAGE_SOURCE, err, rows[i]);
                             reject(err);
+                            // killall handled later
                         }
                         // else unused action? -> taken care of below
                         // else { resolve(actionName) } // taken care of below
@@ -159,8 +161,8 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
                                     'selector should be fixed, maybe code is broken. ' +
                                     'Its ALSO possible there are duplicate actions!';
                                 Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
-
                                 reject(err);
+                                // killall handled later
                             })
 
                             return; // avoid resolving too early
@@ -217,6 +219,7 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
         .catch(err => {
             Utils_Error(MESSAGE_SOURCE, err);
             REJECT(err);
+            // killall handled later
         });
     };
 	
@@ -349,16 +352,18 @@ port.onMessage.addListener(msg => {
         // postSaveRedirectFlag
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                let err = 'Auto import / merge are both true! This shouldnt be possible.';
+                Utils_Error(MESSAGE_SOURCE, err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err)
                 return;
 			}
 

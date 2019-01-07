@@ -49,8 +49,10 @@ const startMerge = ( serviceData ) => {
     
     // if any inserts failed, throw error
     if (elemSetSuccesses.includes(false)) {
-        let errMsg = `Some errors found in [service, date, cw] inserts`;
+        let errMsg = `Some errors found in [service, date, cw] inserts. ` +
+            'Check console output.';
         Utils_Error(MESSAGE_SOURCE, errMsg, elemSetSuccesses);
+        Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         return;
     }
     // else, no errors so click save!
@@ -64,6 +66,7 @@ const startMerge = ( serviceData ) => {
             let errMsg = `Couldn't click save somehow! ` +
                 `<${saveBtnSelector}>`;
             Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         }
     }
 }
@@ -84,24 +87,27 @@ port.onMessage.addListener(msg => {
         // postSaveRedirectFlag
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                let err = 'Auto import / merge are both true! Something is wrong.';
+                Utils_Error(MESSAGE_SOURCE, err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err)
                 return;
 			}
             
             // auto import should never be true here...
             if (autoImport) {
-                const errMsg = 'Somehow got here & auto import is set?' +
+                const errMsg = 'Somehow got to this page & auto import is set?' +
                     ' How?!? Shouldn\'t happen!!';
                 Utils_Error(MESSAGE_SOURCE, errMsg);
+                Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
             }
             // if merge flag is true, start automatically!
             else if (autoMerge) { startMerge( serviceToCreate ); }

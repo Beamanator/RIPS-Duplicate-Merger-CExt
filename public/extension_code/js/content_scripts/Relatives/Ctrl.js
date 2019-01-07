@@ -37,9 +37,10 @@ const getPageDataArr = () => {
         const mappedName = columnNameMap[cellName];
 
         if (mappedName === undefined) {
-            // TODO: throw error, stop the import - mapping failed
-            const err = `Cell "${cellName}" failed to map!`;
+            // throw error, stop the import - mapping failed
+            const err = `Cell "${cellName}" failed to map! Ask dev to investigate.`;
             Utils_Error(MESSAGE_SOURCE, err);
+            Utils_KillAll(port, MESSAGE_SOURCE, err);
         } else {
             columnNames.push(mappedName);
         }
@@ -217,7 +218,7 @@ const startMerge = ( mData, dataIndex ) => {
 
         // 5) Click 'save' (update next rel index to add - in bkg.js)
         const relSaveBtnSelector = FIELD_IDS_RELATIVES[REL_NEW_SAVE_BUTTON];
-        const relSaveBtnElem = document.querySelector(relSaveBtnSelector);
+        const relSaveBtnElem = Utils_QueryDoc(relSaveBtnSelector);
         // click save!
         relSaveBtnElem.click();
         // -> now page will refresh, and incremented dataIndex will
@@ -228,6 +229,13 @@ const startMerge = ( mData, dataIndex ) => {
         const err = `Some relative elem(s) not found! Check 'em!`;
         Utils_Error(MESSAGE_SOURCE, err);
         Utils_Error(MESSAGE_SOURCE, 'CBI ERROR:', errMsg);
+        alert(
+            'Warning: Your internet connection ' +
+            'may be a little bit slow. Please refresh the page now.' +
+            '\n\nIf this message shows up multiple times, please ' +
+            'contact the developer (the RIPS guy). Thanks!' +
+            '\n\nNote for the developer:\nError message: ' + errMsg
+        );
     });
 }
 
@@ -249,26 +257,20 @@ port.onMessage.addListener(msg => {
     const {
         code, mergeData, mergeDataIndex,
         autoImport, autoMerge,
-        // postSaveRedirectFlag
     } = msg;
     
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            
-            // if flag is set to true, we already saved, so now we just
-			// -> have to redirect the user to the next step!
-			// if (postSaveRedirectFlag) {
-			// 	Utils_SendRedirectCode(port, 'Relatives/Relatives');
-			// 	return;
-            // }
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
 
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                let err = 'Auto import / merge are both true! This shouldnt be possible.';
+                Utils_Error(MESSAGE_SOURCE, err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err)
                 return;
 			}
             

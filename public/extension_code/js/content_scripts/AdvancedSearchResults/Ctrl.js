@@ -30,6 +30,11 @@ const analyzeSearchResult = ( clientNum ) => {
             `Error - found something other than 1 result (len:${resultRows.length}):`,
             resultRows
         );
+        Utils_KillAll(
+            port,
+            MESSAGE_SOURCE,
+            `Found ${resultRows.length} records, which shouldn't be possible. Investigate`
+        );
         return;
     }
 
@@ -81,11 +86,11 @@ port.onMessage.addListener(function(msg) {
         code, clientNum,
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(code) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // count how many 'auto...' flags are true
             const autoStartFlags = [autoMerge, autoImport, autoArchive];
@@ -100,6 +105,12 @@ port.onMessage.addListener(function(msg) {
                     'Too many "auto start" flags are true!',
                     '[autoMerge, autoImport, autoArchive]:',
                     autoStartFlags
+                );
+                Utils_KillAll(
+                    port, MESSAGE_SOURCE,
+                    `Somehow program is confused which step to do next.\n\n` +
+                    `autoImport: ${autoImport}\nautoMerge: ${autoMerge}\n` +
+                    `autoArchive: ${autoArchive}\n\nOnly one should be true.`
                 );
                 return;
             }

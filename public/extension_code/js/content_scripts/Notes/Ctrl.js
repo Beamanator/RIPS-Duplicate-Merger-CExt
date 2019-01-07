@@ -48,6 +48,7 @@ const startMerge = (mData) => {
         let errMsg = NOTES + ' not found from selector: ' +
             notesBoxSelector;
         Utils_Error(MESSAGE_SOURCE, errMsg);
+        Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         return;
     }
 
@@ -62,6 +63,7 @@ const startMerge = (mData) => {
         let errMsg = NOTES_SAVE_BUTTON + ' not found from selector: ' +
             notesSaveSelector;
         Utils_Error(MESSAGE_SOURCE, errMsg);
+        Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         return;
     }
 
@@ -92,11 +94,11 @@ port.onMessage.addListener(msg => {
         postSaveRedirectFlag
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // if flag is set to true, we already saved, so now we just
 			// -> have to redirect the user to the next step!
@@ -108,7 +110,9 @@ port.onMessage.addListener(msg => {
             // fail if multiple automatic triggers are true
             // -> (can't do > 1 thing at same time)
             if (autoImport && autoMerge) {
-                Utils_Error(MESSAGE_SOURCE, 'Auto import / merge are both true! :(');
+                let err = 'Auto import / merge are both true! Something is wrong.';
+                Utils_Error(MESSAGE_SOURCE, err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err);
                 return;
 			}
 

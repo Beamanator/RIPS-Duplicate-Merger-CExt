@@ -20,9 +20,9 @@ const startMerge = (mHistData) => {
     // -> we should be here (see startMerge() in Services Ctrl.js)
     if (!mHistData || mHistData.length == 0) {
         const failErr = 'Error: At this point, we should have at least' +
-            ' one action in \'mHistData\' variable. Check `startMerge()`' +
-            ' in services/Ctrl.js?';
+            ' one action in \'mHistData\' variable.';
         Utils_Error(MESSAGE_SOURCE, failErr, mHistData);
+        Utils_KillAll(port, MESSAGE_SOURCE, failErr);
         return;
     }
 
@@ -33,7 +33,7 @@ const startMerge = (mHistData) => {
     const tableHeaderCellsSelector =
         FIELD_IDS_SERVICES[SERVICES_TABLE_HEADER_CELL_LINKS];
     const servicesDescriptionColText =
-        document.querySelectorAll(tableHeaderCellsSelector)
+        Utils_QueryDocA(tableHeaderCellsSelector)
         [servicesDescriptionColumnIndex].innerText.trim();
     
     // if 3rd column [index 2] doesn't match 'services description'
@@ -42,6 +42,7 @@ const startMerge = (mHistData) => {
         const errMsg = 'somehow column 3 (index 2) isn\t "Services' +
             ' Description" as expected... Fix index maybe?';
         Utils_Error(MESSAGE_SOURCE, errMsg);
+        Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         return;
     }
 
@@ -59,7 +60,7 @@ const startMerge = (mHistData) => {
         const tableBodyRowsSelector =
             FIELD_IDS_SERVICES[SERVICES_TABLE_BODY_ROWS];
         // loop through rows to try try to match service descriptions
-        document.querySelectorAll(tableBodyRowsSelector).forEach(row => {
+        Utils_QueryDocA(tableBodyRowsSelector).forEach(row => {
             // quit early if possible
             if (serviceMatch) return;
 
@@ -142,6 +143,7 @@ const startMerge = (mHistData) => {
             let errMsg = `Couldn't click save somehow! ` +
                 `<${createServiceSelector}>`;
             Utils_Error(MESSAGE_SOURCE, errMsg);
+            Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         }
     }
     // else just redirect to view actions page since services
@@ -170,25 +172,23 @@ port.onMessage.addListener(msg => {
         code,
         mergeHistoryData,
         autoImport, autoMerge,
-        // postSaveRedirectFlag
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
-            
-            // TODO: potentially add 'postSaveRedirectFlag after
-            // -> new services have been added? next redirect to add actions?
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // auto import should never be true here...
             if (autoImport) {
-                const errMsg = 'Somehow got here & auto import is set?' +
+                const err = 'Somehow got here & auto import is set?' +
                     ' How?!? Shouldn\t happen!!';
-                Utils_Error(MESSAGE_SOURCE, errMsg);
+                Utils_Error(MESSAGE_SOURCE, err);
+                Utils_KillAll(port, MESSAGE_SOURCE, err)
             }
             // if merge flag is true, start automatically!
+            // -> Note: redirecting handled within the startMerge function
             else if (autoMerge) { startMerge( mergeHistoryData ); }
             break;
 

@@ -36,9 +36,7 @@ const startImport = () => {
     });
 
     // data gathered, now send it back to background.js to store
-    const fileData = {
-        [FILES]: files
-    }
+    const fileData = { [FILES]: files }
     Utils_SendDataToBkg(port, MESSAGE_SOURCE, fileData);
 
     // redirect to next page (History - skip Private Files)
@@ -55,13 +53,20 @@ const startImport = () => {
 // ================================================================
 
 port.onMessage.addListener(msg => {
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch ( msg.code ) {
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            
+            if (msg.autoMerge || msg.autoArchive) {
+                let err = 'Files page should never be archiving or merging! ' +
+                    'Something must be wrong. Stopping everything.'
+                Utils_Error(MESSAGE_SOURCE, err)
+                Utils_KillAll(port, MESSAGE_SOURCE, err);
+            }
             // if autoImport flag is true, start automatically!
-            if (msg.autoImport) {
+            else if (msg.autoImport) {
                 startImport();
             }
             break;

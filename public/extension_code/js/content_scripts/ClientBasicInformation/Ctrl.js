@@ -67,9 +67,10 @@ const importVulnData = () => {
 		// if attributes don't match up, throw error!
 		else {
 			pass = false;
-			const err = `input<${inputAttr}> and label<${labelAttr}> ` +
-				`don't match on vuln<${vulnName}> :(`;
+			const err = `input <${inputAttr}> and label <${labelAttr}> ` +
+				`don't match on vuln <${vulnName}> :( Check with developer.`;
 			Utils_Warn(MESSAGE_SOURCE_V, err);
+			Utils_KillAll(port, MESSAGE_SOURCE_V, err);
 		}
 	});
 
@@ -201,6 +202,7 @@ const startMerge = (clientNum, mData) => {
 		if (!elem) {
 			let err = 'ERR: Elem not found with selector: ' + fieldSelector;
 			Utils_Error(MESSAGE_SOURCE, err);
+			// killall handled later
 			allPass = false;
 			return '';
 		}
@@ -218,10 +220,10 @@ const startMerge = (clientNum, mData) => {
 				} else if (fieldValue === 'not checked') {
 					elem.checked = false;
 				} else {
-					const err = 'ERR: Checkbox value is invalid! ' +
-						'not sure what to do! Value: ' + fieldValue +
-						', selector: ' + fieldSelector;
+					const err = 'Checkbox value is invalid! Not sure what happened. ' +
+						`Value: ${fieldValue}, selector: ${fieldSelector}`;
 					Utils_Error(MESSAGE_SOURCE, err);
+					// killall handled later
 					allPass = false;
 				}
 				break;
@@ -241,18 +243,20 @@ const startMerge = (clientNum, mData) => {
 				});
 				// if no match found during loop, don't continue past the page!
 				if (!matchFound) {
-					const err = 'ERR: No matching option elem found ' +
-						'for selector: ' + fieldSelector;
+					const err = 'No matching "option" elem found with ' +
+						'selector: ' + fieldSelector;
 					Utils_Error(MESSAGE_SOURCE, err);
+					// killall handled later
 					allPass = false;
 				}
 				break;
 			
 			default:
-				const err = 'ERR: Found an unhandled html elem ' +
-					'type while merging client data! Stopping ' +
-					' merge here - ' + fieldSelector;
+				const err = 'Found a whacky element...\n\nFor devs: found an ' +
+					' unhandled HTML elem type while merging client data! ' +
+					'Stopping here - selector: ' + fieldSelector;
 				Utils_Error(MESSAGE_SOURCE, err);
+				// killall handled later
 				allPass = false;
 		}
 	});
@@ -290,9 +294,10 @@ const startMerge = (clientNum, mData) => {
 				} else if (vulnValue === 'not checked') {
 					vulnInputElem.checked = false;
 				} else {
-					const err = 'ERR: Checkbox value is invalid! ' +
-						'not sure what to do! Value: ' + vulnValue;
+					const err = 'Vulnerability checkbox value is invalid! Needs ' +
+						`investigation! Label: ${vulnKey}, Value: ${vulnValue}`;
 					Utils_Error(MESSAGE_SOURCE_V, err);
+					// killall handled later
 					allPass = false;
 				}
 			}
@@ -415,11 +420,11 @@ port.onMessage.addListener(msg => {
 		postSaveRedirectFlag, postArchiveRedirectFlag,
 	} = msg;
 
-    Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
+    // Utils_Log(MESSAGE_SOURCE, `port msg received`, msg);
 
     switch(code) {
 		case PCs.BKG_CS_INIT_PORT:
-			Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+			// Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
 			
 			// if save-redirect flag is set to true, we already saved,
 			// -> so now we just have to redirect the user to the

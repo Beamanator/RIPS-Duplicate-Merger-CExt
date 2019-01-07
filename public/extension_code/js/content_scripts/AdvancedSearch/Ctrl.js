@@ -89,7 +89,7 @@ port.onMessage.addListener(function(msg) {
         code, clientNum,
     } = msg;
 
-    Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
+    // Utils_Log(MESSAGE_SOURCE, 'port msg received', msg);
 
     switch(code) {
         case PCs.BKG_CS_START_IMPORT:
@@ -98,7 +98,7 @@ port.onMessage.addListener(function(msg) {
             break;
         
         case PCs.BKG_CS_INIT_PORT:
-            Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
+            // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
             // count how many 'auto...' flags are true
             const autoStartFlags = [autoMerge, autoImport, autoArchive];
