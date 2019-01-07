@@ -37,9 +37,10 @@ const runClientNumSearch = (clientNum) => {
         // 2) put stars # into stars # field
         const searchFieldSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_CLIENT_NUMBER];
         if (!searchFieldSelector) {
-            let errMsg = 'search field selector not found :(';
+            let errMsg = 'Search field selector not found :(';
             Utils_Error(MESSAGE_SOURCE, errMsg);
             Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
+            return;
         }
         let searchFieldElem = Utils_QueryDoc(searchFieldSelector);
         searchFieldElem.value = clientNum;
@@ -47,14 +48,15 @@ const runClientNumSearch = (clientNum) => {
         // 3) click 'search' button
         const searchButtonSelector = FIELD_IDS_ADVANCED_SEARCH[SEARCH_BUTTON];
         if (!searchFieldSelector) {
-            let errMsg = 'search button selector not found :(';
+            let errMsg = 'Search button selector not found :(';
             Utils_Error(MESSAGE_SOURCE, errMsg);
             Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
+            return;
         }
         let clickSuccess =
             Utils_ClickElem(Utils_QueryDoc(searchButtonSelector));
         if (!clickSuccess) {
-            let errMsg = 'search button click failed :(';
+            let errMsg = 'Search button click failed :(';
             Utils_Error(MESSAGE_SOURCE, errMsg);
             Utils_KillAll(port, MESSAGE_SOURCE, errMsg);
         }
