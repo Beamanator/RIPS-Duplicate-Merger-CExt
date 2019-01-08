@@ -56,10 +56,12 @@ const FIELD_IDS_ADD_ACTION = {
             if (!notesIFrame) {
                 return false;
             } else {
-                // insert new paragraph at end of body, with new notes
+                // insert new notes at end of body
+                // Note: doesn't need to be in extra <p> tag b/c notes
+                // -> should already be encapsulated in <p> tag
                 notesIFrame.insertAdjacentHTML(
                     'beforeend',
-                    `<p>${notes}</p>`
+                    `${notes}`
                 );
                 return true;
             }
