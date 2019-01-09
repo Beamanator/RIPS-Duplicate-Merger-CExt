@@ -75,8 +75,10 @@ const Utils_OnVarChanged = ( config ) => {
 	if (!newVarElem) {
 		Utils_Error(
 			MESSAGE_SOURCE,
-			'Cannot find element with given selector ',
-			newVarElemSelector
+			'Cannot find element with given selector:',
+			newVarElemSelector,
+			"Note: it's expected to have 1 or 2 of these " +
+			"errors if your internet connection isn't great"
 		);
 		return false;
 	}
