@@ -14,9 +14,10 @@ const CustomTableCell = (props) => {
 
 const styles = theme => ({
     root: {
-        flex: 1,
+        flex: '1',
         paddingTop: '15px',
         paddingBottom: '15px',
+        wordBreak: 'break-word',
     },
     head: {
         backgroundColor: theme.palette.common.black,

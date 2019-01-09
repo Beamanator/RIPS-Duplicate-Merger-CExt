@@ -128,7 +128,12 @@ if (process.env.NODE_ENV === 'development') {
                     }
                 ],
                 undefined,
-                undefined
+                [
+                    {
+                        date: 'longnote-2',
+                        note: 'mega.url.domain.name/something/val/param=val1'.repeat(20)
+                    }
+                ]
             ]
         },
         [R_KEYS.NOTES]: {
