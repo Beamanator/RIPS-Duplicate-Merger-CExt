@@ -161,8 +161,20 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
                                     'selector should be fixed, maybe code is broken. ' +
                                     'Its ALSO possible there are duplicate actions!';
                                 Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
-                                reject(err);
-                                // killall handled later
+                                alert(
+                                    'Warning: Your internet connection ' +
+                                    'may be a little bit slow. Please refresh the page now.' +
+                                    '\n\nIf this message shows up multiple times, please ' +
+                                    'contact the developer (the RIPS guy). Thanks!' +
+                                    '\n\nNote for the developer:\nError message: ' + errMsg
+                                );
+                                // no rejection and therefore no killall b/c this may
+                                // -> be an internet connection issue. If killall is called,
+                                // -> all import / merge progress will be killed and have to
+                                // -> start over. We don't want that, so we just ask user to
+                                // -> refresh the page to try & re-start the program at the
+                                // -> current step.
+                                // reject(err);
                             })
 
                             return; // avoid resolving too early
