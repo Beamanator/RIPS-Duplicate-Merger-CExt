@@ -23,7 +23,6 @@ const notifyDialogOpen = (state, action) => {
 };
 
 const notifyDialogSetData = (state, action) => {
-    console.log(action)
     return updateObject(state, {
         ...action.newConfig
     });
