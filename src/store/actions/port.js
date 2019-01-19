@@ -109,11 +109,14 @@ export const backgroundPortInit = (chrome) => {
                         )
                     ));
 
-                    const { importInProgress, mergeInProgress } = getState();
+                    const {
+                        importInProgress: import1,
+                        mergeInProgress: merge1,
+                    } = getState();
                     // dispatch action to reset importInProgress / mergeInProgress
                     // (which ever is appropriate) back to false
-                    if (mergeInProgress) dispatch(stopMerge());
-                    else if (importInProgress) dispatch(stopImport());
+                    if (merge1) dispatch(stopMerge());
+                    else if (import1) dispatch(stopImport());
                     else console.error('... what? How are neither in progress?');
                     break;
 
@@ -127,11 +130,14 @@ export const backgroundPortInit = (chrome) => {
                         )
                     ));
 
-                    const { importInProgress, mergeInProgress } = getState();
+                    const {
+                        importInProgress: import2,
+                        mergeInProgress: merge2
+                    } = getState();
                     // dispatch action to reset importInProgress / mergeInProgress
                     // (which ever is appropriate) back to false
-                    if (mergeInProgress) dispatch(stopMerge());
-                    else if (importInProgress) dispatch(stopImport());
+                    if (merge2) dispatch(stopMerge());
+                    else if (import2) dispatch(stopImport());
                     else console.error('... what? How are neither in progress?');
                     break;
 
