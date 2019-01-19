@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as portCodes from '../portCodes';
+import * as actions from './index';
 
 import { tableConfigs } from '../../shared/ripsTableConfigHolder';
 import { formatRawData } from '../../shared/ripsFormatRawData';
@@ -88,6 +89,9 @@ export const ripsMergeFail = (error) => {
 // KICK OFF PROCESS - start merging rips clients
 export const ripsMergeClients = (port, mData, clientNums) => {
     return dispatch => {
+        // set mergeInProgress = true in port.js reducer
+        dispatch(actions.startMerge());
+
         // call action indicating merge is starting
         dispatch(ripsMergeStart());
 

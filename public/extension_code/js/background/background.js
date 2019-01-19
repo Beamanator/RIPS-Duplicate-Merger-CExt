@@ -34,6 +34,7 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_HISTORY,
     PCs.PORTNAME_CS_NEW_SERVICE,
     PCs.PORTNAME_CS_NOTES,
+    PCs.PORTNAME_CS_PRE_LOGIN,
     PCs.PORTNAME_CS_REDIRECT,
     PCs.PORTNAME_CS_RELATIVES,
     PCs.PORTNAME_CS_SERVICES,
@@ -113,9 +114,8 @@ const highlightTab = ( sourcePort, callback ) => {
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
-// TODO: wrap post sending functions with port-not-found error messages
 const sendPortInit = (port, code) => {
-    // port should always exist, so don't handle other case
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: code,
         autoArchive: ARCHIVE_IN_PROGRESS, // archiving should auto start (if true)
@@ -179,7 +179,14 @@ const sendKillAll = (port, source, error) => {
 const sendNoRIPSTabs = (port) => {
     if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
     port.postMessage({
-        code: BKG_RA_NO_RIPS_TABS,
+        code: PCs.BKG_RA_NO_RIPS_TABS,
+    });
+}
+
+const sendRALoginReminder = (port) => {
+    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    port.postMessage({
+        code: PCs.BKG_RA_LOGIN_REMINDER,
     });
 }
 
@@ -323,6 +330,10 @@ const initContentScriptPort = (port) => {
                 // TODO: stop everything?
                 // TODO: highlight react app?
                 break;
+
+            case PCs.CS_BKG_LOGIN_REMINDER:
+                sendRALoginReminder(RAPort);
+                break;
             
             default: // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
@@ -448,6 +459,7 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_HISTORY:
         case PCs.PORTNAME_CS_NEW_SERVICE:
         case PCs.PORTNAME_CS_NOTES:
+        case PCs.PORTNAME_CS_PRE_LOGIN:
         case PCs.PORTNAME_CS_REDIRECT:
         case PCs.PORTNAME_CS_RELATIVES:
         case PCs.PORTNAME_CS_SERVICES:

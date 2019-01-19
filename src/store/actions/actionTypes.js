@@ -12,6 +12,10 @@ export const RIPS_MERGE_FAIL = 'RIPS_MERGE_FAIL';
 export const RIPS_CLEAR_REDUX = 'RIPS_CLEAR_REDUX';
 // const RIPS_CLEAR_ALL_DATA... (container - no action connected to reducer)
 
+export const APP_IMPORT_START = 'APP_IMPORT_START';
+export const APP_IMPORT_STOP = 'APP_IMPORT_STOP';
+export const APP_MERGE_START = 'APP_MERGE_START';
+export const APP_MERGE_STOP = 'APP_MERGE_STOP';
 export const BACKGROUND_PORT_SET = 'BACKGROUND_PORT_SET';
 export const BACKGROUND_PORT_REMOVE = 'BACKGROUND_PORT_REMOVE';
 export const BACKGROUND_PORT_ERROR = 'BACKGROUND_PORT_ERROR';

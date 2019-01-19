@@ -18,5 +18,6 @@ const RIPS_PAGE_KEYS = {
     // no client data
     ADVANCED_SEARCH: 'CtrlAdvancedSearch',
     ADVANCED_SEARCH_RESULTS: 'CtrlAdvancedSearchResults',
-    REDIRECT: 'CtrlRedirect'
+    REDIRECT: 'CtrlRedirect',
+    PRE_LOGIN: 'CtrlPreLogin',
 }

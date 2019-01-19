@@ -2,7 +2,7 @@
     //--------------------------------------------------------------
 	//     NOTE: ONLY EDIT CODE IN /public/* - NOT IN /build/*
 	//--------------------------------------------------------------
-    "version": "1.1.4",
+    "version": "1.2.0",
     "manifest_version": 2,
 
     "short_name": "Duplicate Client Merger",
@@ -55,9 +55,14 @@
                 "http://rips.247lib.com/Stars/Relatives/Relatives", // relatives
                 "http://rips.247lib.com/Stars/SearchClientDetails/AdvancedSearch", // advanced search
 				"http://rips.247lib.com/Stars/SearchClientDetails/ClientListSearchResult", // advanced search results
-                "http://rips.247lib.com/Stars/User/Login" // login
+                "http://rips.247lib.com/Stars/User/*" // login / password pages
             ],
             "js": [ "extension_code/js/content_scripts/Redirect/Ctrl.js" ]
+        },
+
+        {   // Login, forgotpassword, resetpassword
+            "matches": [ "http://rips.247lib.com/Stars/User/*" ],
+            "js": [ "extension_code/js/content_scripts/PreLogin/Ctrl.js" ]
         },
         
         // {}, Registration page

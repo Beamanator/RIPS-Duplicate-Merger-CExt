@@ -37,8 +37,14 @@ class App extends Component {
         client2Valid: false,
         client3Valid: true, // valid cuz client3 can be empty
         
-        importInProgress: false,
-        mergeInProgress: false,
+        // TODO: move import / mergeinprogress to redux, then have
+        // port.js (BKG_RA_LOGIN_REMINDER - after opening dialog) call a new
+        // action (in new action creator / reducer) to set import / merge to false.
+        // If mergeInProgress is false, only import was happening so set
+        // importInProgress to false. If mergeInProgres is true, set it to false.
+        // TODO: now just remove these comments from this file :)
+        // importInProgress: false,
+        // mergeInProgress: false,
         nodeEnv: process.env.NODE_ENV,
 
         mergeDialogOpen: false,
@@ -123,10 +129,9 @@ class App extends Component {
     }
 
     handleImportDisabled = () => {
-        const { bkgPort } = this.props;
+        const { bkgPort, importInProgress } = this.props;
         const {
-            client1Valid, client2Valid, client3Valid,
-            nodeEnv, importInProgress
+            client1Valid, client2Valid, client3Valid, nodeEnv
         } = this.state;
 
         const importReady = ((
@@ -154,10 +159,10 @@ class App extends Component {
     handleImport = () => {
         console.log('Begin Import');
 
-        const { bkgPort, onRipsFetchData } = this.props;
+        const { bkgPort, onRipsFetchData, onImportStart } = this.props;
 
         // disable clicking import while import in progress
-        this.setState({ importInProgress: true });
+        onImportStart();
         
         // gather client nums into array
         const { client1, client2, client3 } = this.state;
@@ -169,7 +174,7 @@ class App extends Component {
 
     handleClear = () => {
         const {
-            bkgPort, onClearAllData
+            bkgPort, onClearAllData, onImportStop, onMergeStop,
         } = this.props;
         
         // TODO: also clear rips data from redux store
@@ -179,10 +184,12 @@ class App extends Component {
             client1: '', client1Valid: false,
             client2: '', client2Valid: false,
             client3: '', client3Valid: true,
-            importInProgress: false,
-            mergeInProgress: false
+            // importInProgress: false,
+            // mergeInProgress: false
         });
 
+        onImportStop();
+        onMergeStop();
         onClearAllData(bkgPort);
     }
 
@@ -397,7 +404,7 @@ class App extends Component {
         // close dialog
         this.handleMergeDialogClose();
 
-        // if data merge didn't work perfectly, 
+        // throw error if data merge didn't work perfectly
         if (!mergeData.pass) {
             // TODO: add notification or something here
             console.error('error somewhere');
@@ -412,8 +419,9 @@ class App extends Component {
             [client1, client2, client3]
         );
 
+        // TODO: remove
         // lock tables, disable merge button
-        this.setState({ mergeInProgress: true });
+        // this.setState({ mergeInProgress: true });
     }
     handleNotifyDialogClose = () => {        
         this.props.onNotifyDialogClose();
@@ -442,10 +450,9 @@ class App extends Component {
             multiSelect=false
         } = config;
         
-        const { classes, ripsData } = this.props;
+        const { classes, ripsData, mergeInProgress } = this.props;
         const {
-            client1, client2, client3, client3Valid,
-            mergeInProgress
+            client1, client2, client3, client3Valid
         } = this.state;
 
         // if data exists, build grid item!
@@ -476,12 +483,14 @@ class App extends Component {
             classes, // styles
             // bkgPort, // port to background page
             ripsData, // data from RIPS
+            importInProgress,
+            mergeInProgress,
         } = this.props;
 
         const {
             client1, client2, client3,
-            importInProgress,
-            mergeInProgress,
+            // importInProgress,
+            // mergeInProgress,
         
             mergeDialogOpen,
             mergeDialogError,
@@ -497,6 +506,8 @@ class App extends Component {
             notifyDialogButtonCloseText,
             notifyDialogContent,
         } = this.props;
+
+        const RIPS_URL = "http://rips.247lib.com/Stars/User/Login";
 
         return <Fragment>
             <Grid
@@ -550,6 +561,19 @@ class App extends Component {
                     </Paper>
                 </Grid>
 
+                {/* Pre-import instructions */}
+                {!importInProgress ? <Grid item xs={12} className={classes.textCenter}>
+                    <h1>
+                        {"Before beginning, open "}
+                        <a href={RIPS_URL} target="_blank" rel="noopener">RIPS</a>
+                    </h1>
+                    <h4 className={classes.description}>
+                        {"If you don't have RIPS open yet, " +
+                        "click this link to open it up and sign in: "}
+                        <a href={RIPS_URL} target="_blank" rel="noopener">Open RIPS</a>
+                    </h4>
+                </Grid> : null}
+
                 {/* "import" / "clear" buttons - begin collecting data or clear! */}
                 <Grid item xs={12} className={classes.textCenter}>
                     <Grid container justify="center">
@@ -579,7 +603,7 @@ class App extends Component {
                     </Grid>
                 </Grid>
 
-                {/* Instructions */}
+                {/* Post-import instructions */}
                 {ripsData && Object.keys(ripsData).length > 0 ? <Grid item xs={12} className={classes.textCenter}>
                     <h1>{'Select the "correct" client data below!'}</h1>
                     <h4 className={classes.description}>
@@ -722,18 +746,20 @@ const styles = theme => ({
     }
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = ({ port, rips, notifyDialog }) => {
     return {
         // TODO: isAuthenticated...
-        bkgPort: state.port.port,
-        ripsData: state.rips.data,
+        bkgPort: port.port,
+        importInProgress: port.importInProgress,
+        mergeInProgres: port.importInProgress,
+        ripsData: rips.data,
         // data for notify dialog box
-        notifyDialogOpen: state.notifyDialog.open,
-        notifyDialogTitle: state.notifyDialog.title,
-        notifyDialogShowActionButton: state.notifyDialog.showActionButton,
-        notifyDialogButtonActionText: state.notifyDialog.buttonActionText,
-        notifyDialogButtonCloseText: state.notifyDialog.buttonCloseText,
-        notifyDialogContent: state.notifyDialog.dialogContent,
+        notifyDialogOpen: notifyDialog.open,
+        notifyDialogTitle: notifyDialog.title,
+        notifyDialogShowActionButton: notifyDialog.showActionButton,
+        notifyDialogButtonActionText: notifyDialog.buttonActionText,
+        notifyDialogButtonCloseText: notifyDialog.buttonCloseText,
+        notifyDialogContent: notifyDialog.dialogContent,
     };
 };
 
@@ -741,8 +767,12 @@ const mapDispatchToProps = dispatch => {
     return {
         onBackgroundPortInit: (chrome) => dispatch(actions.backgroundPortInit(chrome)),
         onClearAllData: (bkgPort) => dispatch(actions.ripsClearAllData(bkgPort)),
-        onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
+        onImportStart: () => dispatch(actions.startImport()),
+        onImportStop: () => dispatch(actions.stopImport()),
+        // onMergeStart: // called within onMergeBegin! Not here.
         onMergeBegin: (bkgPort, mData, cNums) => dispatch(actions.ripsMergeClients(bkgPort, mData, cNums)),
+        onMergeStop: () => dispatch(actions.stopMerge()),
+        onRipsFetchData: (bkgPort, nums) => dispatch(actions.ripsFetchData(bkgPort, nums)),
         onNotifyDialogClose: () => dispatch(actions.notifyDialogClose()),
         onNotifyDialogOpenNew: (config) => dispatch(actions.notifyDialogOpenNew(config))
     };

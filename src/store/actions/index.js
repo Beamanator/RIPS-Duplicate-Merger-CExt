@@ -2,7 +2,11 @@
 // -> makes importing them into components easy!
 
 export {
-    backgroundPortInit
+    backgroundPortInit,
+    startImport,
+    stopImport,
+    startMerge,
+    stopMerge,
 } from './port';
 
 export {

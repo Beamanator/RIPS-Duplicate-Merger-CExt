@@ -12,6 +12,22 @@ const portSet = (port) => {
     };
 };
 
+export const startImport = () => ({
+    type: actionTypes.APP_IMPORT_START,
+});
+
+export const stopImport = ({
+    type: actionTypes.APP_IMPORT_STOP,
+});
+
+export const startMerge = () => ({
+    type: actionTypes.APP_MERGE_START,
+});
+
+export const stopMerge = () => ({
+    type: actionTypes.APP_MERGE_STOP,
+});
+
 export const backgroundPortInit = (chrome) => {
     if (!chrome) {
         console.warn(
@@ -24,7 +40,8 @@ export const backgroundPortInit = (chrome) => {
     }
 
     console.log('<port action.js> init background port');
-    return dispatch => {
+
+    return (dispatch, getState) => {
         // set up local port
         const port = chrome.runtime.connect({ name: portCodes.PORTNAME_REACT_APP });
 
@@ -76,10 +93,28 @@ export const backgroundPortInit = (chrome) => {
                 case portCodes.BKG_RA_KILL_ALL:
                     dispatch(actions.notifyDialogOpenNew(
                         dialogConfigs.fatalError(
-                            msg.error + `; source: <${msg.source}>`
+                            msg.error + `. Err comes from: <${msg.source}>`
                         )
                     ));
                     // options page open - handled in background.js
+                    // NOTE: import / merge in progress NOT reset
+                    // -> b/c at this point, code may need to be fixed
+                    break;
+
+                // called when extension is reminding user to log in!
+                case portCodes.BKG_RA_LOGIN_REMINDER:
+                    dispatch(actions.notifyDialogOpenNew(
+                        dialogConfigs.fatalError(
+                            'Please login to RIPS and try again!!'
+                        )
+                    ));
+
+                    const { importInProgress, mergeInProgress } = getState();
+                    // dispatch action to reset importInProgress / mergeInProgress
+                    // (which ever is appropriate) back to false
+                    if (mergeInProgress) dispatch(stopMerge());
+                    else if (importInProgress) dispatch(stopImport());
+                    else console.error('... what? How are neither in progress?');
                     break;
 
                 // called when there are no RIPS tabs open! tell user
@@ -91,6 +126,13 @@ export const backgroundPortInit = (chrome) => {
                             'to RIPS, then try again.'
                         )
                     ));
+
+                    const { importInProgress, mergeInProgress } = getState();
+                    // dispatch action to reset importInProgress / mergeInProgress
+                    // (which ever is appropriate) back to false
+                    if (mergeInProgress) dispatch(stopMerge());
+                    else if (importInProgress) dispatch(stopImport());
+                    else console.error('... what? How are neither in progress?');
                     break;
 
                 // invalid msg code recognized in background.js
