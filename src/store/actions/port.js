@@ -30,11 +30,11 @@ export const stopMerge = () => ({
 
 const stopMergeOrImport = () => {
     return (dispatch, getState) => {
-        const { importInProgress, mergeInProgress } = getState();
-        console.log(getState());
-        // if (mergeInProgress) dispatch(stopMerge());
-        // else if (importInProgress) dispatch(stopImport());
-        // else console.error('... what? How are neither in progress?');
+        const { importInProgress, mergeInProgress } = getState().port;
+        
+        if (mergeInProgress) dispatch(stopMerge());
+        else if (importInProgress) dispatch(stopImport());
+        else console.error('... what? How are neither in progress?');
     }
 }
 
@@ -119,10 +119,8 @@ export const backgroundPortInit = (chrome) => {
                             'Please login to RIPS and try again!!'
                         )
                     ));
-
                     // dispatch action to reset importInProgress / mergeInProgress
                     // (which ever is appropriate) back to false
-                    console.log('curr state', getState());
                     dispatch(stopMergeOrImport());
                     break;
 
@@ -135,16 +133,9 @@ export const backgroundPortInit = (chrome) => {
                             'to RIPS, then try again.'
                         )
                     ));
-
-                    const {
-                        importInProgress: import2,
-                        mergeInProgress: merge2
-                    } = getState();
                     // dispatch action to reset importInProgress / mergeInProgress
                     // (which ever is appropriate) back to false
-                    if (merge2) dispatch(stopMerge());
-                    else if (import2) dispatch(stopImport());
-                    else console.error('... what? How are neither in progress?');
+                    dispatch(stopMergeOrImport());
                     break;
 
                 // invalid msg code recognized in background.js
