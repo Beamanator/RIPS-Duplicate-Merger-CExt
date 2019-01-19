@@ -16,7 +16,7 @@ export const startImport = () => ({
     type: actionTypes.APP_IMPORT_START,
 });
 
-export const stopImport = ({
+export const stopImport = () => ({
     type: actionTypes.APP_IMPORT_STOP,
 });
 
@@ -27,6 +27,16 @@ export const startMerge = () => ({
 export const stopMerge = () => ({
     type: actionTypes.APP_MERGE_STOP,
 });
+
+const stopMergeOrImport = () => {
+    return (dispatch, getState) => {
+        const { importInProgress, mergeInProgress } = getState();
+        console.log(getState());
+        // if (mergeInProgress) dispatch(stopMerge());
+        // else if (importInProgress) dispatch(stopImport());
+        // else console.error('... what? How are neither in progress?');
+    }
+}
 
 export const backgroundPortInit = (chrome) => {
     if (!chrome) {
@@ -109,15 +119,10 @@ export const backgroundPortInit = (chrome) => {
                         )
                     ));
 
-                    const {
-                        importInProgress: import1,
-                        mergeInProgress: merge1,
-                    } = getState();
                     // dispatch action to reset importInProgress / mergeInProgress
                     // (which ever is appropriate) back to false
-                    if (merge1) dispatch(stopMerge());
-                    else if (import1) dispatch(stopImport());
-                    else console.error('... what? How are neither in progress?');
+                    console.log('curr state', getState());
+                    dispatch(stopMergeOrImport());
                     break;
 
                 // called when there are no RIPS tabs open! tell user
