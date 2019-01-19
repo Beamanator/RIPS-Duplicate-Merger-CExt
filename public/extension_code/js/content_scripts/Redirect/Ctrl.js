@@ -33,7 +33,7 @@ const port = chrome.runtime.connect({ name: PCs.PORTNAME_CS_REDIRECT });
 
 port.onMessage.addListener(function(msg) {
     const {
-        code, autoImport
+        code, autoImport, autoMerge
     } = msg;
 
     // Utils_Log(MESSAGE_SOURCE, `Port msg received`, msg);
@@ -47,13 +47,13 @@ port.onMessage.addListener(function(msg) {
         case PCs.BKG_CS_INIT_PORT:
             // Utils_Log(MESSAGE_SOURCE, `Successfully connected to background.js`);
             
-            // if autoImport flag is true, send error message bkg because user
+            // if either auto... flag is true, send error message bkg because user
             // -> may have moved us off the path of data gathering. Stop
             // -> everything here!
-            if (autoImport) {
-                const err = `AutoImport is ${autoImport} but` +
-                    ' should be unknown / false. User must have redirected on' +
-                    ' accident. Stopping script.';
+            if (autoImport || autoMerge) {
+                const err = `Some auto... flag is true - import<${autoImport}>` +
+                    ` or merge<${autoMerge}>. These should be unknown / false.`
+                    ' User must have redirected on accident. Stopping script.';
                 Utils_KillAll(port, MESSAGE_SOURCE, err);
             }
             break;
