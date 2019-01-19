@@ -108,7 +108,8 @@ export const backgroundPortInit = (chrome) => {
                     ));
                     // options page open - handled in background.js
                     // NOTE: import / merge in progress NOT reset
-                    // -> b/c at this point, code may need to be fixed
+                    // -> b/c at this point, code may need to be fixed so
+                    // -> needs user to click 'CLEAR' first
                     break;
 
                 // called when extension is reminding user to log in!

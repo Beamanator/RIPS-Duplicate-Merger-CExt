@@ -41,12 +41,9 @@ port.onMessage.addListener(function(msg) {
         code, autoImport, autoMerge
     } = msg;
 
-    // Utils_Log(MESSAGE_SOURCE, `Port msg received`, msg);
-
     switch(code) {
         case PCs.BKG_CS_START_IMPORT:
         case PCs.BKG_CS_START_MERGE:
-            Utils_SendRedirectCode(port, 'SearchClientDetails/AdvancedSearch');
             sendBkgLoginReminder();
             break;
         
