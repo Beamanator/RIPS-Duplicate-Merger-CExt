@@ -332,7 +332,10 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_LOGIN_REMINDER:
+                IMPORT_IN_PROGRESS = false;
+                MERGE_IN_PROGRESS = false;
                 sendRALoginReminder(RAPort);
+                highlightTab(RAPort);
                 break;
             
             default: // code not recognized - send error back
