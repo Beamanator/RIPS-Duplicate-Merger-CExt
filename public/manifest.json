@@ -8,7 +8,7 @@
     "short_name": "Duplicate Client Merger",
     "name": "RIPS Extension - Duplicate Client Merger",
 
-    "description": "RIPS Extension - Enables automatic duplicate client record merging. Checks for mismatching data, asks user to select correct data, then merges!",
+    "description": "RIPS Extension - Enables automatic duplicate client record merging.",
 
     "permissions": [
         "tabs"
