@@ -22,7 +22,8 @@ let MERGE_HISTORY_INDEX = 0; // for ACTIONS only
 let SERVICE_TO_CREATE = null;
 let ACTION_TO_CREATE = null;
 
-const PORTNAME_HOLDER = [ // container for portnames
+const PORTNAME_HOLDER = [
+    // container for portnames
     PCs.PORTNAME_REACT_APP,
     PCs.PORTNAME_CS_ADD_ACTION,
     PCs.PORTNAME_CS_ADDRESSES,
@@ -41,7 +42,8 @@ const PORTNAME_HOLDER = [ // container for portnames
     PCs.PORTNAME_CS_VIEW_ACTIONS,
 ];
 
-const MISSING_PORT_ERROR_MSG = 'Background port not found! Make ' +
+const MISSING_PORT_ERROR_MSG =
+    "Background port not found! Make " +
     "sure there's no other errors, or race condition didn't happen.";
 
 // ==============================================================================
@@ -49,9 +51,8 @@ const MISSING_PORT_ERROR_MSG = 'Background port not found! Make ' +
 // ==============================================================================
 const storeClientData = (source, data) => {
     // initialize source container
-    if (!CLIENT_DATA_CONTAINER[source])
-        CLIENT_DATA_CONTAINER[source] = {};
-    
+    if (!CLIENT_DATA_CONTAINER[source]) CLIENT_DATA_CONTAINER[source] = {};
+
     // loop through data, adding everything that's non-empty
     // -> to CLIENT_DATA_CONTAINER
     // -> fieldName are page keys like 'Files', 'Notes', 'action1',
@@ -60,43 +61,42 @@ const storeClientData = (source, data) => {
         // initialize field array
         if (!CLIENT_DATA_CONTAINER[source][fieldName]) {
             // create blank array of length equal to # of clients
-            let blankArr = (new Array(CLIENT_NUMS.length));
+            let blankArr = new Array(CLIENT_NUMS.length);
             // populate field with blank array
             CLIENT_DATA_CONTAINER[source][fieldName] = blankArr;
         }
-        
-        // add field value to container at current client index location
-        CLIENT_DATA_CONTAINER[source][fieldName]
-            [CLIENT_INDEX] = value;
-    }
-    
-    // log update, just for info
-    Utils_Log('BKG', 'New clnt data container:', CLIENT_DATA_CONTAINER);
-}
 
-const redirectTab = ( tabId, urlPart ) => {
-    Utils_Log('BKG', 'Redirecting user to ' + urlPart);
+        // add field value to container at current client index location
+        CLIENT_DATA_CONTAINER[source][fieldName][CLIENT_INDEX] = value;
+    }
+
+    // log update, just for info
+    Utils_Log("BKG", "New clnt data container:", CLIENT_DATA_CONTAINER);
+};
+
+const redirectTab = (tabId, urlPart) => {
+    Utils_Log("BKG", "Redirecting user to " + urlPart);
 
     // add url part to basic RIPS url
-    const url = 'http://rips.247lib.com/Stars/' + urlPart
-    
+    const url = "https://rips.247lib.com/Stars/" + urlPart;
+
     POST_SAVE_REDIRECT_FLAG = false;
     POST_ARCHIVE_REDIRECT_FLAG = false;
     MERGED_DATA_INDEX = 0;
-    
+
     // update given tab's url
     chrome.tabs.update(tabId, { url: url });
-}
+};
 
-const highlightTab = ( sourcePort, callback ) => {
+const highlightTab = (sourcePort, callback) => {
     if (!callback) {
         callback = (param) => {
-            console.warn('redirect to tab index #' + tabIndex, param);
-        }
+            console.warn("redirect to tab index #" + tabIndex, param);
+        };
     }
 
     if (!sourcePort) {
-        callback('No source port available! Bad news...');
+        callback("No source port available! Bad news...");
         return;
     }
 
@@ -105,24 +105,29 @@ const highlightTab = ( sourcePort, callback ) => {
     // first get Tab object from id
     chrome.tabs.get(sourcePort.sender.tab.id, (Tab) => {
         // next highlight the desired tab, by the Tab's id
-        chrome.tabs.highlight({
-            tabs: Tab.index
-        }, callback);
+        chrome.tabs.highlight(
+            {
+                tabs: Tab.index,
+            },
+            callback
+        );
     });
-}
+};
 
 // ==============================================================================
 //                          MESSAGE POSTING FUNCTIONS
 // ==============================================================================
 const sendPortInit = (port, code) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: code,
         autoArchive: ARCHIVE_IN_PROGRESS, // archiving should auto start (if true)
         autoImport: IMPORT_IN_PROGRESS, // import should auto start (if true)
         autoMerge: MERGE_IN_PROGRESS, // merge should auto start (if true)
-        clientNum: (IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS || ARCHIVE_IN_PROGRESS)
-            ? CLIENT_NUMS[CLIENT_INDEX] : null,
+        clientNum:
+            IMPORT_IN_PROGRESS || MERGE_IN_PROGRESS || ARCHIVE_IN_PROGRESS
+                ? CLIENT_NUMS[CLIENT_INDEX]
+                : null,
         mergeData: MERGE_IN_PROGRESS ? MERGED_DATA_CONTAINER : null,
         mergeHistoryData: MERGE_HISTORY_DATA ? MERGE_HISTORY_DATA : null,
         postArchiveRedirectFlag: POST_ARCHIVE_REDIRECT_FLAG,
@@ -132,63 +137,63 @@ const sendPortInit = (port, code) => {
         serviceToCreate: SERVICE_TO_CREATE,
         actionToCreate: ACTION_TO_CREATE,
     });
-}
+};
 
 // Note: CLIENT_INDEX out of bounds (import complete) handled in
 // -> CSPort listener -> PCs.CS_BKG_CLIENT_IMPORT_DONE
 const sendStartImport = (port) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_CS_START_IMPORT,
-        clientNum: CLIENT_NUMS[CLIENT_INDEX]
+        clientNum: CLIENT_NUMS[CLIENT_INDEX],
     });
-}
+};
 
 const sendStartMerge = (port) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_CS_START_MERGE,
-        clientNum: CLIENT_NUMS[CLIENT_INDEX]
+        clientNum: CLIENT_NUMS[CLIENT_INDEX],
     });
-}
+};
 
 const sendImportDone = (port, clientData) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_IMPORT_DONE,
-        data: clientData
+        data: clientData,
     });
-}
+};
 
 const sendArchiveDone = (port) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_ARCHIVE_DONE,
     });
-}
+};
 
 const sendKillAll = (port, source, error) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_KILL_ALL,
         source: source,
         error: error,
     });
-}
+};
 
 const sendNoRIPSTabs = (port) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_NO_RIPS_TABS,
     });
-}
+};
 
 const sendRALoginReminder = (port) => {
-    if (!port) Utils_Error('BKG', MISSING_PORT_ERROR_MSG);
+    if (!port) Utils_Error("BKG", MISSING_PORT_ERROR_MSG);
     port.postMessage({
         code: PCs.BKG_RA_LOGIN_REMINDER,
     });
-}
+};
 
 // ==============================================================================
 //                           PORT MESSAGE LISTENERS
@@ -197,27 +202,27 @@ const initContentScriptPort = (port) => {
     // If content script port already has been initialized,
     // -> skip setting new listener
     if (CSPort) {
-        console.warn('Tried initializing CSPort, even though already exists. Skipping');
+        console.warn(
+            "Tried initializing CSPort, even though already exists. Skipping"
+        );
         return;
     }
 
     // send init message to either port
-    sendPortInit(
-        port, PCs.BKG_CS_INIT_PORT
-    );
+    sendPortInit(port, PCs.BKG_CS_INIT_PORT);
 
     // set global content script port container
     CSPort = port;
 
     port.onMessage.addListener(function(msg, MessageSender) {
-        console.log('<background.js> content script port msg received', msg);
+        console.log("<background.js> content script port msg received", msg);
 
-        switch(msg.code) {
+        switch (msg.code) {
             case PCs.CS_BKG_ADD_NEXT_ACTION:
                 ACTION_TO_CREATE = msg.data;
                 redirectTab(
                     MessageSender.sender.tab.id,
-                    'MatterAction/CreateNewAction'
+                    "MatterAction/CreateNewAction"
                 );
                 // increment history index so next time in View Actions,
                 // -> next action will be sent back here
@@ -226,10 +231,7 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_ADD_MERGE_HISTORY_AND_REDIRECT:
                 MERGE_HISTORY_DATA = msg.data;
-                redirectTab(
-                    MessageSender.sender.tab.id,
-                    msg.urlPart
-                );
+                redirectTab(MessageSender.sender.tab.id, msg.urlPart);
                 break;
 
             case PCs.CS_BKG_START_ARCHIVE:
@@ -249,14 +251,14 @@ const initContentScriptPort = (port) => {
                 MERGE_HISTORY_INDEX = 0;
                 SERVICE_TO_CREATE = null;
                 ACTION_TO_CREATE = null;
-                
+
                 // 4) redirect to advanced search to start archiving
                 redirectTab(
                     MessageSender.sender.tab.id,
-                    'SearchClientDetails/AdvancedSearch'
+                    "SearchClientDetails/AdvancedSearch"
                 );
                 break;
-            
+
             case PCs.CS_BKG_ARCHIVE_NEXT_CLIENT:
                 CLIENT_INDEX++;
                 // if client index out of bounds (no more clients left to archive)
@@ -271,10 +273,7 @@ const initContentScriptPort = (port) => {
                 break;
 
             case PCs.CS_BKG_PAGE_REDIRECT:
-                redirectTab(
-                    MessageSender.sender.tab.id,
-                    msg.urlPart
-                );
+                redirectTab(MessageSender.sender.tab.id, msg.urlPart);
                 break;
 
             case PCs.CS_BKG_DATA_RECEIVED:
@@ -283,7 +282,7 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_CLIENT_IMPORT_DONE:
                 // check if import should keep going
-                if (CLIENT_NUMS && CLIENT_INDEX+1 < CLIENT_NUMS.length) {
+                if (CLIENT_NUMS && CLIENT_INDEX + 1 < CLIENT_NUMS.length) {
                     // increment client index
                     CLIENT_INDEX++;
                     sendStartImport(CSPort);
@@ -301,7 +300,7 @@ const initContentScriptPort = (port) => {
                 IMPORT_IN_PROGRESS = false;
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
-                
+
                 sendKillAll(RAPort, msg.source, msg.error);
                 // open / focus options page since error occurred
                 highlightTab(RAPort);
@@ -317,7 +316,11 @@ const initContentScriptPort = (port) => {
 
             case PCs.CS_BKG_INCREMENT_MERGE_DATA_INDEX:
                 MERGED_DATA_INDEX++;
-                Utils_Log('BKG', 'Incrementing merge data index!', MERGED_DATA_INDEX);
+                Utils_Log(
+                    "BKG",
+                    "Incrementing merge data index!",
+                    MERGED_DATA_INDEX
+                );
                 break;
 
             case PCs.CS_BKG_ADD_MISSING_SERVICES:
@@ -337,24 +340,27 @@ const initContentScriptPort = (port) => {
                 sendRALoginReminder(RAPort);
                 highlightTab(RAPort);
                 break;
-            
-            default: // code not recognized - send error back
+
+            default:
+                // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
                 highlightTab(RAPort);
         }
     });
 
-    port.onDisconnect.addListener(removedPort => {
+    port.onDisconnect.addListener((removedPort) => {
         console.log(`Port <${removedPort.name}> disconnected`);
         CSPort = null;
     });
-}
+};
 
 const initReactAppPort = (port) => {
     // If react app port already has been initialized, skip setting new listener
     if (RAPort) {
-        console.warn('Tried initializing RAPort, even though already exists. Skipping');
+        console.warn(
+            "Tried initializing RAPort, even though already exists. Skipping"
+        );
         return;
     }
 
@@ -367,15 +373,15 @@ const initReactAppPort = (port) => {
     RAPort = port;
 
     port.onMessage.addListener(function(msg) {
-        console.log('<background.js> react app port msg received', msg);
+        console.log("<background.js> react app port msg received", msg);
 
-        switch(msg.code) {
+        switch (msg.code) {
             case PCs.RA_BKG_START_IMPORT:
                 IMPORT_IN_PROGRESS = true;
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
                 // set global clientnums arr - remove empty strings
-                CLIENT_NUMS = msg.clientNums.filter(n => n.trim() !== '');
+                CLIENT_NUMS = msg.clientNums.filter((n) => n.trim() !== "");
                 CLIENT_INDEX = 0;
                 // open RIPS & begin import, if available
                 if (CSPort) {
@@ -388,9 +394,7 @@ const initReactAppPort = (port) => {
                 break;
 
             case PCs.RA_BKG_START_MERGE:
-                const {
-                    data: mergeData, clientNums
-                } = msg;
+                const { data: mergeData, clientNums } = msg;
                 // 1) set merge in progress to true
                 MERGE_IN_PROGRESS = true;
                 IMPORT_IN_PROGRESS = false;
@@ -411,7 +415,10 @@ const initReactAppPort = (port) => {
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
                 // popup handled in react app
-                Utils_Warn('BKG',`Code sent to React <${msg.errCode}> not recognized`);
+                Utils_Warn(
+                    "BKG",
+                    `Code sent to React <${msg.errCode}> not recognized`
+                );
                 // highlight options page / react app
                 highlightTab(RAPort);
                 break;
@@ -422,35 +429,37 @@ const initReactAppPort = (port) => {
                 MERGE_IN_PROGRESS = false;
                 ARCHIVE_IN_PROGRESS = false;
                 // clear data vars
-                CLIENT_NUMS = null; CLIENT_INDEX = 0;
+                CLIENT_NUMS = null;
+                CLIENT_INDEX = 0;
                 MERGED_DATA_INDEX = 0;
                 MERGE_HISTORY_INDEX = 0;
                 CLIENT_DATA_CONTAINER = {};
                 MERGED_DATA_CONTAINER = {};
-                Utils_Warn('BKG', 'All client data cleared');
+                Utils_Warn("BKG", "All client data cleared");
                 break;
 
-            default: // code not recognized - send error back
+            default:
+                // code not recognized - send error back
                 IMPORT_IN_PROGRESS = false;
                 Utils_SendPortCodeError(port, msg.code, PCs.PORTNAME_REACT_APP);
         }
     });
 
-    port.onDisconnect.addListener(removedPort => {
+    port.onDisconnect.addListener((removedPort) => {
         console.log(`Port <${removedPort.name}> disconnected`);
         RAPort = null;
 
         IMPORT_IN_PROGRESS = false;
     });
-}
+};
 
 // ==============================================================================
 //                          PORT CONNECTION LISTENER
 // ==============================================================================
-chrome.runtime.onConnect.addListener(port => {
-    console.assert( PORTNAME_HOLDER.includes(port.name) );
-    Utils_Log('BKG',`Port <${port.name}> connected!`);
-    
+chrome.runtime.onConnect.addListener((port) => {
+    console.assert(PORTNAME_HOLDER.includes(port.name));
+    Utils_Log("BKG", `Port <${port.name}> connected!`);
+
     switch (port.name) {
         case PCs.PORTNAME_CS_ADD_ACTION:
         case PCs.PORTNAME_CS_ADDRESSES:
@@ -468,18 +477,18 @@ chrome.runtime.onConnect.addListener(port => {
         case PCs.PORTNAME_CS_SERVICES:
         case PCs.PORTNAME_CS_VIEW_ACTIONS:
             // init content script port listener
-            initContentScriptPort( port );
+            initContentScriptPort(port);
             break;
 
         case PCs.PORTNAME_REACT_APP:
             // init react app port listener
-            initReactAppPort( port );
+            initReactAppPort(port);
             break;
-        
+
         default:
             IMPORT_IN_PROGRESS = false;
             Utils_Log(
-                'BKG',
+                "BKG",
                 "ERR: somehow connecting port isn't recognized, but we said assert!",
                 port
             );
