@@ -127,7 +127,12 @@ Input a list of StARS numbers and this extension will show the user any mis-matc
 ## Getting Started
 1. Run `npm install` to install the node packages in `package.json`
 1. Run `npm run build` to "build" the React app
-1. Open `chrome://extensions` in your browser, then click `Load Unpacked`. Now navigate to your `build` directory that was created in the previous step. Finally, click 'ok'.
+1. Load the built app into Google Chrome
+    - Open `chrome://extensions` in your browser
+    - Open "Developer Mode" (click switch in rop-right corner of the page)
+    - Click `Load Unpacked`.
+    - Navigate to your `build` directory that was created in the previous step.
+    - Finally, click 'ok'.
 
 Now you should have a new, working chrome extension!
 
