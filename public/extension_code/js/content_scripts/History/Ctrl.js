@@ -68,124 +68,126 @@ const getPageDataContainer = () => new Promise((RESOLVE, REJECT) => {
         let rowDataCollectPromises = [];
 
         const tableBodyCellsFromRowsSelector = FIELD_IDS_HISTORY[ACTION_TABLE_BODY_CELLS_FROM_ROWS];
+
         // collect data from row at index i
-        rows[i].querySelectorAll(tableBodyCellsFromRowsSelector)
-        .forEach((cell, colIndex) => {
-            // add promise to cell collection ALL BECAUSE extra-long-note
-            // -> click / collecting is asynchronous :(
-            rowDataCollectPromises.push(new Promise((resolve, reject) => {
-                // if there's no column name, skip collecting this cell's data
-                if (columnNames[colIndex] == '') { resolve('SKIP') }
-                // else, we want this row! add cell data to row object
-                else {
-                    let cellData = cell.innerText.trim();
-                    const cellMapName = columnNames[colIndex];
-    
-                    // if current cell is in ACTION_NAME column,
-                    // -> save off action name
-                    if (cellMapName === ACTION_NAME) {
-                        actionName = cellData;
-                        
-                        if (actionName == '') {
-                            // ERROR - somehow there wasn't anything listed in 
-                            // -> the ACTION_NAME column??
-                            let err = `Error! No Action Name found in row among` +
-                                ` rowData:`;
-                            Utils_Error(MESSAGE_SOURCE, err, rows[i]);
-                            reject(err);
-                            // killall handled later
-                        }
-                        // else unused action? -> taken care of below
-                        // else { resolve(actionName) } // taken care of below
-                    }
-    
-                    else if (cellMapName === ACTION_NOTES) {
-                        // blank out notes if they're just the default
-                        // -> action notes added by this auto merger utility
-                        // -> (so in future action note duplicate checking, default
-                        // -> notes will act the same as empty notes)
-                        if (cellData === U_DEFAULT_ACTION_NOTE) {
-                            cellData = '';
-                        }
-    
-                        // action notes exist. if they're long enough, we
-                        // -> have to click on the row to fetch the entire note
-                        // -> from the database
-                        // Note: max chars may be around 270, but need to use
-                        // -> lower # as max b/c some chars like html don't
-                        // -> display so aren't counted here, even they exist
-                        // -> in the database.
-                        else if (cellData.length > 150) {
-                            // 1) click the row / cell (long notes show up
-                            // -> asynchronously)
-                            cell.click();
-
-                            // get note textarea selector
-                            const noteTextareaSelector = 
-                                FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA];
-
-                            // 2) wait for textarea with notes to show up
-                            Utils_WaitForCondition(
-                                Utils_OnVarChanged, {
-                                    origVar: lastActionNoteData,
-                                    newVarElemSelector: noteTextareaSelector,
-                                }, 250, 8
-                            )
-                            .then(() => {
-                                // 3) collect data from new textarea with ALL notes
-                                const noteTextarea = Utils_QueryDoc(noteTextareaSelector);
-                                let longNote = noteTextarea.innerText;
-
-                                // 4) update last action note data in case
-                                // -> there's another long on note in history
-                                lastActionNoteData = '';
-
-                                // 5) delete the note element's data (in case there's
-                                // -> duplicate actions with same notes)
-                                noteTextarea.innerText = '';
-
-                                // 6) close the textarea popup
-                                const closeSelector = 
-                                    FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA_CLOSE];
-                                const closeElem = Utils_QueryDoc(closeSelector);
-                                closeElem.click();
+        if (rows[i])
+            rows[i].querySelectorAll(tableBodyCellsFromRowsSelector)
+            .forEach((cell, colIndex) => {
+                // add promise to cell collection ALL BECAUSE extra-long-note
+                // -> click / collecting is asynchronous :(
+                rowDataCollectPromises.push(new Promise((resolve, reject) => {
+                    // if there's no column name, skip collecting this cell's data
+                    if (columnNames[colIndex] == '') { resolve('SKIP') }
+                    // else, we want this row! add cell data to row object
+                    else {
+                        let cellData = cell.innerText.trim();
+                        const cellMapName = columnNames[colIndex];
+        
+                        // if current cell is in ACTION_NAME column,
+                        // -> save off action name
+                        if (cellMapName === ACTION_NAME) {
+                            actionName = cellData;
                             
-                                // 7) resolve promise w/ long note
-                                resolve({ [cellMapName]: longNote });
-                            })
-                            .catch(err => {
-                                // custom error message
-                                let errMsg = `Cannot find textarea "${noteTextareaSelector}" ` +
-                                    'OR var lastActionNoteData didnt change so cannot ' +
-                                    'move on! Maybe internet is bad, maybe ' +
-                                    'selector should be fixed, maybe code is broken. ' +
-                                    'Its ALSO possible there are duplicate actions!';
-                                Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
-                                alert(
-                                    'Warning: Your internet connection ' +
-                                    'may be a little bit slow. Please refresh the page now.' +
-                                    '\n\nIf this message shows up multiple times, please ' +
-                                    'contact the developer (the RIPS guy). Thanks!' +
-                                    '\n\nNote for the developer:\nError message: ' + errMsg
-                                );
-                                // no rejection and therefore no killall b/c this may
-                                // -> be an internet connection issue. If killall is called,
-                                // -> all import / merge progress will be killed and have to
-                                // -> start over. We don't want that, so we just ask user to
-                                // -> refresh the page to try & re-start the program at the
-                                // -> current step.
-                                // reject(err);
-                            })
-
-                            return; // avoid resolving too early
+                            if (actionName == '') {
+                                // ERROR - somehow there wasn't anything listed in 
+                                // -> the ACTION_NAME column??
+                                let err = `Error! No Action Name found in row among` +
+                                    ` rowData:`;
+                                Utils_Error(MESSAGE_SOURCE, err, rows[i]);
+                                reject(err);
+                                // killall handled later
+                            }
+                            // else unused action? -> taken care of below
+                            // else { resolve(actionName) } // taken care of below
                         }
-                    }
+        
+                        else if (cellMapName === ACTION_NOTES) {
+                            // blank out notes if they're just the default
+                            // -> action notes added by this auto merger utility
+                            // -> (so in future action note duplicate checking, default
+                            // -> notes will act the same as empty notes)
+                            if (cellData === U_DEFAULT_ACTION_NOTE) {
+                                cellData = '';
+                            }
+        
+                            // action notes exist. if they're long enough, we
+                            // -> have to click on the row to fetch the entire note
+                            // -> from the database
+                            // Note: max chars may be around 270, but need to use
+                            // -> lower # as max b/c some chars like html don't
+                            // -> display so aren't counted here, even they exist
+                            // -> in the database.
+                            else if (cellData.length > 150) {
+                                // 1) click the row / cell (long notes show up
+                                // -> asynchronously)
+                                cell.click();
 
-                    // just resolve basic data here
-                    resolve({ [cellMapName]: cellData });
-                }
-            }));
-        });
+                                // get note textarea selector
+                                const noteTextareaSelector = 
+                                    FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA];
+
+                                // 2) wait for textarea with notes to show up
+                                Utils_WaitForCondition(
+                                    Utils_OnVarChanged, {
+                                        origVar: lastActionNoteData,
+                                        newVarElemSelector: noteTextareaSelector,
+                                    }, 250, 8
+                                )
+                                .then(() => {
+                                    // 3) collect data from new textarea with ALL notes
+                                    const noteTextarea = Utils_QueryDoc(noteTextareaSelector);
+                                    let longNote = noteTextarea.innerText;
+
+                                    // 4) update last action note data in case
+                                    // -> there's another long on note in history
+                                    lastActionNoteData = '';
+
+                                    // 5) delete the note element's data (in case there's
+                                    // -> duplicate actions with same notes)
+                                    noteTextarea.innerText = '';
+
+                                    // 6) close the textarea popup
+                                    const closeSelector = 
+                                        FIELD_IDS_HISTORY[ACTION_NOTES_TEXTAREA_CLOSE];
+                                    const closeElem = Utils_QueryDoc(closeSelector);
+                                    closeElem.click();
+                                
+                                    // 7) resolve promise w/ long note
+                                    resolve({ [cellMapName]: longNote });
+                                })
+                                .catch(err => {
+                                    // custom error message
+                                    let errMsg = `Cannot find textarea "${noteTextareaSelector}" ` +
+                                        'OR var lastActionNoteData didnt change so cannot ' +
+                                        'move on! Maybe internet is bad, maybe ' +
+                                        'selector should be fixed, maybe code is broken. ' +
+                                        'Its ALSO possible there are duplicate actions!';
+                                    Utils_Error(MESSAGE_SOURCE, errMsg, cellData);
+                                    alert(
+                                        'Warning: Your internet connection ' +
+                                        'may be a little bit slow. Please refresh the page now.' +
+                                        '\n\nIf this message shows up multiple times, please ' +
+                                        'contact the developer (the RIPS guy). Thanks!' +
+                                        '\n\nNote for the developer:\nError message: ' + errMsg
+                                    );
+                                    // no rejection and therefore no killall b/c this may
+                                    // -> be an internet connection issue. If killall is called,
+                                    // -> all import / merge progress will be killed and have to
+                                    // -> start over. We don't want that, so we just ask user to
+                                    // -> refresh the page to try & re-start the program at the
+                                    // -> current step.
+                                    // reject(err);
+                                })
+
+                                return; // avoid resolving too early
+                            }
+                        }
+
+                        // just resolve basic data here
+                        resolve({ [cellMapName]: cellData });
+                    }
+                }));
+            });
 
         // collect all data from row, and decide what to do next
         Promise.all(rowDataCollectPromises)
