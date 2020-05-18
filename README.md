@@ -136,6 +136,22 @@ Input a list of StARS numbers and this extension will show the user any mis-matc
 
 Now you should have a new, working chrome extension!
 
+## Updating Extension Locally
+
+Let's say you made some change (fixed a bug or something), and you want the change to be running on the local version of your Chrome Extension.
+
+After you make your changes and want to test, follow these steps:
+
+1. Make sure everything is saved.
+1. Run `npm run build` to add your changes to the `build` folder
+1. Open `chrome://extensions` and find the Extension listing. It should look something like this:
+    <img src="readme_imgs/11_Extension_Listing.png" width="400px">
+1. Click the refresh icon in the extension listing
+
+Now you're pretty good to go, but I'd always recommend refreshing the RIPS page you have open, as this clear the previous import state :)
+
+You're good to go! Happy coding :)
+
 ## Common errors:
 1. Error with `service-worker`:
     - Found in `background.js`
