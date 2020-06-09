@@ -23,7 +23,8 @@
 
     "icons": {
         "48": "extension_code/img/Icon-48.png",
-    	"96": "extension_code/img/Icon-96.png"
+        "96": "extension_code/img/Icon-96.png",
+        "128": "extension_code/img/Icon-128.png"
     },
     "background": {
 		"page": "extension_code/html/background.html"
